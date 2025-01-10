@@ -1,0 +1,22 @@
+.home {
+  .welcome-banner {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    background-color: var(--n-color-hover);
+    border-radius: 4px;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

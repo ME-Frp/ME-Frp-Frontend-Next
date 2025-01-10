@@ -1,0 +1,29 @@
+.footer {
+    /* margin-top: 20px; */
+    padding-bottom: 20px;
+    background-color: var(--n-color);
+    border-top: 1px solid var(--n-border-color);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    text-align: center;
+}
+
+.footer p {
+    margin: 8px 0;
+    color: var(--n-text-color-2);
+    font-size: 0.9rem;
+}
+
+.footer a {
+    color: var(--n-text-color-2);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: #2196F3;
+}

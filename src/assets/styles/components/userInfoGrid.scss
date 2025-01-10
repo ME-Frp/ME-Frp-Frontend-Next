@@ -1,0 +1,29 @@
+.user-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.user-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.user-info-label {
+    font-size: 14px;
+    color: var(--n-text-color-2);
+}
+
+.user-info-value {
+    font-size: 14px;
+    color: var(--n-text-color);
+}
+
+.sign-btn {
+    margin-left: 8px;
+}

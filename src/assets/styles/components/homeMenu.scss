@@ -1,0 +1,56 @@
+@use '../variables.scss' as *;
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: $bg-color;
+    backdrop-filter: blur(8px);
+}
+
+.navbar-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.logo {
+    flex: 1;
+}
+
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.logo h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    text-align: left;
+    background: $primary-gradient;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.desktop-menu {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* 移动端适配 */
+@media (max-width: 700px) {
+    .navbar-content {
+        padding: 12px 16px;
+        gap: 8px;
+    }
+
+    .logo h2 {
+        text-align: left;
+    }
+}

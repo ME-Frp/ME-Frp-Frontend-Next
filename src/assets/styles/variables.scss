@@ -1,0 +1,25 @@
+// 主色调
+$primary-color: #2196F3;
+$primary-hover: #42A5F5;
+$primary-pressed: #1976D2;
+$primary-suppl: #90CAF9;
+
+// 渐变
+$primary-gradient: linear-gradient(45deg, $primary-color, $primary-hover);
+
+// 文本颜色
+$text-color: var(--n-text-color);
+$text-color-2: var(--n-text-color-2);
+
+// 背景色
+$bg-color: var(--n-color);
+$bg-color-hover: var(--n-color-hover);
+
+// 边框
+$border-color: var(--n-border-color);
+
+// 阴影
+$box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+// 过渡
+$transition-all: all 0.3s ease; 

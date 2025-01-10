@@ -1,0 +1,182 @@
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+
+const routes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    name: 'home',
+    component: () => import('../views/Home.vue'),
+    meta: { title: '首页' }
+  },
+  {
+    path: '/auth/login',
+    name: 'login',
+    component: () => import('../views/auth/Login.vue'),
+    meta: {
+      title: '登录',
+      requiresGuest: true
+    }
+  },
+  {
+    path: '/auth/register',
+    name: 'register',
+    component: () => import('../views/auth/Register.vue'),
+    meta: {
+      title: '注册',
+      requiresGuest: true
+    }
+  },
+  {
+    path: '/auth/iforgot',
+    name: 'forgot',
+    component: () => import('../views/auth/iForgot.vue'),
+    meta: {
+      title: '找回密码',
+      requiresGuest: true
+    }
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('../views/Dashboard.vue'),
+    redirect: '/dashboard/home',
+    meta: {
+      title: '控制台',
+      requiresAuth: true
+    },
+    children: [
+      {
+        path: 'home',
+        name: 'dashboard-home',
+        component: () => import('../views/dashboard/Home.vue'),
+        meta: { title: '控制台' }
+      },
+      {
+        path: 'create-proxy',
+        name: 'create-proxy',
+        component: () => import('../views/dashboard/CreateProxy.vue'),
+        meta: { title: '创建隧道' }
+      },
+      {
+        path: 'manage-proxies',
+        name: 'manage-proxies',
+        component: () => import('../views/dashboard/ManageProxies.vue'),
+        meta: { title: '隧道管理' }
+      },
+      {
+        path: 'node-status',
+        name: 'node-status',
+        component: () => import('../views/dashboard/NodeStatus.vue'),
+        meta: { title: '节点监控' }
+      },
+      {
+        path: 'downloads',
+        name: 'downloads',
+        component: () => import('../views/dashboard/Downloads.vue'),
+        meta: { title: '文件下载' }
+      },
+      {
+        path: 'profile',
+        name: 'profile',
+        component: () => import('../views/dashboard/Profile.vue'),
+        meta: { title: '个人中心' }
+      },
+      {
+        path: 'donate',
+        name: 'donate',
+        component: () => import('../views/dashboard/Donate.vue'),
+        meta: { title: '赞助我们' }
+      },
+      {
+        path: 'about',
+        name: 'about',
+        component: () => import('../views/dashboard/About.vue'),
+        meta: { title: '关于面板' }
+      },
+      {
+        path: 'admin',
+        name: 'admin',
+        redirect: '/dashboard/admin/users',
+        children: [
+          {
+            path: 'users',
+            name: 'admin-users',
+            component: () => import('../views/dashboard/admin/Users.vue'),
+            meta: {
+              title: '用户管理',
+              requiresAdmin: true
+            }
+          },
+          {
+            path: 'nodes',
+            name: 'admin-nodes',
+            component: () => import('../views/dashboard/admin/Nodes.vue'),
+            meta: {
+              title: '节点管理',
+              requiresAdmin: true
+            }
+          },
+          {
+            path: 'proxies',
+            name: 'admin-proxies',
+            component: () => import('../views/dashboard/admin/Proxies.vue'),
+            meta: {
+              title: '隧道管理',
+              requiresAdmin: true
+            }
+          },
+          {
+            path: 'panel',
+            name: 'admin-panel',
+            component: () => import('../views/dashboard/admin/Panel.vue'),
+            meta: {
+              title: '面板管理',
+              requiresAdmin: true
+            }
+          }]
+      },
+    ]
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  const isAdmin = localStorage.getItem('group') === 'admin'
+
+  if (to.meta.requiresAuth && !token) {
+    next('/auth/login')
+    return
+  }
+
+  if (to.meta.requiresAdmin && !isAdmin) {
+    next('/dashboard')
+    return
+  }
+
+  if (to.meta.requiresGuest && token) {
+    next('/dashboard')
+    return
+  }
+
+  if (to.path === '/') {
+    document.title = 'ME Frp | 镜缘映射 - 免费内网穿透_免费端口映射_半公益_高速_Minecraft我的世界联机_泰拉瑞亚联机_远程桌面_开发调试_建站'
+  } else if (to.path === '/auth/login') {
+    document.title = '登录到 ME Frp 5.0'
+  } else if (to.path === '/auth/register') {
+    document.title = '注册 ME Frp 账户'
+  } else if (to.path === '/auth/iforgot') {
+    document.title = '找回 ME Frp 账户'
+  } else {
+    document.title = `${to.meta.title} | ME Frp 5.0 管理面板`
+  }
+
+  next()
+})
+
+export default router
+
+export { default as routes } from './index'

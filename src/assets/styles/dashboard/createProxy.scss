@@ -1,0 +1,39 @@
+.create {
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .node-info {
+    margin-top: 4px;
+    color: var(--n-text-color-2);
+    font-size: 14px;
+  }
+
+  .tip-text {
+    color: var(--n-text-color-2);
+    font-size: 14px;
+    margin: -5px 0 16px;
+  }
+
+  .action-row {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .proxy-form {
+    width: 100%;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+} 

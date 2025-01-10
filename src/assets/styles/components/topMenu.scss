@@ -1,0 +1,44 @@
+@use '../variables.scss' as *;
+
+.header-content {
+    .left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+    padding: 0 24px;
+}
+
+.logo {
+    font-size: 20px;
+    background: $text-color;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.menu-trigger {
+    display: none;
+
+    @media (max-width: 768px) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.right {
+    display: flex;
+    align-items: center;
+}
+
+.mobile-menu {
+    min-width: 200px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}

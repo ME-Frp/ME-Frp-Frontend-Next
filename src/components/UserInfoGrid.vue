@@ -1,0 +1,184 @@
+<template>
+  <div class="user-info-grid">
+    <template v-if="loading">
+      <div v-for="i in 8" :key="i" class="user-info-item">
+        <NSkeleton :sharp="false" size="medium" />
+      </div>
+    </template>
+    <template v-else>
+      <div class="user-info-item">
+        <div class="user-info-label">实名认证</div>
+        <div class="user-info-value">
+          <NTag :type="userInfo.isRealname ? 'success' : 'default'">
+            {{ userInfo.isRealname ? '已实名' : '未实名' }}
+          </NTag>
+        </div>
+      </div>
+
+      <div class="user-info-item">
+        <div class="user-info-label">用户组</div>
+        <div class="user-info-value">
+          <NTag type="info">
+            {{ userInfo.friendlyGroup }}
+          </NTag>
+        </div>
+      </div>
+
+      <div class="user-info-item">
+        <div class="user-info-label">注册时间</div>
+        <div class="user-info-value">{{ formattedRegTime }}</div>
+      </div>
+
+      <div class="user-info-item">
+        <div class="user-info-label">注册邮箱</div>
+        <div class="user-info-value">{{ userInfo.email }}</div>
+      </div>
+
+      <div class="user-info-item">
+        <div class="user-info-label">隧道数量</div>
+        <div class="user-info-value">{{ userInfo.usedProxies }} / {{ userInfo.maxProxies }}</div>
+      </div>
+
+      <div class="user-info-item">
+        <div class="user-info-label">剩余流量</div>
+        <div class="user-info-value">
+          {{ formattedTraffic }}
+          <NButton size="small" type="primary" :loading="signLoading" :disabled="!isSignAvailable" @click="handleSign" class="sign-btn">
+            {{ signButtonText }}
+          </NButton>
+        </div>
+      </div>
+
+      <div class="user-info-item">
+        <div class="user-info-label">上行带宽</div>
+        <div class="user-info-value">{{ userInfo.inBound }} Mbps</div>
+      </div>
+
+      <div class="user-info-item">
+        <div class="user-info-label">下行带宽</div>
+        <div class="user-info-value">{{ userInfo.outBound }} Mbps</div>
+      </div>
+    </template>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
+import { NTag, useMessage, NSkeleton, NButton } from 'naive-ui'
+import { type UserInfo } from '../types'
+import { AuthApi } from '../shared/api/auth'
+
+const message = useMessage()
+const loading = ref(true)
+const signLoading = ref(false)
+const isSignAvailable = ref(false)
+
+const userInfo = ref<UserInfo>({
+  userId: 0,
+  username: '',
+  isRealname: false,
+  group: '',
+  friendlyGroup: '',
+  usedProxies: 0,
+  maxProxies: 0,
+  regTime: '',
+  traffic: '',
+  outBound: 0,
+  inBound: 0,
+  email: '',
+})
+
+const formatTime = (timestamp: string) => {
+  return new Date(parseInt(timestamp) * 1000).toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  })
+}
+
+const formatTraffic = (traffic: string) => {
+  const value = parseFloat(traffic)
+  if (isNaN(value)) return traffic
+  if (value >= 1024) {
+    return `${(value / 1024).toFixed(2)} GB`
+  }
+  return `${value.toFixed(2)} MB`
+}
+
+const formattedRegTime = computed(() => formatTime(userInfo.value.regTime))
+const formattedTraffic = computed(() => formatTraffic(userInfo.value.traffic))
+const signButtonText = computed(() => signLoading.value ? '签到中...' : (isSignAvailable.value ? '签到' : '已签到'))
+
+// 获取签到状态
+const fetchSignStatus = async () => {
+  try {
+    const response = await AuthApi.getSignStatus()
+    if (response.data.code === 200) {
+      isSignAvailable.value = response.data.data.available
+    }
+  } catch (error) {
+    console.error('获取签到状态失败:', error)
+  }
+}
+
+// 执行签到
+const handleSign = async () => {
+  if (!isSignAvailable.value || signLoading.value) return
+  
+  try {
+    signLoading.value = true
+    const response = await AuthApi.sign()
+    if (response.data.code === 200) {
+      message.success(`签到成功，获得 ${response.data.data.extraTraffic } GB 流量`)
+      isSignAvailable.value = false
+      // 刷新用户信息以更新流量显示
+      await fetchUserInfo()
+    } else {
+      message.error(response.data.message || '签到失败')
+    }
+  } catch (error: any) {
+    if (error?.response?.data?.message) {
+      message.error(error.response.data.message)
+    } else {
+      message.error('签到失败，请重试')
+    }
+  } finally {
+    signLoading.value = false
+  }
+}
+
+const fetchUserInfo = async () => {
+  try {
+    loading.value = true
+    const response = await AuthApi.getUserInfo()
+    if (response.data.code === 200) {
+      userInfo.value = response.data.data
+      localStorage.setItem('username', userInfo.value.username)
+      localStorage.setItem('group', userInfo.value.group)
+    } else {
+      message.error(response.data.message || '获取用户信息失败')
+    }
+  } catch (error: any) {
+    if (error?.response?.data?.message) {
+      message.error(error.response.data.message)
+    } else {
+      message.error('获取用户信息失败，请重试')
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(async () => {
+  await fetchUserInfo()
+  await fetchSignStatus()
+})
+</script>
+
+<style lang="scss" scoped>
+@use '../assets/styles/components/userInfoGrid.scss';
+</style>
