@@ -2,14 +2,14 @@
   <div class="donate">
     <div class="content-grid">
       <NCard title="赞助我们">
-        <div class="qrcode-grid">
+        <!-- <div class="qrcode-grid">
           <div class="qrcode-item">
             <img src="../assets/img/alipay_qiye.jpg" alt="支付宝" width="250" height="375" />
           </div>
           <div class="qrcode-item">
             <img src="../assets/img/wechat_qiye.jpg" alt="微信支付" width="250" height="375" />
           </div>
-        </div>
+        </div> -->
         <p>你的支持是我们最大的动力！</p>
         <p>不要忘记备注您的用户名、邮箱和留言哦！</p>
         <div class="button-group">
