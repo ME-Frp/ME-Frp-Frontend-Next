@@ -36,9 +36,10 @@ import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { NLayout, NLayoutSider, NLayoutContent, NMenu } from 'naive-ui'
 import TopMenu from '../../components/TopMenu.vue'
-import { menuOptions } from '../../shared/menuOptions'
+import { getMenuOptions } from '../../shared/menuOptions'
 
 const route = useRoute()
+const menuOptions = ref(getMenuOptions())
 const collapsed = ref(false)
 
 const activeKey = computed(() => {
