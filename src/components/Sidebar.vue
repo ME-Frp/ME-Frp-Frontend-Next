@@ -7,10 +7,11 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { NMenu } from 'naive-ui'
 import { useRouter, useRoute } from 'vue-router'
-import { menuOptions } from '../shared/menuOptions'
+import { getMenuOptions } from '../shared/menuOptions'
 
 const router = useRouter()
 const route = useRoute()
+const menuOptions = ref(getMenuOptions())
 const isMobile = ref(window.innerWidth <= 700)
 
 const updateIsMobile = () => {

@@ -56,7 +56,7 @@
           <span>域名白名单</span>
         </div>
         <div class="security-desc">
-          这里是用于 “中国大陆(不含港澳台)” 节点创建 HTTP(S) 隧道的备案域名白名单；非中国大陆节点建站，域名无需要过白。
+          这里是用于 “中国大陆(不含港澳台)” 节点创建 HTTP(S) 隧道的备案域名白名单；非中国大陆节点建站，域名无需过白。
         </div>
         <div class="security-value">
           
@@ -156,7 +156,7 @@ const handlePasswordReset = () => {
         localStorage.removeItem('token')
         closePasswordModal()
         new Promise(resolve => setTimeout(resolve, 1000))
-        window.location.href = '/login'
+        window.location.href = '/auth/login'
         window.location.reload()
       } else {
         message.error(response.data.message || '密码重置失败')
@@ -208,45 +208,5 @@ const handleTokenReset = async () => {
 </script>
 
 <style lang="scss" scoped>
-.profile {
-  .info-card {
-    margin-bottom: 16px;
-  }
-
-  .security-card {
-    margin-bottom: 16px;
-
-    .security-item {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-
-      .security-label {
-        font-size: 16px;
-        color: var(--n-text-color-2);
-      }
-
-      .security-desc {
-        font-size: 14px;
-        color: var(--n-text-color-2);
-        margin-bottom: 8px;
-      }
-
-      .security-value {
-        font-size: 14px;
-        color: var(--n-text-color);
-      }
-    }
-  }
-
-  .button-group {
-    display: flex;
-    gap: 8px;
-
-    .action-btn {
-      height: 32px;
-      padding: 0 12px;
-    }
-  }
-}
+@use '../../assets/styles/dashboard/profile.scss';
 </style>

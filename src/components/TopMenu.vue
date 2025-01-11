@@ -38,11 +38,12 @@ import { useRouter, useRoute } from 'vue-router'
 import { NLayoutHeader, NIcon, NButton, NDropdown, useDialog, useMessage, NSwitch, NPopover, NMenu } from 'naive-ui'
 import { PersonCircleOutline, LogOutOutline, SunnyOutline, MoonOutline, MenuOutline } from '@vicons/ionicons5'
 import { themeColors } from '../constants/theme'
-import { menuOptions } from '../shared/menuOptions'
+import { getMenuOptions } from '../shared/menuOptions'
 
 const router = useRouter()
 const route = useRoute()
 const showMenu = ref(false)
+const menuOptions = ref(getMenuOptions())
 const activeKey = ref(route.path)
 const dialog = useDialog()
 const message = useMessage()
@@ -51,7 +52,11 @@ const username = localStorage.getItem('username')
 const { toggleTheme } = inject('theme') as { theme: any, toggleTheme: (isDark: boolean) => void }
 
 // 当前主题状态
-const isDark = ref(localStorage.getItem('theme') === 'dark')
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+const isDark = ref(localStorage.getItem('theme') ? 
+  localStorage.getItem('theme') === 'dark' : 
+  prefersDark
+)
 
 // Switch 按钮样式
 const railStyle = ({ focused, checked }: { focused: boolean; checked: boolean }) => {

@@ -27,6 +27,8 @@ export interface ApiResponse<T> {
 
 export interface LoginResponseData {
     token: string;
+    group: string;
+    username: string;
 }
 
 export const PublicApi = {

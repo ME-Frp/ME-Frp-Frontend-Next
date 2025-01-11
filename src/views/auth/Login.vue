@@ -69,6 +69,8 @@ const handleSubmit = async () => {
     
     if (response.data.code === 200) {
       localStorage.setItem('token', response.data.data.token)
+      localStorage.setItem('username', response.data.data.username)
+      localStorage.setItem('group', response.data.data.group)
       message.success('登录成功')
       router.push('/dashboard')
     } else {

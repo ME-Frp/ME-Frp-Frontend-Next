@@ -39,7 +39,18 @@ const route = useRoute()
 const isDashboard = computed(() => route.path.startsWith('/dashboard'))
 
 // 主题状态
-const theme = ref(localStorage.getItem('theme') === 'dark' ? darkTheme : null)
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+const theme = ref(localStorage.getItem('theme') ? 
+  (localStorage.getItem('theme') === 'dark' ? darkTheme : null) :
+  (prefersDark ? darkTheme : null)
+)
+
+// 监听系统主题变化
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  if (!localStorage.getItem('theme')) {
+    theme.value = e.matches ? darkTheme : null
+  }
+})
 
 // 提供主题切换函数给全局
 const toggleTheme = (isDark: boolean) => {

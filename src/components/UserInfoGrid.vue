@@ -157,7 +157,6 @@ const fetchUserInfo = async () => {
     const response = await AuthApi.getUserInfo()
     if (response.data.code === 200) {
       userInfo.value = response.data.data
-      localStorage.setItem('username', userInfo.value.username)
       localStorage.setItem('group', userInfo.value.group)
     } else {
       message.error(response.data.message || '获取用户信息失败')

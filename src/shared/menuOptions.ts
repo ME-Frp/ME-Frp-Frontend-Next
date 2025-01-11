@@ -1,8 +1,9 @@
 import { h, Component } from 'vue'
 import { RouterLink } from 'vue-router'
 import { HomeOutline, AddCircleOutline, AppsOutline, CloudDownloadOutline, PersonOutline, CashOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, ServerOutline, SettingsOutline } from '@vicons/ionicons5'
+import type { MenuOption } from 'naive-ui'
 
-export const menuOptions = [
+const baseMenuOptions: MenuOption[] = [
   {
     label: () =>
       h(
@@ -12,7 +13,7 @@ export const menuOptions = [
         },
         { default: () => '首页' }
       ),
-    key: 'dashboard-home',
+    key: '/dashboard/home',
     icon: renderIcon(HomeOutline)
   },
   {
@@ -24,7 +25,7 @@ export const menuOptions = [
         },
         { default: () => '创建隧道' }
       ),
-    key: 'create-proxy',
+    key: '/dashboard/create-proxy',
     icon: renderIcon(AddCircleOutline)
   },
   {
@@ -36,7 +37,7 @@ export const menuOptions = [
         },
         { default: () => '隧道管理' }
       ),
-    key: 'manage-proxies',
+    key: '/dashboard/manage-proxies',
     icon: renderIcon(AppsOutline)
   },
   {
@@ -48,7 +49,7 @@ export const menuOptions = [
         },
         { default: () => '节点监控' }
       ),
-    key: 'node-status',
+    key: '/dashboard/node-status',
     icon: renderIcon(StatsChartOutline)
   },
   {
@@ -60,7 +61,7 @@ export const menuOptions = [
         },
         { default: () => '文件下载' }
       ),
-    key: 'downloads',
+    key: '/dashboard/downloads',
     icon: renderIcon(CloudDownloadOutline)
   },
   {
@@ -72,18 +73,10 @@ export const menuOptions = [
         },
         { default: () => '个人中心' }
       ),
-    key: 'profile',
+    key: '/dashboard/profile',
     icon: renderIcon(PersonOutline)
   },
   {
-    // label: () =>
-    //   h(
-    //     RouterLink,
-    //     {
-    //       to: '/dashboard/donate'
-    //     },
-    //     { default: () => '赞助我们' }
-    //   ),
     label: '赞助我们',
     key: 'donate',
     icon: renderIcon(CashOutline),
@@ -98,64 +91,77 @@ export const menuOptions = [
         },
         { default: () => '关于面板' }
       ),
-    key: 'about',
+    key: '/dashboard/about',
     icon: renderIcon(InformationCircleOutline)
-  },
-  {
-    label: '管理选项',
-    icon: renderIcon(SettingsOutline),
-    children: [
-      {
-        label: () =>
-          h(
-            RouterLink,
-            {
-              to: '/dashboard/admin/users'
-            },
-            { default: () => '用户管理' }
-          ),
-        key: 'admin-users',
-        icon: renderIcon(PeopleOutline)
-      },
-      {
-        label: () =>
-          h(
-            RouterLink,
-            {
-              to: '/dashboard/admin/nodes'
-            },
-            { default: () => '节点管理' }
-          ),
-        key: 'admin-nodes',
-        icon: renderIcon(ServerOutline)
-      },
-      {
-        label: () =>
-          h(
-            RouterLink,
-            {
-              to: '/dashboard/admin/proxies'
-            },
-            { default: () => '隧道管理' }
-          ),
-        key: 'admin-proxies',
-        icon: renderIcon(AppsOutline)
-      },
-      {
-        label: () =>
-          h(
-            RouterLink,
-            {
-              to: '/dashboard/admin/panel'
-            },
-            { default: () => '面板管理' }
-          ),
-        key: 'admin-panel',
-        icon: renderIcon(SettingsOutline)
-      }
-    ]
   }
 ]
+
+const adminMenuOptions: MenuOption = {
+  label: '管理选项',
+  key: 'admin',
+  icon: renderIcon(SettingsOutline),
+  children: [
+    {
+      label: () =>
+        h(
+          RouterLink,
+          {
+            to: '/dashboard/admin/users'
+          },
+          { default: () => '用户管理' }
+        ),
+      key: '/dashboard/admin/users',
+      icon: renderIcon(PeopleOutline)
+    },
+    {
+      label: () =>
+        h(
+          RouterLink,
+          {
+            to: '/dashboard/admin/nodes'
+          },
+          { default: () => '节点管理' }
+        ),
+      key: '/dashboard/admin/nodes',
+      icon: renderIcon(ServerOutline)
+    },
+    {
+      label: () =>
+        h(
+          RouterLink,
+          {
+            to: '/dashboard/admin/proxies'
+          },
+          { default: () => '隧道管理' }
+        ),
+      key: '/dashboard/admin/proxies',
+      icon: renderIcon(AppsOutline)
+    },
+    {
+      label: () =>
+        h(
+          RouterLink,
+          {
+            to: '/dashboard/admin/panel'
+          },
+          { default: () => '面板管理' }
+        ),
+      key: '/dashboard/admin/panel',
+      icon: renderIcon(SettingsOutline)
+    }
+  ]
+}
+
+export function getMenuOptions(): MenuOption[] {
+  const userGroup = localStorage.getItem('group')
+  const options = [...baseMenuOptions]
+  
+  if (userGroup === 'admin') {
+    options.push(adminMenuOptions)
+  }
+  
+  return options
+}
 
 function renderIcon(icon: Component) {
   return () => h(icon, { style: 'font-size: 18px;' })
