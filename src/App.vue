@@ -22,10 +22,10 @@
 <script setup lang="ts">
 import { ref, computed, provide } from 'vue'
 import { useRoute } from 'vue-router'
-import { 
-  NConfigProvider, 
-  NGlobalStyle, 
-  NMessageProvider, 
+import {
+  NConfigProvider,
+  NGlobalStyle,
+  NMessageProvider,
   NDialogProvider,
   NNotificationProvider,
   NLoadingBarProvider,
@@ -35,12 +35,21 @@ import HomeMenu from './components/HomeMenu.vue'
 import HomeFooter from './components/HomeFooter.vue'
 import { themeOverrides } from './constants/theme'
 
+console.log(`    __  _________   ______         
+   /  |/  / ____/  / ____/________ 
+  / /|_/ / __/    / /_  / ___/ __ \\
+ / /  / / /___   / __/ / /  / /_/ /
+/_/  /_/_____/  /_/   /_/  / .___/ 
+                          /_/      `);
+console.log("Copyright 2025, The ME Frp Project Team.");
+console.log("No redistribution allowed.");
+
 const route = useRoute()
 const isDashboard = computed(() => route.path.startsWith('/dashboard'))
 
 // 主题状态
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-const theme = ref(localStorage.getItem('theme') ? 
+const theme = ref(localStorage.getItem('theme') ?
   (localStorage.getItem('theme') === 'dark' ? darkTheme : null) :
   (prefersDark ? darkTheme : null)
 )

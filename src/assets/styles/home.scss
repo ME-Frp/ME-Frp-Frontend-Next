@@ -1,0 +1,111 @@
+.home-container {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-section {
+    padding-top: 10px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+.main-title {
+    margin: 16px 0 0;
+    font-size: 2.5rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, #2196F3, #42A5F5);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    margin: 16px 0 24px;
+    font-size: 1.2rem;
+    color: var(--n-text-color-2);
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 32px;
+}
+
+.feature-card {
+    height: 100%;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card h4 {
+    margin: 8px 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.feature-card p {
+    margin: 0;
+    color: var(--n-text-color-2);
+    line-height: 1.6;
+}
+
+/* 调整图标和文字的间距 */
+.feature-card :deep(.n-space) {
+    --n-space-vertical: 8px;
+}
+
+/* 移动端适配 */
+@media (max-width: 700px) {
+    .home-container {
+        padding: 16px;
+    }
+
+    .hero-section {
+        padding: 32px 0;
+    }
+
+    .main-title {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        padding: 0 16px;
+    }
+
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 24px;
+    }
+
+    .feature-card {
+        margin-bottom: 0;
+    }
+
+    .feature-card p {
+        font-size: 0.9rem;
+    }
+
+    .feature-card h4 {
+        font-size: 1rem;
+    }
+
+    /* 禁用悬停效果 */
+    .feature-card:hover {
+        transform: none;
+    }
+}
+
+/* 平板适配
+@media (max-width: 700px) {
+.content-grid {
+    grid-template-columns: repeat(2, 2fr);
+}
+} */
