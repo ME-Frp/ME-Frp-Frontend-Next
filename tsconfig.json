@@ -1,15 +1,15 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "ES2020",
         "useDefineForClassFields": true,
-        "module": "esnext",
+        "module": "ES2022",
         "moduleResolution": "node",
         "sourceMap": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "lib": [
-            "esnext",
-            "dom"
+            "ES2022",
+            "DOM"
         ],
         "baseUrl": ".",
         "skipLibCheck": true
@@ -17,7 +17,6 @@
     "include": [
         "src/**/*.ts",
         "src/**/*.d.ts",
-        "src/**/*.tsx",
         "src/**/*.vue"
     ]
 }
