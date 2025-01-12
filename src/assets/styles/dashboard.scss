@@ -1,3 +1,4 @@
+@use 'variables.scss' as *;
 html,
 body,
 #app {
@@ -7,19 +8,35 @@ body,
 }
 
 .header-content {
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  height: 100%;
+  height: 64px;
   padding: 0 24px;
-  gap: 12px;
 }
 
 .logo {
   font-size: 20px;
+  background: $text-color;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .menu-trigger {
-  font-size: 20px;
+  display: none;
+
+  @media (max-width: 700px) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
 }
 
 :deep(.n-menu-item-content) {
@@ -59,4 +76,9 @@ body,
 
 .n-layout-content {
   min-height: calc(100vh - 64px);
-} 
+}
+
+.right {
+    display: flex;
+    align-items: center;
+}

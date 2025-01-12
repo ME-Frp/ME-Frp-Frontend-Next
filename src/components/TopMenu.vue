@@ -11,13 +11,13 @@
             </NButton>
           </template>
           <div class="mobile-menu">
-            <NMenu :options="menuOptions" :value="activeKey" @update:value="handleMenuSelect" />
+            <NMenu :options="menuOptions" :value="currentKey" @update:value="handleMenuSelect" />
           </div>
         </NPopover>
         <h2 class="logo">ME Frp</h2>
       </div>
       <div class="right">
-        <NDropdown :options="options" @select="handleSelect">
+        <NDropdown :options="options" @select="handleUserMenuSelect">
           <NButton text>
             <template #icon>
               <NIcon>
@@ -33,18 +33,17 @@
 </template>
 
 <script setup lang="ts">
-import { h, ref, inject } from 'vue'
+import { h, ref, inject, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { NLayoutHeader, NIcon, NButton, NDropdown, useDialog, useMessage, NSwitch, NPopover, NMenu } from 'naive-ui'
+import { NLayoutHeader, NIcon, NButton, NDropdown, useDialog, useMessage, NSwitch, NPopover, NMenu, MenuOption } from 'naive-ui'
 import { PersonCircleOutline, LogOutOutline, SunnyOutline, MoonOutline, MenuOutline } from '@vicons/ionicons5'
 import { themeColors } from '../constants/theme'
-import { getMenuOptions } from '../shared/menuOptions'
+import { getMenuOptions, renderIcon } from '../shared/menuOptions'
 
 const router = useRouter()
 const route = useRoute()
 const showMenu = ref(false)
 const menuOptions = ref(getMenuOptions())
-const activeKey = ref(route.path)
 const dialog = useDialog()
 const message = useMessage()
 const username = localStorage.getItem('username')
@@ -109,17 +108,13 @@ const options = [
   }
 ]
 
-function renderIcon(icon: any) {
-  return () => h(NIcon, null, { default: () => h(icon) })
-}
-
 // 处理主题切换
 const handleThemeChange = (value: boolean) => {
   isDark.value = value
   toggleTheme(value)
 }
 
-const handleSelect = (key: string) => {
+const handleUserMenuSelect = (key: string) => {
   switch (key) {
     case 'logout':
       dialog.warning({
@@ -141,14 +136,13 @@ const handleSelect = (key: string) => {
       break
   }
 }
-
-const handleMenuSelect = (key: string) => {
-  router.push(key)
+const handleMenuSelect = (_: any, item: MenuOption) => {
+  router.push(item.link as string)
   showMenu.value = false
 }
+const currentKey = computed(() => {
+  const key = route.path.replace('/dashboard/', '').replace('/', '-')
+  if (key === 'home') return 'dashboard-home'
+  return key
+})
 </script>
-
-<style lang="scss" scoped>
-@use '../assets/styles/components/topMenu.scss';
-
-</style>
