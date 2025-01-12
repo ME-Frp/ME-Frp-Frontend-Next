@@ -1,5 +1,5 @@
 import { h, Component } from 'vue'
-import { HomeOutline, AddCircleOutline, AppsOutline, CloudDownloadOutline, PersonOutline, CashOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, ServerOutline, SettingsOutline } from '@vicons/ionicons5'
+import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline,IdCardOutline,CreateOutline, CashOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline } from '@vicons/ionicons5'
 import { NIcon, type MenuOption } from 'naive-ui'
 
 const baseMenuOptions: MenuOption[] = [
@@ -29,13 +29,13 @@ const baseMenuOptions: MenuOption[] = [
   },
   {
     label: '文件下载',
-    icon: renderIcon(CloudDownloadOutline),
+    icon: renderIcon(DownloadOutline),
     key: 'downloads',
     link: '/dashboard/downloads',
   },
   {
-    label: '个人资料',
-    icon: renderIcon(PersonOutline),
+    label: '用户中心',
+    icon: renderIcon(IdCardOutline),
     key: 'profile',
     link: '/dashboard/profile',
   },
@@ -56,7 +56,7 @@ const baseMenuOptions: MenuOption[] = [
 
 const adminMenuOptions: MenuOption = {
   label: '管理选项',
-  icon: renderIcon(SettingsOutline),
+  icon: renderIcon(ConstructOutline),
   key: 'admin',
   children: [
     {
@@ -69,7 +69,7 @@ const adminMenuOptions: MenuOption = {
       label: '节点管理',
       key: 'admin-nodes',
       link: '/dashboard/admin/nodes',
-      icon: renderIcon(ServerOutline)
+      icon: renderIcon(CloudyOutline)
     },
     {
       label: '隧道管理',
@@ -81,7 +81,7 @@ const adminMenuOptions: MenuOption = {
       label: '面板管理',
       key: 'admin-panel',
       link: '/dashboard/admin/panel',
-      icon: renderIcon(SettingsOutline)
+      icon: renderIcon(CreateOutline)
     }
   ]
 }
