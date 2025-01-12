@@ -50,12 +50,12 @@
       </div>
 
       <div class="user-info-item">
-        <div class="user-info-label">上行带宽</div>
+        <div class="user-info-label">入站带宽</div>
         <div class="user-info-value">{{ userInfo.inBound }} Mbps</div>
       </div>
 
       <div class="user-info-item">
-        <div class="user-info-label">下行带宽</div>
+        <div class="user-info-label">出站带宽</div>
         <div class="user-info-value">{{ userInfo.outBound }} Mbps</div>
       </div>
     </template>
