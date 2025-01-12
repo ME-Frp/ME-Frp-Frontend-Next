@@ -162,7 +162,7 @@
 import { ref, h } from 'vue'
 import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag } from 'naive-ui'
 import type { DataTableColumns, FormRules, FormInst, SelectOption } from 'naive-ui'
-import { AdminApi, type Node, type UpdateNodeConfig, type GetNodesParams } from '../../../shared/api/admin'
+import { AdminApi, type Node, type UpdateNodeArgs, type GetNodesArgs } from '../../../shared/api/admin'
 
 const message = useMessage()
 const loading = ref(false)
@@ -172,8 +172,8 @@ const showAddModal = ref(false)
 const formRef = ref<FormInst | null>(null)
 
 const searchKeyword = ref('')
-const selectedOnline = ref<string>('all')
-const selectedStatus = ref<string>('all')
+const selectedOnline = ref<string | null>(null)
+const selectedStatus = ref<string | null>(null)
 
 const groupOptions = ref<{ label: string; value: string }[]>([])
 
@@ -342,11 +342,11 @@ const pagination = ref({
 
 const columns: DataTableColumns = [
   {
-    title: '节点ID',
+    title: 'ID',
     key: 'nodeId'
   },
   {
-    title: '节点名称',
+    title: '名称',
     key: 'name',
     render(row) {
       return h('div', { style: 'white-space: pre-wrap; word-break: break-all;' }, row.name)
@@ -357,7 +357,7 @@ const columns: DataTableColumns = [
     key: 'hostname'
   },
   {
-    title: '节点描述',
+    title: '描述',
     key: 'description',
     render(row) {
       return h('div', { style: 'white-space: pre-wrap; word-break: break-all;' }, row.description)
@@ -372,7 +372,7 @@ const columns: DataTableColumns = [
     key: 'adminPort'
   },
   {
-    title: '允许用户组',
+    title: '用户组',
     key: 'allowGroup',
     render(row) {
       const groups = row.allowGroup.split(',')
@@ -397,11 +397,11 @@ const columns: DataTableColumns = [
     }
   },
   {
-    title: '允许端口',
+    title: '端口',
     key: 'allowPort'
   },
   {
-    title: '允许协议',
+    title: '协议',
     key: 'allowType',
     render(row) {
       const types = row.allowType.split(',')
@@ -505,7 +505,7 @@ const handleEditSubmit = () => {
     if (!errors) {
       submitting.value = true
       try {
-        const config: UpdateNodeConfig = {
+        const config: UpdateNodeArgs = {
           nodeId: editingNode.value.nodeId,
           name: formModel.value.name,
           hostname: formModel.value.hostname,
@@ -606,21 +606,19 @@ const handleFilterChange = () => {
 }
 
 const onlineOptions: SelectOption[] = [
-  { label: '全部', value: 'all' },
   { label: '在线', value: 'online' },
   { label: '离线', value: 'offline' }
 ]
 
 const statusOptions: SelectOption[] = [
-  { label: '全部', value: 'all' },
-  { label: '启用', value: 'enabled' },
-  { label: '禁用', value: 'disabled' }
+  { label: '已启用', value: 'enabled' },
+  { label: '已禁用', value: 'disabled' }
 ]
 
 const fetchNodes = async () => {
   loading.value = true
   try {
-    const params: GetNodesParams = {
+    const params: GetNodesArgs = {
       page: pagination.value.page,
       limit: pagination.value.pageSize
     }
@@ -628,10 +626,10 @@ const fetchNodes = async () => {
     if (searchKeyword.value) {
       params.keyword = searchKeyword.value
     }
-    if (selectedOnline.value !== 'all') {
+    if (selectedOnline.value !== null) {
       params.isOnline = selectedOnline.value === 'online'
     }
-    if (selectedStatus.value !== 'all') {
+    if (selectedStatus.value !== null) {
       params.isDisabled = selectedStatus.value === 'disabled'
     }
 
