@@ -49,19 +49,104 @@
       />
     </n-space>
   </n-card>
+
+  <!-- 添加编辑用户的模态框 -->
+  <n-modal v-model:show="showEditModal" preset="card" title="编辑用户" style="width: 600px;">
+    <n-form
+      ref="formRef"
+      :model="editForm"
+      :rules="rules"
+      label-placement="left"
+      label-width="auto"
+      require-mark-placement="right-hanging"
+    >
+      <n-form-item label="用户名" path="username">
+        <n-input v-model:value="editForm.username" placeholder="请输入用户名" />
+      </n-form-item>
+      <n-form-item label="邮箱" path="email">
+        <n-input v-model:value="editForm.email" placeholder="请输入邮箱" />
+      </n-form-item>
+      <n-form-item label="用户组" path="group">
+        <n-select
+          v-model:value="editForm.group"
+          :options="groupOptions"
+          placeholder="请选择用户组"
+        />
+      </n-form-item>
+      <n-form-item label="账户状态" path="status">
+        <n-select
+          v-model:value="editForm.status"
+          :options="statusOptions"
+          placeholder="请选择账户状态"
+        />
+      </n-form-item>
+      <n-form-item label="实名状态" path="isRealname">
+        <n-switch v-model:value="editForm.isRealname" />
+      </n-form-item>
+      <n-form-item label="流量限制" path="traffic">
+        <n-space align="center">
+          <n-input-number
+            v-model:value="editForm.traffic"
+            placeholder="请输入流量限制"
+            :min="0"
+          />
+          <span>GB</span>
+        </n-space>
+      </n-form-item>
+      <n-form-item label="出站带宽" path="outBound">
+        <n-space align="center">
+          <n-input-number
+            v-model:value="editForm.outBound"
+            placeholder="请输入出站带宽"
+            :min="0"
+          />
+          <span>Mbps</span>
+        </n-space>
+      </n-form-item>
+      <n-form-item label="入站带宽" path="inBound">
+        <n-space align="center">
+          <n-input-number
+            v-model:value="editForm.inBound"
+            placeholder="请输入入站带宽"
+            :min="0"
+          />
+          <span>Mbps</span>
+        </n-space>
+      </n-form-item>
+      <n-form-item label="隧道数量" path="maxProxies">
+        <n-input-number
+          v-model:value="editForm.maxProxies"
+          placeholder="请输入隧道数量"
+          :min="0"
+        />
+      </n-form-item>
+    </n-form>
+    <template #footer>
+      <n-space justify="end">
+        <n-button @click="showEditModal = false">取消</n-button>
+        <n-button
+          type="primary"
+          :loading="submitting"
+          @click="handleEditSubmit"
+        >
+          确定
+        </n-button>
+      </n-space>
+    </template>
+  </n-modal>
 </template>
 
 <script lang="ts" setup>
 import { ref, h } from 'vue'
-import { NCard, NSpace, NDataTable, NButton, useMessage, NTag, NInput, NSelect, NPopconfirm, NIcon } from 'naive-ui'
+import { NCard, NSpace, NDataTable, NButton, useMessage, NTag, NInput, NSelect, NPopconfirm, NIcon, NModal, NForm, NFormItem, NInputNumber, NSwitch, SelectOption } from 'naive-ui'
 import { Search } from '@vicons/ionicons5'
-import type { DataTableColumns } from 'naive-ui'
-import { AdminApi, type FilterUsersParams } from '../../../shared/api/admin'
-import type { BaseUser } from '../../../types/user'
-
+import type { DataTableColumns, FormInst, FormRules } from 'naive-ui'
+import { AdminApi } from '../../../shared/api/admin'
+import type { UserInfo } from '../../../types/user'
+import type { FilterUsersArgs } from '../../../types/adminApi'
 const message = useMessage()
 const loading = ref(false)
-const users = ref<BaseUser[]>([])
+const users = ref<UserInfo[]>([])
 const groupNameMap = ref<Record<string, string>>({})
 
 const filters = ref<{
@@ -78,12 +163,12 @@ const filters = ref<{
 
 const groupOptions = ref<{ label: string; value: string }[]>([])
 
-const realnameOptions = [
+const realnameOptions: SelectOption[] = [
   { label: '已实名', value: 'true', type: 'default' },
   { label: '未实名', value: 'false', type: 'default' }
 ]
 
-const statusOptions = [
+const statusOptions: SelectOption[] = [
   { label: '正常', value: 0 },
   { label: '封禁', value: 1 },
   { label: '流量超限', value: 2 }
@@ -127,7 +212,50 @@ const pagination = ref({
   }
 })
 
-const columns: DataTableColumns = [
+const showEditModal = ref(false)
+const formRef = ref<FormInst | null>(null)
+const submitting = ref(false)
+
+const editForm = ref({
+  userId: 0,
+  username: '',
+  email: '',
+  group: '',
+  status: 0,
+  isRealname: false,
+  traffic: 0,
+  outBound: 0,
+  inBound: 0,
+  maxProxies: 0
+})
+
+const rules: FormRules = {
+  username: {
+    required: true,
+    message: '请输入用户名',
+    trigger: ['blur', 'input']
+  },
+  email: {
+    required: true,
+    message: '请输入邮箱',
+    trigger: ['blur', 'input'],
+    validator: (rule: any, value: string) => {
+      if (!value) return true
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(value)) {
+        return new Error('请输入有效的邮箱地址')
+      }
+      return true
+    }
+  },
+  group: {
+    required: true,
+    message: '请选择用户组',
+    trigger: ['blur', 'change']
+  }
+}
+
+const columns: DataTableColumns<UserInfo> = [
   {
     title: 'ID',
     key: 'userId'
@@ -144,29 +272,26 @@ const columns: DataTableColumns = [
     title: '用户组',
     key: 'group',
     render(row) {
-      const user = row as unknown as BaseUser
-      return user.friendlyGroup || user.group
+      return row.friendlyGroup || row.group
     }
   },
   {
     title: '注册时间',
     key: 'regTime',
     render(row) {
-      const user = row as unknown as BaseUser
-      return new Date(user.regTime * 1000).toLocaleString()
+      return new Date(row.regTime * 1000).toLocaleString()
     }
   },
   {
     title: '状态',
     key: 'status',
     render(row) {
-      const user = row as unknown as BaseUser
       const statusMap: Record<number, { text: string, type: 'success' | 'error' | 'warning' }> = {
         0: { text: '正常', type: 'success' },
         1: { text: '封禁', type: 'error' },
         2: { text: '流量超限', type: 'warning' }
       }
-      const status = statusMap[user.status] || { text: '未知', type: 'warning' }
+      const status = statusMap[row.status] || { text: '未知', type: 'warning' }
       return h(
         NTag,
         {
@@ -180,7 +305,6 @@ const columns: DataTableColumns = [
     title: '操作',
     key: 'actions',
     render(row) {
-      const user = row as unknown as BaseUser
       return h(
         NSpace,
         {},
@@ -190,29 +314,28 @@ const columns: DataTableColumns = [
               NButton,
               {
                 size: 'small',
-                onClick: () => handleEdit(user)
+                onClick: () => handleEdit(row)
               },
               { default: () => '编辑' }
             ),
             h(
               NPopconfirm,
               {
-                onPositiveClick: () => handleToggleStatus(user),
+                onPositiveClick: () => handleToggleStatus(row),
                 positiveText: '确定',
                 negativeText: '取消'
               },
               {
-                trigger: () => h(
-                  NButton,
-                  {
-                    size: 'small',
-                    type: user.status === 1 ? 'primary' : 'warning'
-                  },
-                  { default: () => user.status === 1 ? '解封' : '封禁' }
-                ),
-                default: () => user.status === 1 ? 
-                  '确定要解封该用户吗？' : 
-                  '确定要封禁该用户吗？'
+                default: () => row.status === 1 ? '确认解封此用户？' : '确认封禁此用户？',
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: row.status === 1 ? 'success' : 'error'
+                    },
+                    { default: () => row.status === 1 ? '解封' : '封禁' }
+                  )
               }
             )
           ]
@@ -227,22 +350,89 @@ const handlePageChange = (page: number) => {
   loadData()
 }
 
-const handleEdit = (user: BaseUser) => {
-  message.info('编辑用户：' + user.username)
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
+
+const handleSearch = () => {
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+  searchTimeout = setTimeout(() => {
+    pagination.value.page = 1
+    loadData()
+  }, 300)
 }
 
-const handleToggleStatus = async (user: BaseUser) => {
+const handleGroupFilter = () => {
+  pagination.value.page = 1
+  loadData()
+}
+
+const handleRealnameFilter = () => {
+  pagination.value.page = 1
+  loadData()
+}
+
+const handleStatusFilter = () => {
+  pagination.value.page = 1
+  loadData()
+}
+
+const handleToggleStatus = async (user: UserInfo) => {
   try {
-    if (user.status === 1) {
+    if (Number(user.status) === 1) {
       await AdminApi.unbanUser(user.userId)
+      message.success('解封用户成功')
     } else {
       await AdminApi.banUser(user.userId)
+      message.success('封禁用户成功')
     }
-    const action = user.status === 1 ? '解封' : '封禁'
-    message.success(action + '用户成功')
     loadData()
-  } catch (error) {
-    message.error('操作失败')
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '操作失败')
+  }
+}
+
+const handleEditSubmit = () => {
+  formRef.value?.validate(async (errors) => {
+    if (!errors) {
+      submitting.value = true
+      try {
+        await AdminApi.updateUser(editForm.value)
+        message.success('更新用户成功')
+        showEditModal.value = false
+        loadData()
+      } catch (error: any) {
+        message.error(error?.response?.data?.message || '更新用户失败')
+      } finally {
+        submitting.value = false
+      }
+    }
+  })
+}
+
+const handleEdit = async (user: UserInfo) => {
+  try {
+    const res = await AdminApi.getUser(user.userId)
+    if (res.data.code === 200) {
+      const userDetail = res.data.data
+      editForm.value = {
+        userId: userDetail.userId,
+        username: userDetail.username,
+        email: userDetail.email,
+        group: userDetail.group,
+        status: userDetail.status,
+        isRealname: userDetail.isRealname,
+        traffic: userDetail.traffic,
+        outBound: userDetail.outBound,
+        inBound: userDetail.inBound,
+        maxProxies: userDetail.maxProxies
+      }
+      showEditModal.value = true
+    } else {
+      message.error(res.data.message || '获取用户信息失败')
+    }
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '获取用户信息失败')
   }
 }
 
@@ -270,7 +460,7 @@ const fetchUserGroups = async () => {
 }
 
 // 处理用户数据，添加 friendlyGroup
-const processUsers = (users: BaseUser[]) => {
+const processUsers = (users: UserInfo[]) => {
   return users.map(user => ({
     ...user,
     friendlyGroup: groupNameMap.value[user.group] || user.group
@@ -281,7 +471,7 @@ const processUsers = (users: BaseUser[]) => {
 const loadData = async () => {
   loading.value = true
   try {
-    const params: FilterUsersParams = {
+    const params: FilterUsersArgs = {
       page: pagination.value.page,
       limit: pagination.value.pageSize
     }
@@ -314,36 +504,6 @@ const loadData = async () => {
   } finally {
     loading.value = false
   }
-}
-
-// 使用防抖处理搜索
-let searchTimeout: NodeJS.Timeout | null = null
-const handleSearch = () => {
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
-  }
-  searchTimeout = setTimeout(() => {
-    pagination.value.page = 1
-    loadData()
-  }, 300)
-}
-
-// 处理用户组筛选
-const handleGroupFilter = () => {
-  pagination.value.page = 1
-  loadData()
-}
-
-// 处理实名状态筛选
-const handleRealnameFilter = () => {
-  pagination.value.page = 1
-  loadData()
-}
-
-// 处理账户状态筛选
-const handleStatusFilter = () => {
-  pagination.value.page = 1
-  loadData()
 }
 
 // 初始化数据

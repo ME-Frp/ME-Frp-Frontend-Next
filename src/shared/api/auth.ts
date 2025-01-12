@@ -1,5 +1,5 @@
 import baseApi from './config';
-import type { ApiResponse } from './public';
+import type { ApiResponse } from './config';
 import type { UserInfo } from '../../types';
 
 

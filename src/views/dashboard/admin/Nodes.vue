@@ -162,7 +162,8 @@
 import { ref, h } from 'vue'
 import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag } from 'naive-ui'
 import type { DataTableColumns, FormRules, FormInst, SelectOption } from 'naive-ui'
-import { AdminApi, type Node, type UpdateNodeArgs, type GetNodesArgs } from '../../../shared/api/admin'
+import { AdminApi } from '../../../shared/api/admin'
+import type { Node, UpdateNodeArgs, GetNodesArgs } from '../../../types/adminApi'
 
 const message = useMessage()
 const loading = ref(false)

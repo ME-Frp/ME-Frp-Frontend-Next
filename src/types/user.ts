@@ -17,11 +17,12 @@ export interface UserInfo {
   friendlyGroup: string
   usedProxies: number
   maxProxies: number
-  regTime: string
-  traffic: string
+  regTime: number
+  traffic: number
   outBound: number
   inBound: number
   email: string
+  status: number
 }
 
 export interface Sponsor {

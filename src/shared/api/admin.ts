@@ -1,81 +1,11 @@
 import baseApi from './config'
 import type { ApiResponse } from './config';
-import type { BaseUser } from '../../types/user'
-export interface GetUsersData {
-  users: BaseUser[];
-  totalPages: number;
-  totalUsers: number;
-}
-
-export interface GetUserGroupsData {
-  groups: {
-    name: string;
-    friendlyName: string;
-    maxProxies: number;
-    baseTraffic: number;
-    outBound: number;
-    inBound: number;
-  }[];
-}
-
-export interface FilterUsersParams {
-  page: number;
-  limit: number;
-  group?: string;
-  isRealname?: boolean;
-  status?: number;
-  keyword?: string;
-}
-
-
-export interface Node {
-  nodeId: number;
-  name: string;
-  hostname: string;
-  description: string;
-  token: string;
-  servicePort: number;
-  adminPort: number;
-  adminPass: string;
-  allowGroup: string;
-  allowPort: string;
-  allowType: string;
-}
-
-export interface AddNodeConfig {
-  name: string;
-  hostname: string;
-  description: string;
-  token: string;
-  servicePort: number;
-  adminPort: number;
-  adminPass: string;
-  allowGroup: string;
-  allowPort: string;
-  allowType: string;
-}
-
-export interface UpdateNodeConfig extends AddNodeConfig {
-  nodeId: number;
-}
-
-export interface GetNodesParams {
-  page: number;
-  limit: number;
-  isOnline?: boolean;
-  isDisabled?: boolean;
-  keyword?: string;
-}
-
-export interface GetNodesData {
-  nodes: Node[];
-  totalPages: number;
-  totalNodes: number;
-}
+import type { UserInfo } from '../../types/user'
+import type { GetUsersData, FilterUsersArgs, GetUserGroupsData, UpdateUserArgs, GetNodesData, AddNodeArgs, GetNodesArgs, UpdateNodeArgs } from '../../types/adminApi'
 
 export const AdminApi = {
   // 用户相关
-  filterUsers: (params: FilterUsersParams) => {
+  filterUsers: (params: FilterUsersArgs) => {
     return baseApi.post<ApiResponse<GetUsersData>>('/admin/user/filter', params)
   },
 
@@ -91,16 +21,24 @@ export const AdminApi = {
     return baseApi.get<ApiResponse<GetUserGroupsData>>('/admin/user/groups')
   },
 
+  getUser: (userId: number) => {
+    return baseApi.post<ApiResponse<UserInfo>>(`/admin/user/get`, { userId })
+  },
+
+  updateUser: (params: UpdateUserArgs) => {
+    return baseApi.post<ApiResponse<void>>('/admin/user/update', params)
+  },
+
   // 节点相关
-  filterNodes: (params: GetNodesParams) => {
+  filterNodes: (params: GetNodesArgs) => {
     return baseApi.post<ApiResponse<GetNodesData>>('/admin/node/filter', params)
   },
 
-  addNode: (config: AddNodeConfig) => {
+  addNode: (config: AddNodeArgs) => {
     return baseApi.post<ApiResponse<void>>('/admin/node/add', config)
   },
 
-  updateNode: (config: UpdateNodeConfig) => {
+  updateNode: (config: UpdateNodeArgs) => {
     return baseApi.post<ApiResponse<void>>(`/admin/node/update`, config)
   },
 
