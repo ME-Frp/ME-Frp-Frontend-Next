@@ -1,5 +1,12 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
+
+export interface ApiResponse<T> {
+    data: T;
+    message: string;
+    code: number;
+}
+
 let baseURL: string;
 switch (process.env.NODE_ENV) {
     case 'development':

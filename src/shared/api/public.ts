@@ -1,4 +1,4 @@
-import baseApi from './config';
+import baseApi, { ApiResponse } from './config';
 
 export interface RegisterData {
     email: string;
@@ -17,12 +17,6 @@ export interface iForgotData {
     email: string;
     password: string;
     emailCode: string;
-}
-
-export interface ApiResponse<T> {
-    data: T;
-    message: string;
-    code: number;
 }
 
 export interface LoginResponseData {
