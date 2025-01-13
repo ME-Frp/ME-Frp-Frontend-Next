@@ -49,9 +49,9 @@
 <script setup lang="ts">
 import { NCard, NButton, NTable } from 'naive-ui'
 import { ref } from 'vue'
-import { type Sponsor, mockSponsors } from '../../types'
+import { type Sponsor } from '../../types'
 
-const sponsors = ref<Sponsor[]>(mockSponsors)
+const sponsors = ref<Sponsor[]>([])
 </script>
 
 <style lang="scss" scoped>

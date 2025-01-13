@@ -1,7 +1,7 @@
 import baseApi from './config'
 import type { ApiResponse } from './config';
-import type { UserInfo } from '../../types/user'
-import type { GetUsersData, FilterUsersArgs, GetUserGroupsData, UpdateUserArgs, GetNodesData, AddNodeArgs, GetNodesArgs, UpdateNodeArgs } from '../../types/adminApi'
+import type { UserInfo } from '../../types/authApi'
+import type { GetUsersData, FilterUsersArgs, GetUserGroupsData, UpdateUserArgs, GetNodesData, AddNodeArgs, GetNodesArgs, UpdateNodeArgs, FilterProxiesArgs, GetProxiesData, UpdateProxyArgs } from '../../types'
 
 export const AdminApi = {
   // 用户相关
@@ -15,10 +15,6 @@ export const AdminApi = {
 
   unbanUser: (userId: number) => {
     return baseApi.post<ApiResponse<void>>(`/admin/user/unban`, { userId })
-  },
-
-  getUserGroups: () => {
-    return baseApi.get<ApiResponse<GetUserGroupsData>>('/admin/user/groups')
   },
 
   getUser: (userId: number) => {
@@ -44,5 +40,26 @@ export const AdminApi = {
 
   deleteNode: (nodeId: number) => {
     return baseApi.post<ApiResponse<void>>(`/admin/node/delete`, { nodeId })
+  },
+
+  // 隧道相关
+  filterProxies: (params: FilterProxiesArgs) => {
+    return baseApi.post<ApiResponse<GetProxiesData>>('/admin/proxy/filter', params)
+  },
+
+  banProxy: (proxyId: number) => {
+    return baseApi.post<ApiResponse<void>>(`/admin/proxy/ban`, { proxyId })
+  },
+
+  unbanProxy: (proxyId: number) => {
+    return baseApi.post<ApiResponse<void>>(`/admin/proxy/unban`, { proxyId })
+  },
+
+  deleteProxy: (proxyId: number) => {
+    return baseApi.post<ApiResponse<void>>(`/admin/proxy/delete`, { proxyId })
+  },
+
+  updateProxy: (params: UpdateProxyArgs) => {
+    return baseApi.post<ApiResponse<void>>('/admin/proxy/update', params)
   }
 }

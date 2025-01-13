@@ -20,17 +20,41 @@ export const proxyTypeOptions = [
     { label: 'HTTPS', value: 'https' }
 ] as const
 
-export interface Proxy {
-    id: string
-    name: string
-    type: string
-    node: string
-    localAddr: string
-    localPort: number
-    remotePort: number
-    domain?: string
-    remoteAddr?: string
-    status: 'online' | 'offline'
-    usedTraffic: string
-    createdAt: string
+export interface UpdateProxyArgs {
+    proxyId: number;
+    proxyName: string;
+    localIp: string;
+    localPort: number;
+    remotePort: number;
+    domain?: string;
+    proxyType: string;
+    nodeId: number;
 }
+
+export interface CreateProxyArgs {
+    proxyName: string;
+    localIp: string;
+    localPort: number;
+    remotePort: number;
+    domain?: string;
+    proxyType: string;
+    nodeId: number;
+    accessKey?: string;
+    hostHeaderRewrite?: string;
+    headerXFromWhere?: string;
+    proxyProtocolVersion?: string;
+    useEncryption?: boolean;
+    useCompression?: boolean;
+}
+
+export interface UserNode {
+    nodeId: number;
+    name: string;
+    hostname: string;
+    allowedProtocols: string[];
+    portRange: {
+        min: number;
+        max: number;
+    };
+}
+

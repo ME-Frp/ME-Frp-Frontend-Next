@@ -1,22 +1,10 @@
-import type { UserInfo } from './user'
+import type { UserInfo } from './authApi'
 
 export interface GetUsersData {
     users: UserInfo[];
     totalPages: number;
     totalUsers: number;
 }
-
-export interface GetUserGroupsData {
-    groups: {
-        name: string;
-        friendlyName: string;
-        maxProxies: number;
-        baseTraffic: number;
-        outBound: number;
-        inBound: number;
-    }[];
-}
-
 export interface FilterUsersArgs {
     page: number;
     limit: number;
@@ -25,7 +13,6 @@ export interface FilterUsersArgs {
     status?: number;
     keyword?: string;
 }
-
 
 export interface Node {
     nodeId: number;
@@ -83,4 +70,42 @@ export interface UpdateUserArgs {
     outBound?: number;
     inBound?: number;
     maxProxies?: number;
+}
+
+export interface Proxy {
+    proxyId: number;
+    proxyName: string;
+    username: string;
+    nodeId: number;
+    localIp: string;
+    localPort: number;
+    remotePort: number;
+    domain?: string;
+    proxyType: string;
+    isOnline: boolean;
+    isBanned: boolean;
+    location: string;
+    accessKey: string;
+    hostHeaderRewrite: string;
+    headerXFromWhere: string;
+    useEncryption: boolean;
+    useCompression: boolean;
+    proxyProtocolVersion: string;
+}
+
+export interface FilterProxiesArgs {
+    page: number;
+    limit: number;
+    nodeId?: number;
+    username?: string;
+    proxyType?: string;
+    isOnline?: boolean;
+    isBanned?: boolean;
+    keyword?: string;
+}
+
+export interface GetProxiesData {
+    proxies: Proxy[];
+    totalPages: number;
+    totalProxies: number;
 }

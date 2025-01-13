@@ -93,7 +93,6 @@ export function getMenuOptions(): MenuOption[] {
   if (userGroup === 'admin') {
     options.push(adminMenuOptions)
   }
-  console.log(options)
   return options
 }
 

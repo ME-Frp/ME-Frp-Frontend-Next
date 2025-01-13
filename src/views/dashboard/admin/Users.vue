@@ -142,7 +142,8 @@ import { NCard, NSpace, NDataTable, NButton, useMessage, NTag, NInput, NSelect, 
 import { Search } from '@vicons/ionicons5'
 import type { DataTableColumns, FormInst, FormRules } from 'naive-ui'
 import { AdminApi } from '../../../shared/api/admin'
-import type { UserInfo } from '../../../types/user'
+import { AuthApi } from '../../../shared/api/auth'
+import type { UserInfo } from '../../../types/authApi'
 import type { FilterUsersArgs } from '../../../types/adminApi'
 const message = useMessage()
 const loading = ref(false)
@@ -439,7 +440,7 @@ const handleEdit = async (user: UserInfo) => {
 // 获取用户组列表
 const fetchUserGroups = async () => {
   try {
-    const res = await AdminApi.getUserGroups()
+    const res = await AuthApi.getUserGroups()
     if (res.data.code === 200) {
       // 更新用户组选项
       groupOptions.value = res.data.data.groups.map(group => ({

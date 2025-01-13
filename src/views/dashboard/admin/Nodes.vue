@@ -163,6 +163,7 @@ import { ref, h } from 'vue'
 import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag } from 'naive-ui'
 import type { DataTableColumns, FormRules, FormInst, SelectOption } from 'naive-ui'
 import { AdminApi } from '../../../shared/api/admin'
+import { AuthApi } from '../../../shared/api/auth'
 import type { Node, UpdateNodeArgs, GetNodesArgs } from '../../../types/adminApi'
 
 const message = useMessage()
@@ -651,7 +652,7 @@ const fetchNodes = async () => {
 
 const fetchUserGroups = async () => {
   try {
-    const res = await AdminApi.getUserGroups()
+    const res = await AuthApi.getUserGroups()
     if (res.data.code === 200) {
       groupOptions.value = res.data.data.groups.map(group => ({
         label: group.friendlyName,

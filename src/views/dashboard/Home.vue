@@ -22,10 +22,10 @@
 <script setup lang="ts">
 import { NCard, NTimeline, NTimelineItem } from 'naive-ui'
 import { ref } from 'vue'
-import { type Notice, mockNotices } from '../../types'
+import { type Notice } from '../../types'
 import UserInfoGrid from '../../components/UserInfoGrid.vue'
 
-const notices = ref<Notice[]>(mockNotices)
+const notices = ref<Notice[]>([])
 const username = localStorage.getItem('username')
 </script>
 

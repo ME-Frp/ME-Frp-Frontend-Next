@@ -22,3 +22,17 @@ export interface LoginResponseData {
     group: string;
     username: string;
 }
+
+export interface Sponsor {
+    name: string
+    email: string
+    amount: string
+    message: string
+}
+
+export interface Notice {
+    id: number
+    title: string
+    time: string
+    content: string
+}
