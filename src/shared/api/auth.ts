@@ -44,7 +44,7 @@ export const AuthApi = {
 
     // 创建隧道
     createProxy: (data: CreateProxyArgs) => {
-        return baseApi.post<ApiResponse<void>>('/auth/user/proxy/create', data);
+        return baseApi.post<ApiResponse<void>>('/auth/proxy/create', data);
     },
 
     // 删除隧道
