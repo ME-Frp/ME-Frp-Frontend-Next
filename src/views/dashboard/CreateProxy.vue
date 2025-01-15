@@ -1,12 +1,28 @@
 <template>
   <div class="content-grid">
-    <n-card title="选择节点" class="node-card" style="height: 100%;">
+    <!-- 修改步骤指示器区域 -->
+    <div class="steps-container" v-if="isMobile">
+      <n-button secondary round v-if="currentStep === 2" @click="currentStep = 1" size="medium">
+        返回
+        <template #icon>
+          <NIcon>
+            <ArrowBackOutline />
+          </NIcon>
+        </template>
+      </n-button>
+      <n-steps :current="currentStep" class="mobile-steps">
+        <n-step title="选择节点" />
+        <n-step title="隧道配置" />
+      </n-steps>
+    </div>
+
+    <!-- 修改节点卡片的显示逻辑 -->
+    <n-card v-if="!isMobile || currentStep === 1" title="选择节点" class="node-card">
       <n-space vertical>
         <n-grid x-gap="12" y-gap="12" cols="1" style="padding-top: 14px;">
           <n-grid-item v-for="node in nodeOptions" :key="node.value">
             <n-card hoverable @click="handleNodeChange(node.value)"
-              :class="{ 'selected-node': formValue.nodeId === node.value }" 
-              class="node-item">
+              :class="{ 'selected-node': formValue.nodeId === node.value }" class="node-item">
               <n-space vertical>
                 <div class="node-header">
                   <n-space align="center">
@@ -45,8 +61,8 @@
       </n-space>
     </n-card>
 
-    <!-- 右侧配置卡片 -->
-    <n-card title="隧道配置" class="config-card">
+    <!-- 修改配置卡片的显示逻辑 -->
+    <n-card v-if="!isMobile || currentStep === 2" title="隧道配置" class="config-card">
       <!-- 基础配置 -->
       <n-form ref="formRef" :model="formValue" :rules="rules" label-placement="left" label-width="120"
         require-mark-placement="right-hanging">
@@ -118,16 +134,28 @@
         </n-form-item>
       </n-form>
 
-      <!-- 提交按钮 -->
+      <!-- 修改提交按钮区域 -->
       <div class="submit-section">
-        <n-button type="primary" :loading="loading" @click="handleCreate" size="large" :disabled="!canEditConfig">
-          <template #icon>
-            <n-icon>
-              <CloudUploadOutline />
-            </n-icon>
-          </template>
-          创建隧道
-        </n-button>
+        <n-space justify="end">
+          <n-button v-if="isMobile && currentStep === 1" 
+                   type="primary" 
+                   :disabled="!formValue.nodeId"
+                   @click="currentStep = 2">
+            下一步
+          </n-button>
+          <n-button v-if="!isMobile || currentStep === 2" 
+                   type="primary" 
+                   :loading="loading" 
+                   @click="handleCreate"
+                   :disabled="!canEditConfig">
+            <template #icon>
+              <n-icon>
+                <CloudUploadOutline />
+              </n-icon>
+            </template>
+            创建隧道
+          </n-button>
+        </n-space>
       </div>
     </n-card>
   </div>
@@ -135,11 +163,11 @@
 
 <script setup lang="ts">
 import { themeColors } from '../../constants/theme'
-import { ref, h, computed } from 'vue'
-import { NCard, NForm, NFormItem, NInput, NInputNumber, NSelect, NButton, NIcon, useMessage, type FormRules, type FormInst, NDivider, NSwitch, NTag, NSpace, NText, NGrid, NGridItem, NDynamicTags } from 'naive-ui'
-import { CloudUploadOutline } from '@vicons/ionicons5'
+import { ref, h, computed, onMounted, onUnmounted } from 'vue'
+import { NCard, NForm, NFormItem, NInput, NInputNumber, NSelect, NButton, NIcon, useMessage, type FormRules, type FormInst, NDivider, NSwitch, NTag, NSpace, NText, NGrid, NGridItem, NDynamicTags, NSteps, NStep } from 'naive-ui'
+import { CloudUploadOutline, ArrowBackOutline } from '@vicons/ionicons5'
 import { AuthApi } from '../../shared/api/auth'
-import type { CreateProxyArgs, UserNode } from '../../types'
+import type { CreateProxyArgs } from '../../types'
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
@@ -320,6 +348,11 @@ const handleNodeChange = (value: number | null) => {
       formValue.value.nodeId = value
       formValue.value.type = null
       formValue.value.remotePort = null
+      
+      // 在移动端选择节点后自动进入下一步
+      if (isMobile.value) {
+        currentStep.value = 2
+      }
     }
   } else {
     selectedNode.value = null
@@ -424,6 +457,20 @@ const init = async () => {
 
 // 修改初始化调用
 init()
+const isMobile = ref(window.innerWidth <= 700)
+
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 700
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+const currentStep = ref<number>(1)
 </script>
 
 <style lang="scss" scoped>

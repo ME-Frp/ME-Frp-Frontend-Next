@@ -14,7 +14,7 @@
 
     :deep(.n-card__content) {
       height: 100%;
-      max-height: calc(100vh - 200px);
+      max-height: calc(82vh);
       overflow-y: auto;
       padding-right: 12px;
 
@@ -37,10 +37,32 @@
     }
   }
 
+  .config-card {
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba($primary-color, 0.2);
+      border-radius: 3px;
+
+      &:hover {
+        background-color: rgba($primary-color, 0.3);
+      }
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+  }
+
   .node-item {
     border: 1px solid $border-color;
     transition: $transition-all;
     cursor: pointer;
+    height: 100%;
   }
 
   .selected-node {
@@ -64,7 +86,28 @@
     }
   }
 
+  .steps-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 5px;
+    margin-top: 5px;
+
+    .mobile-steps {
+      flex: 1;
+    }
+  }
+
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
+    
+    .node-card, .config-card {
+      :deep(.n-card__content) {
+        height: 100%;
+        overflow-y: auto;
+        max-height: 100%;
+      }
+    }
   }
 }
