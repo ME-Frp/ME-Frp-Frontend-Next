@@ -25,13 +25,18 @@ export interface UserNode {
   isOnline: boolean;
   isDisabled: boolean;
 }
+export interface UserNodeName {
+  nodeId: number;
+  name: string;
+  hostname: string;
+}
 export interface GetUserGroupsData {
   groups: {
-      name: string;
-      friendlyName: string;
-      maxProxies: number;
-      baseTraffic: number;
-      outBound: number;
-      inBound: number;
+    name: string;
+    friendlyName: string;
+    maxProxies: number;
+    baseTraffic: number;
+    outBound: number;
+    inBound: number;
   }[];
 }

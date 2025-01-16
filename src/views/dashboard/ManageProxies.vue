@@ -74,7 +74,9 @@
             </div>
           </div>
           <div class="proxy-actions">
-            <NDropdown :options="dropdownOptions" @select="key => handleSelect(key, proxy)" trigger="click">
+            <NDropdown :options="dropdownOptions.filter(opt => 
+              !(opt.key === 'offline' && !proxy.isOnline)
+            )" @select="key => handleSelect(key, proxy)" trigger="click">
               <NButton secondary size="small">
                 <template #icon>
                   <NIcon>
@@ -116,8 +118,9 @@
               </NTag>
             </td>
             <td>
-              <NDropdown :options="dropdownOptions" @select="key => handleSelect(key, proxy)" trigger="click"
-                placement="bottom">
+              <NDropdown :options="dropdownOptions.filter(opt => 
+                !(opt.key === 'offline' && !proxy.isOnline)
+              )" @select="key => handleSelect(key, proxy)" trigger="click" placement="bottom">
                 <div style="display: flex; align-items: center;">
                   <NButton text>
                     <template #icon>
@@ -139,30 +142,42 @@
       <template #header>
         <div>隧道详细信息</div>
       </template>
-      <div v-if="selectedProxy" style="padding-top: 12px;">
+      <div v-if="selectedProxy" style="padding: 16px 0">
         <div class="modal-info-item">
           <span class="label">隧道名称：</span>
           <span class="value">{{ selectedProxy.proxyName }}</span>
         </div>
         <div class="modal-info-item">
-          <span class="label">本地地址：</span>
-          <span class="value">{{ selectedProxy.localIp }}</span>
+          <span class="label">协议类型：</span>
+          <span class="value">{{ selectedProxy.proxyType.toUpperCase() }}</span>
         </div>
         <div class="modal-info-item">
           <span class="label">本地端口：</span>
           <span class="value">{{ selectedProxy.localPort }}</span>
         </div>
         <div class="modal-info-item">
+          <span class="label">本地地址：</span>
+          <span class="value">{{ selectedProxy.localIp }}</span>
+        </div>
+        <div class="modal-info-item">
+          <span class="label">节点名称：</span>
+          <span class="value">{{ getNodeLabel(selectedProxy.nodeId).split(' - ')[1] }}</span>
+        </div>
+        <div class="modal-info-item">
+          <span class="label">节点主机名：</span>
+          <span class="value">{{ nodeOptions.find(node => node.value === selectedProxy.nodeId)?.hostname || '-' }}</span>
+        </div>
+        <div class="modal-info-item">
           <span class="label">远程端口：</span>
           <span class="value">{{ selectedProxy.remotePort }}</span>
         </div>
-        <div v-if="selectedProxy.domain" class="modal-info-item">
-          <span class="label">绑定域名：</span>
-          <span class="value">{{ selectedProxy.domain }}</span>
+        <div class="modal-info-item">
+          <span class="label">上次启动时间：</span>
+          <span class="value">{{ selectedProxy.lastStartTime || '从未启动' }}</span>
         </div>
         <div class="modal-info-item">
-          <span class="label">协议类型：</span>
-          <span class="value">{{ selectedProxy.proxyType.toUpperCase() }}</span>
+          <span class="label">上次关闭时间：</span>
+          <span class="value">{{ selectedProxy.lastCloseTime || '从未关闭' }}</span>
         </div>
         <div class="modal-info-item">
           <span class="label">状态：</span>
@@ -174,6 +189,18 @@
           </NTag>
         </div>
       </div>
+    </NModal>
+
+    <!-- 删除确认弹窗 -->
+    <NModal v-model:show="showDeleteModal" preset="dialog" title="是否删除此隧道？" style="width: 400px">
+      <template #header>
+        <div>删除确认</div>
+      </template>
+        <p>确定要删除此隧道吗？此操作不可恢复。</p>
+      <template #action>
+        <NButton size="small" @click="showDeleteModal = false">取消</NButton>
+        <NButton size="small" type="error" :loading="loading" @click="handleDeleteConfirm">删除</NButton>
+      </template>
     </NModal>
 
     <!-- 编辑隧道弹窗 -->
@@ -240,10 +267,10 @@
 
 <script setup lang="ts">
 import { ref, computed, h } from 'vue'
-import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, NDivider, NSwitch, NText } from 'naive-ui'
+import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, NDivider, NSwitch, NText, NPopconfirm } from 'naive-ui'
 import { GridOutline, ListOutline, BuildOutline, RefreshOutline, SearchOutline, InformationCircleOutline, CreateOutline, TrashOutline, PowerOutline } from '@vicons/ionicons5'
 import { AuthApi } from '../../shared/api/auth'
-import type { Proxy, UserNode } from '../../types'
+import type { Proxy, UserNodeName } from '../../types'
 import { themeColors } from '../../constants/theme'
 
 const message = useMessage()
@@ -375,9 +402,9 @@ const handleViewInfo = (proxy: Proxy) => {
 // 获取节点列表
 const fetchNodes = async () => {
   try {
-    const res = await AuthApi.getNodes()
+    const res = await AuthApi.getNodeNames()
     if (res.data.code === 200) {
-      nodeOptions.value = res.data.data.map((node: UserNode) => ({
+      nodeOptions.value = res.data.data.map((node: UserNodeName) => ({
         label: node.name,
         value: node.nodeId,
         hostname: node.hostname
@@ -501,10 +528,49 @@ const handleEditSubmit = () => {
   })
 }
 
+const showDeleteModal = ref(false)
+const proxyToDelete = ref<Proxy | null>(null)
+
+const handleDeleteClick = (proxy: Proxy) => {
+  proxyToDelete.value = proxy
+  showDeleteModal.value = true
+}
+
+const handleDeleteConfirm = async () => {
+  if (!proxyToDelete.value) return
+  try {
+    await AuthApi.deleteProxy(proxyToDelete.value.proxyId)
+    message.success('删除隧道成功')
+    handleRefresh()
+    showDeleteModal.value = false
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '删除隧道失败')
+  }
+}
+
+const actions = [
+  {
+    label: '详情',
+    key: 'detail',
+    icon: renderIcon(InformationCircleOutline)
+  },
+  {
+    label: '编辑',
+    key: 'edit',
+    icon: renderIcon(CreateOutline)
+  },
+  {
+    label: '删除',
+    key: 'delete',
+    icon: renderIcon(TrashOutline)
+  }
+]
+
 const handleSelect = (key: string, proxy: Proxy) => {
   switch (key) {
     case 'view':
-      handleViewInfo(proxy)
+      selectedProxy.value = proxy
+      showModal.value = true
       break
     case 'edit':
       handleEdit(proxy)
@@ -516,7 +582,7 @@ const handleSelect = (key: string, proxy: Proxy) => {
       handleForceOffline(proxy)
       break
     case 'delete':
-      handleDelete(proxy)
+      handleDeleteClick(proxy)
       break
   }
 }

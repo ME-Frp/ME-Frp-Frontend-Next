@@ -381,7 +381,7 @@ const columns: DataTableColumns<Proxy> = [
       if (['http', 'https'].includes(row.proxyType)) {
         const domains = (row.domain || '-')
           .replace(/[\[\]"]/g, '')
-          .split(',')
+          .split(';')
           .map(domain => domain.trim())
           .filter(Boolean)
         return h(NSpace, { vertical: true, size: 4 }, {

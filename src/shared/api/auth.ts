@@ -1,6 +1,6 @@
 import baseApi from './config';
 import type { ApiResponse } from './config';
-import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData } from '../../types';
+import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData, UserNodeName } from '../../types';
 
 
 export const AuthApi = {
@@ -31,6 +31,11 @@ export const AuthApi = {
     // 获取节点列表
     getNodes: () => {
         return baseApi.get<ApiResponse<UserNode[]>>('/auth/node/list');
+    },
+
+    // 获取节点名称列表
+    getNodeNames: () => {
+        return baseApi.get<ApiResponse<UserNodeName[]>>('/auth/node/nameList');
     },
 
     // 获取用户隧道列表

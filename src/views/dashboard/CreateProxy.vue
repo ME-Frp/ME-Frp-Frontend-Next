@@ -292,8 +292,8 @@ const fetchNodes = async () => {
     if (res.data.code === 200) {
       nodeOptions.value = res.data.data.map((node: any) => {
         const [minPort, maxPort] = node.allowPort.split('-').map(Number)
-        const allowedProtocols = node.allowType.split(',').map((type: string) => type.trim())
-        const allowGroups = node.allowGroup.split(',').map((group: string) => {
+        const allowedProtocols = node.allowType.split(';').map((type: string) => type.trim())
+        const allowGroups = node.allowGroup.split(';').map((group: string) => {
           const trimmedGroup = group.trim()
           return {
             name: trimmedGroup,
