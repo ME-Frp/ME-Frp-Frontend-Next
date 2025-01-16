@@ -377,7 +377,7 @@ const columns: DataTableColumns = [
     title: '用户组',
     key: 'allowGroup',
     render(row) {
-      const groups = row.allowGroup.split(',')
+      const groups = row.allowGroup.split(';')
       return h(
         NSpace,
         { wrap: true, justify: 'start' },
@@ -406,7 +406,7 @@ const columns: DataTableColumns = [
     title: '协议',
     key: 'allowType',
     render(row) {
-      const types = row.allowType.split(',')
+      const types = row.allowType.split(';')
       return h(
         NSpace,
         { wrap: true, justify: 'start' },
@@ -428,6 +428,20 @@ const columns: DataTableColumns = [
     }
   },
   {
+    title: '状态',
+    key: 'status',
+    render(row) {
+      return h(
+        NTag,
+        {
+          type: row.isDisabled ? 'error' : 'success',
+          size: 'small'
+        },
+        { default: () => row.isDisabled ? '已禁用' : '已启用' }
+      )
+    }
+  },
+  {
     title: '操作',
     key: 'actions',
     render(row) {
@@ -443,6 +457,26 @@ const columns: DataTableColumns = [
                 onClick: () => handleEdit(row)
               },
               { default: () => '编辑' }
+            ),
+            h(
+              NPopconfirm,
+              {
+                onPositiveClick: () => handleToggleNode(row),
+                positiveText: '确定',
+                negativeText: '取消'
+              },
+              {
+                default: () => `确认${row.isDisabled ? '启用' : '禁用'}此节点？`,
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: row.isDisabled ? 'primary' : 'warning'
+                    },
+                    { default: () => row.isDisabled ? '启用' : '禁用' }
+                  )
+              }
             ),
             h(
               NPopconfirm,
@@ -489,9 +523,9 @@ const handleEdit = (row: Node) => {
     servicePort: row.servicePort,
     adminPort: row.adminPort,
     adminPass: row.adminPass,
-    allowGroup: row.allowGroup.split(','),
+    allowGroup: row.allowGroup.split(';'),
     allowPort: row.allowPort,
-    allowType: row.allowType.split(',')
+    allowType: row.allowType.split(';')
   })
   showEditModal.value = true
 }
@@ -663,6 +697,16 @@ const fetchUserGroups = async () => {
     }
   } catch (error: any) {
     message.error(error?.response?.data?.message || '获取用户组列表失败')
+  }
+}
+
+const handleToggleNode = async (row: Node) => {
+  try {
+    await AdminApi.toggleNode(row.nodeId, !row.isDisabled)
+    message.success(`${row.isDisabled ? '启用' : '禁用'}节点成功`)
+    fetchNodes()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || `${row.isDisabled ? '启用' : '禁用'}节点失败`)
   }
 }
 

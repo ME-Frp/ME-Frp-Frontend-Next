@@ -42,6 +42,10 @@ export const AdminApi = {
     return baseApi.post<ApiResponse<void>>(`/admin/node/delete`, { nodeId })
   },
 
+  toggleNode: (nodeId: number, isDisabled: boolean) => {
+    return baseApi.post<ApiResponse<void>>(`/admin/node/toggle`, { nodeId, isDisabled })
+  },
+
   // 隧道相关
   filterProxies: (params: FilterProxiesArgs) => {
     return baseApi.post<ApiResponse<GetProxiesData>>('/admin/proxy/filter', params)

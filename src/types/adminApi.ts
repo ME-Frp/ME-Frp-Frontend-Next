@@ -26,6 +26,7 @@ export interface Node {
     allowGroup: string;
     allowPort: string;
     allowType: string;
+    isDisabled: boolean;
 }
 
 export interface AddNodeArgs {
@@ -86,6 +87,8 @@ export interface Proxy {
     isBanned: boolean;
     location: string;
     accessKey: string;
+    lastStartTime: string;
+    lastCloseTime: string;
     hostHeaderRewrite: string;
     headerXFromWhere: string;
     useEncryption: boolean;
