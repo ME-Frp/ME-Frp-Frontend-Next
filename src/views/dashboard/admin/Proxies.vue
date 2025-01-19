@@ -495,6 +495,27 @@ const columns: DataTableColumns<Proxy> = [
             h(
               NPopconfirm,
               {
+                onPositiveClick: () => handleKickProxy(row),
+                positiveText: '确定',
+                negativeText: '取消'
+              },
+              {
+                default: () => '确认强制下线此隧道？',
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: 'info',
+                      disabled: !row.isOnline
+                    },
+                    { default: () => '下线' }
+                  )
+              }
+            ),
+            h(
+              NPopconfirm,
+              {
                 onPositiveClick: () => handleDelete(row),
                 positiveText: '确定',
                 negativeText: '取消'
@@ -556,6 +577,16 @@ const handleToggleBan = async (proxy: Proxy) => {
   }
 }
 
+const handleKickProxy = async (proxy: Proxy) => {
+  try {
+    await AdminApi.kickProxy(proxy.proxyId)
+    message.success('强制下线成功')
+    loadData()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '强制下线失败')
+  }
+}
+
 const handleDelete = async (proxy: Proxy) => {
   try {
     await AdminApi.deleteProxy(proxy.proxyId)
@@ -599,7 +630,7 @@ const fetchNodes = async () => {
       }))
     }
   } catch (error: any) {
-    message.error('获取节点列表失败')
+    message.error(error?.response?.data?.message || '获取节点列表失败')
   }
 }
 

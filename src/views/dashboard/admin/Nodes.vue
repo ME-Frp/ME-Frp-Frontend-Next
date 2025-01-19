@@ -286,7 +286,7 @@ const rules: FormRules = {
       if (!value) return new Error('请输入端口范围')
       
       // 支持多个端口范围，用逗号分隔
-      const ranges = value.split(',').map(range => range.trim())
+      const ranges = value.split(';').map(range => range.trim())
       
       for (const range of ranges) {
         // 检查单个端口
@@ -550,9 +550,9 @@ const handleEditSubmit = () => {
           servicePort: formModel.value.servicePort,
           adminPort: formModel.value.adminPort,
           adminPass: formModel.value.adminPass,
-          allowGroup: formModel.value.allowGroup.join(','),
+          allowGroup: formModel.value.allowGroup.join(';'),
           allowPort: formModel.value.allowPort,
-          allowType: formModel.value.allowType.join(',')
+          allowType: formModel.value.allowType.join(';')
         }
         await AdminApi.updateNode(config)
         message.success('更新节点成功')
@@ -602,8 +602,8 @@ const handleAddNode = () => {
       try {
         const config = {
           ...formModel.value,
-          allowGroup: formModel.value.allowGroup.join(','),
-          allowType: formModel.value.allowType.join(',')
+          allowGroup: formModel.value.allowGroup.join(';'),
+          allowType: formModel.value.allowType.join(';')
         }
         await AdminApi.addNode(config)
         message.success('添加节点成功')

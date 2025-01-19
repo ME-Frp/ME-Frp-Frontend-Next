@@ -445,7 +445,7 @@ const dropdownOptions = [
   },
   {
     label: '强制下线',
-    key: 'offline',
+    key: 'kickProxy',
     icon: renderIcon(PowerOutline)
   },
   {
@@ -479,9 +479,9 @@ const handleRefreshStatus = async (proxy: Proxy) => {
   }
 }
 
-const handleForceOffline = async (proxy: Proxy) => {
+const handleKickProxy = async (proxy: Proxy) => {
   try {
-    await AuthApi.forceOfflineProxy(proxy.proxyId)
+    await AuthApi.kickProxy(proxy.proxyId)
     message.success('强制下线成功')
     handleRefresh()
   } catch (error: any) {
@@ -578,8 +578,8 @@ const handleSelect = (key: string, proxy: Proxy) => {
     case 'refresh':
       handleRefreshStatus(proxy)
       break
-    case 'offline':
-      handleForceOffline(proxy)
+    case 'kickProxy':
+      handleKickProxy(proxy)
       break
     case 'delete':
       handleDeleteClick(proxy)

@@ -81,15 +81,17 @@ const userInfo = ref<UserInfo>({
   friendlyGroup: '',
   usedProxies: 0,
   maxProxies: 0,
-  regTime: '',
-  traffic: '',
+  regTime: 0,
+  traffic: 0,
   outBound: 0,
   inBound: 0,
   email: '',
+  status: 0,
+  todaySigned: false
 })
 
-const formatTime = (timestamp: string) => {
-  return new Date(parseInt(timestamp) * 1000).toLocaleString('zh-CN', {
+const formatTime = (timestamp: number) => {
+  return new Date(timestamp * 1000).toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -100,8 +102,8 @@ const formatTime = (timestamp: string) => {
   })
 }
 
-const formatTraffic = (traffic: string) => {
-  const value = parseFloat(traffic)
+const formatTraffic = (traffic: number) => {
+  const value = traffic
   if (isNaN(value)) return traffic
   if (value >= 1024) {
     return `${(value / 1024).toFixed(2)} GB`
@@ -112,18 +114,6 @@ const formatTraffic = (traffic: string) => {
 const formattedRegTime = computed(() => formatTime(userInfo.value.regTime))
 const formattedTraffic = computed(() => formatTraffic(userInfo.value.traffic))
 const signButtonText = computed(() => signLoading.value ? '签到中...' : (isSignAvailable.value ? '签到' : '已签到'))
-
-// 获取签到状态
-const fetchSignStatus = async () => {
-  try {
-    const response = await AuthApi.getSignStatus()
-    if (response.data.code === 200) {
-      isSignAvailable.value = response.data.data.available
-    }
-  } catch (error) {
-    console.error('获取签到状态失败:', error)
-  }
-}
 
 // 执行签到
 const handleSign = async () => {
@@ -157,6 +147,7 @@ const fetchUserInfo = async () => {
     const response = await AuthApi.getUserInfo()
     if (response.data.code === 200) {
       userInfo.value = response.data.data
+      isSignAvailable.value = response.data.data.todaySigned
       localStorage.setItem('group', userInfo.value.group)
     } else {
       message.error(response.data.message || '获取用户信息失败')
@@ -174,7 +165,6 @@ const fetchUserInfo = async () => {
 
 onMounted(async () => {
   await fetchUserInfo()
-  await fetchSignStatus()
 })
 </script>
 

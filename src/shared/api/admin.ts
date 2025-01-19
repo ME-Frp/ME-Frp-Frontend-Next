@@ -65,5 +65,9 @@ export const AdminApi = {
 
   updateProxy: (params: UpdateProxyArgs) => {
     return baseApi.post<ApiResponse<void>>('/admin/proxy/update', params)
-  }
+  },
+
+  kickProxy: (proxyId: number) => {
+    return baseApi.post<ApiResponse<void>>(`/admin/proxy/kick`, { proxyId })
+  },
 }

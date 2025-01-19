@@ -4,18 +4,14 @@ import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUs
 
 
 export const AuthApi = {
+    // 获取用户信息
     getUserInfo: () => {
-        return baseApi.post<ApiResponse<UserInfo>>('/auth/user/info');
-    },
-
-    // 获取签到状态
-    getSignStatus: () => {
-        return baseApi.get<ApiResponse<{ available: boolean }>>('/auth/user/sign/status');
+        return baseApi.get<ApiResponse<UserInfo>>('/auth/user/info');
     },
 
     // 执行签到
     sign: () => {
-        return baseApi.post<ApiResponse<{ extraTraffic: number }>>('/auth/user/sign');
+        return baseApi.get<ApiResponse<{ extraTraffic: number }>>('/auth/user/sign');
     },
 
     // 重置访问密钥
@@ -43,6 +39,7 @@ export const AuthApi = {
         return baseApi.get<ApiResponse<Proxy[]>>('/auth/proxy/list');
     },
 
+    // 获取用户组列表
     getUserGroups: () => {
         return baseApi.get<ApiResponse<GetUserGroupsData>>('/auth/user/groups')
     },
@@ -68,8 +65,8 @@ export const AuthApi = {
     },
 
     // 强制下线隧道
-    forceOfflineProxy: (proxyId: number) => {
-        return baseApi.post<ApiResponse<void>>('/auth/proxy/offline', { proxyId });
+    kickProxy: (proxyId: number) => {
+        return baseApi.post<ApiResponse<void>>('/auth/proxy/kick', { proxyId });
     },
 };
 

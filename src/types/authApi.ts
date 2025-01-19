@@ -12,6 +12,7 @@ export interface UserInfo {
   inBound: number
   email: string
   status: number
+  todaySigned: boolean
 }
 
 export interface UserNode {
