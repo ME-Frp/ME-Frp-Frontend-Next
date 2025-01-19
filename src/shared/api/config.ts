@@ -49,7 +49,7 @@ baseApi.interceptors.response.use(
             switch (error.response.status) {
                 case 401:
                     localStorage.removeItem('token');
-                    window.location.href = '/login';
+                    window.location.href = '/auth/login';
                     break;
                 default:
                     console.error('API Error:', error.response.data);
