@@ -147,7 +147,7 @@ const fetchUserInfo = async () => {
     const response = await AuthApi.getUserInfo()
     if (response.data.code === 200) {
       userInfo.value = response.data.data
-      isSignAvailable.value = response.data.data.todaySigned
+      isSignAvailable.value = !response.data.data.todaySigned
       localStorage.setItem('group', userInfo.value.group)
     } else {
       message.error(response.data.message || '获取用户信息失败')
