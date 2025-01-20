@@ -84,6 +84,7 @@ export interface Proxy {
     domain?: string;
     proxyType: string;
     isOnline: boolean;
+    /** 隧道是否被封禁（管理员手动封禁） */
     isBanned: boolean;
     location: string;
     accessKey: string;

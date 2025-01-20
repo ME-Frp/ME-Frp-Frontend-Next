@@ -70,4 +70,9 @@ export const AdminApi = {
   kickProxy: (proxyId: number) => {
     return baseApi.post<ApiResponse<void>>(`/admin/proxy/kick`, { proxyId })
   },
+
+  // 禁用/启用隧道
+  toggleProxy: (proxyId: number, isDisabled: boolean) => {
+    return baseApi.post<ApiResponse<void>>('/admin/proxy/toggle', { proxyId, isDisabled })
+  },
 }

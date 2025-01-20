@@ -334,6 +334,58 @@ const rules: FormRules = {
   }
 }
 
+const renderStatus = (row: Proxy) => {
+  const tags = []
+  
+  // 在线状态标签
+  tags.push(h(
+    NTag,
+    {
+      type: row.isOnline ? 'success' : 'warning',
+      size: 'small',
+      style: 'margin-right: 4px'
+    },
+    { default: () => row.isOnline ? '在线' : '离线' }
+  ))
+  
+  // 封禁状态标签
+  if (row.isBanned) {
+    tags.push(h(
+      NTag,
+      {
+        type: 'error',
+        size: 'small',
+        style: 'margin-right: 4px'
+      },
+      { default: () => '已封禁' }
+    ))
+  }
+
+  // 禁用状态标签
+  if (row.isDisabled) {
+    tags.push(h(
+      NTag,
+      {
+        type: 'warning',
+        size: 'small'
+      },
+      { default: () => '已禁用' }
+    ))
+  }
+  
+  return h(NSpace, { size: 4 }, { default: () => tags })
+}
+
+const handleToggleProxy = async (proxy: Proxy) => {
+  try {
+    await AdminApi.toggleProxy(proxy.proxyId, !proxy.isDisabled)
+    message.success(proxy.isDisabled ? '启用隧道成功' : '禁用隧道成功')
+    loadData()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '操作失败')
+  }
+}
+
 const columns: DataTableColumns<Proxy> = [
   {
     title: 'ID',
@@ -426,34 +478,7 @@ const columns: DataTableColumns<Proxy> = [
   {
     title: '状态',
     key: 'status',
-    render(row) {
-      const tags = []
-      
-      // 在线状态标签
-      tags.push(h(
-        NTag,
-        {
-          type: row.isOnline ? 'success' : 'warning',
-          size: 'small',
-          style: 'margin-right: 4px'
-        },
-        { default: () => row.isOnline ? '在线' : '离线' }
-      ))
-      
-      // 封禁状态标签
-      if (row.isBanned) {
-        tags.push(h(
-          NTag,
-          {
-            type: 'error',
-            size: 'small'
-          },
-          { default: () => '已封禁' }
-        ))
-      }
-      
-      return h(NSpace, { size: 4 }, { default: () => tags })
-    }
+    render: renderStatus
   },
   {
     title: '操作',
@@ -489,6 +514,26 @@ const columns: DataTableColumns<Proxy> = [
                       type: row.isBanned ? 'success' : 'warning',
                     },
                     { default: () => row.isBanned ? '解封' : '封禁' }
+                  )
+              }
+            ),
+            h(
+              NPopconfirm,
+              {
+                onPositiveClick: () => handleToggleProxy(row),
+                positiveText: '确定',
+                negativeText: '取消'
+              },
+              {
+                default: () => row.isDisabled ? '确认启用此隧道？' : '确认禁用此隧道？',
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: row.isDisabled ? 'success' : 'warning',
+                    },
+                    { default: () => row.isDisabled ? '启用' : '禁用' }
                   )
               }
             ),

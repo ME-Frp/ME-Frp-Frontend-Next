@@ -34,6 +34,11 @@ export const AuthApi = {
         return baseApi.get<ApiResponse<UserNodeName[]>>('/auth/node/nameList');
     },
 
+    // 获取空闲节点端口
+    getFreeNodePort: () => {
+        return baseApi.get<ApiResponse<number>>('/auth/node/freePort');
+    },
+
     // 获取用户隧道列表
     getUserProxies: () => {
         return baseApi.get<ApiResponse<Proxy[]>>('/auth/proxy/list');
@@ -57,6 +62,11 @@ export const AuthApi = {
     // 更新隧道
     updateProxy: (data: UpdateProxyArgs) => {
         return baseApi.post<ApiResponse<void>>('/auth/proxy/update', data);
+    },
+
+    // 禁用/启用隧道
+    toggleProxy: (proxyId: number, isDisabled: boolean) => {
+        return baseApi.post<ApiResponse<void>>('/auth/proxy/toggle', { proxyId, isDisabled });
     },
 
     // 刷新隧道状态

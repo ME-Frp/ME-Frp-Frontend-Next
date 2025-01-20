@@ -49,9 +49,17 @@
             <h3 class="proxy-title">
               {{ proxy.proxyName }}
             </h3>
-            <NTag :type="proxy.isOnline ? 'success' : 'error'" size="small">
-              {{ proxy.isOnline ? '在线' : '离线' }}
-            </NTag>
+            <div class="status-tags">
+              <NTag :type="proxy.isOnline ? 'success' : 'error'" size="small">
+                {{ proxy.isOnline ? '在线' : '离线' }}
+              </NTag>
+              <NTag v-if="proxy.isBanned" type="error" size="small" style="margin-left: 4px">
+                已封禁
+              </NTag>
+              <NTag v-if="proxy.isDisabled" type="warning" size="small" style="margin-left: 4px">
+                已禁用
+              </NTag>
+            </div>
           </div>
           <div class="proxy-info">
             <div class="info-item">
@@ -74,9 +82,7 @@
             </div>
           </div>
           <div class="proxy-actions">
-            <NDropdown :options="dropdownOptions.filter(opt => 
-              !(opt.key === 'offline' && !proxy.isOnline)
-            )" @select="key => handleSelect(key, proxy)" trigger="click">
+            <NDropdown :options="dropdownOptions(proxy)" @select="key => handleSelect(key, proxy)" trigger="click">
               <NButton secondary size="small">
                 <template #icon>
                   <NIcon>
@@ -113,14 +119,20 @@
             <td>{{ proxy.remotePort }}</td>
             <td>{{ getNodeLabel(proxy.nodeId) }}</td>
             <td>
-              <NTag :type="proxy.isOnline ? 'success' : 'error'" size="small">
-                {{ proxy.isOnline ? '在线' : '离线' }}
-              </NTag>
+              <div style="display: flex; gap: 4px;">
+                <NTag :type="proxy.isOnline ? 'success' : 'error'" size="small">
+                  {{ proxy.isOnline ? '在线' : '离线' }}
+                </NTag>
+                <NTag v-if="proxy.isBanned" type="error" size="small">
+                  已封禁
+                </NTag>
+                <NTag v-if="proxy.isDisabled" type="warning" size="small">
+                  已禁用
+                </NTag>
+              </div>
             </td>
             <td>
-              <NDropdown :options="dropdownOptions.filter(opt => 
-                !(opt.key === 'offline' && !proxy.isOnline)
-              )" @select="key => handleSelect(key, proxy)" trigger="click" placement="bottom">
+              <NDropdown :options="dropdownOptions(proxy)" @select="key => handleSelect(key, proxy)" trigger="click" placement="bottom">
                 <div style="display: flex; align-items: center;">
                   <NButton text>
                     <template #icon>
@@ -260,6 +272,30 @@
       <template #action>
         <NButton size="small" @click="showEditModal = false">取消</NButton>
         <NButton size="small" type="primary" :loading="loading" @click="handleEditSubmit">确定</NButton>
+      </template>
+    </NModal>
+
+    <!-- 禁用/启用确认弹窗 -->
+    <NModal v-model:show="showToggleModal" preset="dialog" style="width: 400px">
+      <template #header>
+        <div>{{ toggleModalTitle }}</div>
+      </template>
+      <div>{{ toggleModalContent }}</div>
+      <template #action>
+        <NButton size="small" @click="showToggleModal = false">取消</NButton>
+        <NButton size="small" type="primary" :loading="loading" @click="handleToggleConfirm">确定</NButton>
+      </template>
+    </NModal>
+
+    <!-- 强制下线确认弹窗 -->
+    <NModal v-model:show="showKickModal" preset="dialog" style="width: 400px">
+      <template #header>
+        <div>强制下线确认</div>
+      </template>
+      <div>确认要强制下线此隧道吗？</div>
+      <template #action>
+        <NButton size="small" @click="showKickModal = false">取消</NButton>
+        <NButton size="small" type="warning" :loading="loading" @click="handleKickConfirm">确定</NButton>
       </template>
     </NModal>
   </div>
@@ -423,7 +459,21 @@ function renderIcon(icon: any) {
   return () => h(NIcon, null, { default: () => h(icon) })
 }
 
-const dropdownOptions = [
+const showToggleModal = ref(false)
+const showKickModal = ref(false)
+const proxyToOperate = ref<Proxy | null>(null)
+
+const toggleModalTitle = computed(() => {
+  if (!proxyToOperate.value) return ''
+  return proxyToOperate.value.isDisabled ? '启用确认' : '禁用确认'
+})
+
+const toggleModalContent = computed(() => {
+  if (!proxyToOperate.value) return ''
+  return proxyToOperate.value.isDisabled ? '确认要启用此隧道吗？' : '确认要禁用此隧道吗？'
+})
+
+const dropdownOptions = (proxy: Proxy) => [
   {
     label: '查看详情',
     key: 'view',
@@ -453,21 +503,16 @@ const dropdownOptions = [
     key: 'd2'
   },
   {
+    label: proxy.isDisabled ? '启用' : '禁用',
+    key: 'toggle',
+    icon: renderIcon(PowerOutline)
+  },
+  {
     label: '删除',
     key: 'delete',
     icon: renderIcon(TrashOutline)
   }
 ]
-
-const handleDelete = async (proxy: Proxy) => {
-  try {
-    await AuthApi.deleteProxy(proxy.proxyId)
-    message.success('删除隧道成功')
-    handleRefresh()
-  } catch (error: any) {
-    message.error(error?.response?.data?.message || '删除隧道失败')
-  }
-}
 
 const handleRefreshStatus = async (proxy: Proxy) => {
   try {
@@ -479,13 +524,43 @@ const handleRefreshStatus = async (proxy: Proxy) => {
   }
 }
 
-const handleKickProxy = async (proxy: Proxy) => {
+const handleToggleClick = (proxy: Proxy) => {
+  proxyToOperate.value = proxy
+  showToggleModal.value = true
+}
+
+const handleToggleConfirm = async () => {
+  if (!proxyToOperate.value) return
   try {
-    await AuthApi.kickProxy(proxy.proxyId)
+    loading.value = true
+    await AuthApi.toggleProxy(proxyToOperate.value.proxyId, !proxyToOperate.value.isDisabled)
+    message.success(proxyToOperate.value.isDisabled ? '启用隧道成功' : '禁用隧道成功')
+    handleRefresh()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '操作失败')
+  } finally {
+    loading.value = false
+    showToggleModal.value = false
+  }
+}
+
+const handleKickClick = (proxy: Proxy) => {
+  proxyToOperate.value = proxy
+  showKickModal.value = true
+}
+
+const handleKickConfirm = async () => {
+  if (!proxyToOperate.value) return
+  try {
+    loading.value = true
+    await AuthApi.kickProxy(proxyToOperate.value.proxyId)
     message.success('强制下线成功')
     handleRefresh()
   } catch (error: any) {
     message.error(error?.response?.data?.message || '强制下线失败')
+  } finally {
+    loading.value = false
+    showKickModal.value = false
   }
 }
 
@@ -548,24 +623,6 @@ const handleDeleteConfirm = async () => {
   }
 }
 
-const actions = [
-  {
-    label: '详情',
-    key: 'detail',
-    icon: renderIcon(InformationCircleOutline)
-  },
-  {
-    label: '编辑',
-    key: 'edit',
-    icon: renderIcon(CreateOutline)
-  },
-  {
-    label: '删除',
-    key: 'delete',
-    icon: renderIcon(TrashOutline)
-  }
-]
-
 const handleSelect = (key: string, proxy: Proxy) => {
   switch (key) {
     case 'view':
@@ -579,7 +636,10 @@ const handleSelect = (key: string, proxy: Proxy) => {
       handleRefreshStatus(proxy)
       break
     case 'kickProxy':
-      handleKickProxy(proxy)
+      handleKickClick(proxy)
+      break
+    case 'toggle':
+      handleToggleClick(proxy)
       break
     case 'delete':
       handleDeleteClick(proxy)
