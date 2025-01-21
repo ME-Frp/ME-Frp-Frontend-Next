@@ -9,26 +9,56 @@
       </NCard>
 
       <n-card title="系统公告" class="notice-card">
-        <NTimeline>
-          <NTimelineItem v-for="notice in notices" :key="notice.id" :title="notice.title" :time="notice.time">
-            {{ notice.content }}
-          </NTimelineItem>
-        </NTimeline>
+          <div class="markdown-content" v-html="renderedNotice" />
       </n-card>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { NCard, NTimeline, NTimelineItem } from 'naive-ui'
-import { ref } from 'vue'
-import { type Notice } from '../../types'
+import { NCard } from 'naive-ui'
+import { ref, onMounted, computed } from 'vue'
+import { marked } from 'marked'
+import DOMPurify from 'dompurify'
+import { AuthApi } from '../../shared/api/auth'
 import UserInfoGrid from '../../components/UserInfoGrid.vue'
 
-const notices = ref<Notice[]>([])
+const notices = ref<string>('')
 const username = localStorage.getItem('username')
+
+// 配置 marked
+marked.setOptions({
+  gfm: true,
+  breaks: true
+})
+
+const renderedNotice = computed(() => {
+  if (!notices.value) return ''
+  try {
+    const html = marked.parse(notices.value) as string
+    return DOMPurify.sanitize(html)
+  } catch {
+    return ''
+  }
+})
+
+const fetchNotice = async (): Promise<void> => {
+  try {
+    const data = await AuthApi.getNotice()
+    if (data.data.code !== 200) {
+      throw new Error('获取公告失败')
+    }
+    notices.value = data.data.data
+  } catch (error) {
+    console.error('获取公告失败:', error)
+  }
+}
+
+onMounted(() => {
+  fetchNotice()
+})
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @use '../../assets/styles/dashboard/home.scss';
 </style>

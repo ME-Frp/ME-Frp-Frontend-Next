@@ -1,9 +1,14 @@
 import baseApi from './config';
 import type { ApiResponse } from './config';
-import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData, UserNodeName } from '../../types';
+import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData, UserNodeName, NodeUsage } from '../../types';
 
 
 export const AuthApi = {
+    // 获取公告
+    getNotice: () => {
+        return baseApi.get<ApiResponse<string>>('/auth/notice');
+    },
+
     // 获取用户信息
     getUserInfo: () => {
         return baseApi.get<ApiResponse<UserInfo>>('/auth/user/info');
@@ -34,9 +39,13 @@ export const AuthApi = {
         return baseApi.get<ApiResponse<UserNodeName[]>>('/auth/node/nameList');
     },
 
+    getNodeStatus: () => {
+        return baseApi.get<ApiResponse<NodeUsage[]>>('/auth/node/status');
+    },
+
     // 获取空闲节点端口
-    getFreeNodePort: () => {
-        return baseApi.get<ApiResponse<number>>('/auth/node/freePort');
+    getFreeNodePort: (data: { nodeId: number }) => {
+        return baseApi.post<ApiResponse<number>>('/auth/node/freePort', data);
     },
 
     // 获取用户隧道列表

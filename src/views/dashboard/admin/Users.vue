@@ -380,12 +380,11 @@ const handleStatusFilter = () => {
 
 const handleToggleStatus = async (user: UserInfo) => {
   try {
-    if (Number(user.status) === 1) {
-      await AdminApi.unbanUser(user.userId)
-      message.success('解封用户成功')
+    const data = await AdminApi.toggleUser(user.userId, user.status === 1)
+    if (data.data.code === 200) {
+      message.success(data.data.message || '操作成功')
     } else {
-      await AdminApi.banUser(user.userId)
-      message.success('封禁用户成功')
+      message.error(data.data.message || '操作失败')
     }
     loadData()
   } catch (error: any) {

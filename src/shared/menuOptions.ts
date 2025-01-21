@@ -78,9 +78,9 @@ const adminMenuOptions: MenuOption = {
       icon: renderIcon(AppsOutline)
     },
     {
-      label: '面板管理',
-      key: 'admin-panel',
-      link: '/dashboard/admin/panel',
+      label: '系统管理',
+      key: 'admin-system',
+      link: '/dashboard/admin/system',
       icon: renderIcon(CreateOutline)
     }
   ]

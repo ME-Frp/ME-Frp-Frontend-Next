@@ -10,8 +10,12 @@
   },
   "dependencies": {
     "@types/axios": "^0.14.4",
+    "@types/dompurify": "^3.2.0",
+    "@types/marked": "^6.0.0",
     "@vicons/ionicons5": "^0.12.0",
     "axios": "^1.7.9",
+    "dompurify": "^3.2.3",
+    "marked": "^15.0.6",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },

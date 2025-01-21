@@ -113,3 +113,21 @@ export interface GetProxiesData {
     totalPages: number;
     totalProxies: number;
 }
+
+export interface UpdateSystemConfigArgs {
+    key: string;
+    value: string;
+}
+
+export interface SystemConfig {
+    allowRegister: boolean;
+    allowSign: boolean;
+    notice: string;
+    smtp: string;
+    smtpFrom: string;
+    smtpPassword: string;
+    smtpPort: number;
+    smtpSSL: boolean;
+}
+
+export type SystemConfigKey = keyof SystemConfig;

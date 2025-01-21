@@ -1,70 +1,84 @@
 <template>
-  <div class="user-info-grid">
-    <template v-if="loading">
-      <div v-for="i in 8" :key="i" class="user-info-item">
-        <NSkeleton :sharp="false" size="medium" />
-      </div>
-    </template>
-    <template v-else>
-      <div class="user-info-item">
-        <div class="user-info-label">实名认证</div>
-        <div class="user-info-value">
-          <NTag :type="userInfo.isRealname ? 'success' : 'default'">
-            {{ userInfo.isRealname ? '已实名' : '未实名' }}
-          </NTag>
+  <div>
+    <div class="user-info-grid">
+      <template v-if="loading">
+        <div v-for="i in 8" :key="i" class="user-info-item">
+          <NSkeleton :sharp="false" size="medium" />
         </div>
-      </div>
-
-      <div class="user-info-item">
-        <div class="user-info-label">用户组</div>
-        <div class="user-info-value">
-          <NTag type="info">
-            {{ userInfo.friendlyGroup }}
-          </NTag>
+      </template>
+      <template v-else>
+        <div class="user-info-item">
+          <div class="user-info-label">实名认证</div>
+          <div class="user-info-value">
+            <NTag :type="userInfo.isRealname ? 'success' : 'default'">
+              {{ userInfo.isRealname ? '已实名' : '未实名' }}
+            </NTag>
+          </div>
         </div>
-      </div>
 
-      <div class="user-info-item">
-        <div class="user-info-label">注册时间</div>
-        <div class="user-info-value">{{ formattedRegTime }}</div>
-      </div>
-
-      <div class="user-info-item">
-        <div class="user-info-label">注册邮箱</div>
-        <div class="user-info-value">{{ userInfo.email }}</div>
-      </div>
-
-      <div class="user-info-item">
-        <div class="user-info-label">隧道数量</div>
-        <div class="user-info-value">{{ userInfo.usedProxies }} / {{ userInfo.maxProxies }}</div>
-      </div>
-
-      <div class="user-info-item">
-        <div class="user-info-label">剩余流量</div>
-        <div class="user-info-value">
-          {{ formattedTraffic }}
-          <NButton size="small" type="primary" :loading="signLoading" :disabled="!isSignAvailable" @click="handleSign" class="sign-btn">
-            {{ signButtonText }}
-          </NButton>
+        <div class="user-info-item">
+          <div class="user-info-label">用户组</div>
+          <div class="user-info-value">
+            <NTag type="info">
+              {{ userInfo.friendlyGroup }}
+            </NTag>
+          </div>
         </div>
-      </div>
 
-      <div class="user-info-item">
-        <div class="user-info-label">入站带宽</div>
-        <div class="user-info-value">{{ userInfo.inBound }} Mbps</div>
-      </div>
+        <div class="user-info-item">
+          <div class="user-info-label">注册时间</div>
+          <div class="user-info-value">{{ formattedRegTime }}</div>
+        </div>
 
-      <div class="user-info-item">
-        <div class="user-info-label">出站带宽</div>
-        <div class="user-info-value">{{ userInfo.outBound }} Mbps</div>
-      </div>
-    </template>
+        <div class="user-info-item">
+          <div class="user-info-label">注册邮箱</div>
+          <div class="user-info-value">{{ userInfo.email }}</div>
+        </div>
+
+        <div class="user-info-item">
+          <div class="user-info-label">隧道数量</div>
+          <div class="user-info-value">{{ userInfo.usedProxies }} / {{ userInfo.maxProxies }}</div>
+        </div>
+
+        <div class="user-info-item">
+          <div class="user-info-label">剩余流量</div>
+          <div class="user-info-value">
+            {{ formattedTraffic }}
+          </div>
+        </div>
+
+        <div class="user-info-item">
+          <div class="user-info-label">入站带宽</div>
+          <div class="user-info-value">{{ userInfo.inBound }} Mbps</div>
+        </div>
+
+        <div class="user-info-item">
+          <div class="user-info-label">出站带宽</div>
+          <div class="user-info-value">{{ userInfo.outBound }} Mbps</div>
+        </div>
+      </template>
+    </div>
+
+    <div class="sign-section" v-if="!loading">
+      <NSpace vertical :size="4">
+        <NButton text type="primary" :loading="signLoading" :disabled="!isSignAvailable" @click="handleSign">
+          <template #icon>
+            <NIcon>
+              <CalendarOutline />
+            </NIcon>
+          </template>
+          {{ signButtonText }}
+        </NButton>
+        <NText depth="3" style="font-size: 13px;">签到一次可以获得 5 - 10 GB 的流量</NText>
+      </NSpace>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { NTag, useMessage, NSkeleton, NButton } from 'naive-ui'
+import { NTag, useMessage, NSkeleton, NButton, NIcon, NSpace, NText } from 'naive-ui'
+import { CalendarOutline } from '@vicons/ionicons5'
 import { type UserInfo } from '../types'
 import { AuthApi } from '../shared/api/auth'
 

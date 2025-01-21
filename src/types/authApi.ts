@@ -41,3 +41,12 @@ export interface GetUserGroupsData {
     inBound: number;
   }[];
 }
+
+export interface NodeUsage {
+  nodeId: number;
+  name: string;
+  totalTrafficIn: number;
+  totalTrafficOut: number;
+  onlineCount: number;
+  isOnline: boolean;
+}

@@ -2,9 +2,9 @@ import axios, { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'ax
 
 
 export interface ApiResponse<T> {
-    data: T;
-    message: string;
     code: number;
+    message: string;
+    data: T;
 }
 
 let baseURL: string;

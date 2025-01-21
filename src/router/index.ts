@@ -125,11 +125,11 @@ const routes: RouteRecordRaw[] = [
             }
           },
           {
-            path: 'panel',
-            name: 'admin-panel',
-            component: () => import('../views/dashboard/admin/Panel.vue'),
+            path: 'system',
+            name: 'admin-system',
+            component: () => import('../views/dashboard/admin/System.vue'),
             meta: {
-              title: '面板管理',
+              title: '系统管理',
               requiresAdmin: true
             }
           }]

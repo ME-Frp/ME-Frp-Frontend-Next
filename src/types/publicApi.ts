@@ -29,10 +29,3 @@ export interface Sponsor {
     amount: string
     message: string
 }
-
-export interface Notice {
-    id: number
-    title: string
-    time: string
-    content: string
-}

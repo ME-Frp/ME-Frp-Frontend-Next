@@ -25,11 +25,19 @@
               :class="{ 'selected-node': formValue.nodeId === node.value }" class="node-item">
               <n-space vertical>
                 <div class="node-header">
-                  <n-space align="center">
-                    <n-tag type="info" size="small"># {{ node.id }}</n-tag>
-                    <n-text>{{ node.name }}</n-text>
+                  <n-space align="center" justify="space-between">
+                    <n-space align="center">
+                      <n-space :size="4">
+                        <n-tag type="info" size="small"># {{ node.id }}</n-tag>
+                        <n-tag :type="node.isOnline ? 'success' : 'error'" size="small">
+                          {{ node.isOnline ? '在线' : '离线' }}
+                        </n-tag>
+                      </n-space>
+                      <n-text>{{ node.name }}</n-text>
+                    </n-space>
                   </n-space>
                 </div>
+                <n-text depth="3" style="font-size: 13px;">{{ node.description }}</n-text>
                 <n-space vertical size="small">
                   <div class="info-item">
                     <span class="label">用户组:</span>
@@ -89,8 +97,13 @@
         </n-form-item>
 
         <n-form-item v-else label="远程端口" path="remotePort">
-          <n-input-number v-model:value="formValue.remotePort" :min="selectedNode?.portRange?.min || 1"
-            :max="selectedNode?.portRange?.max || 65535" placeholder="请输入远程端口" :disabled="!canEditConfig" />
+          <n-space align="center">
+            <n-input-number v-model:value="formValue.remotePort" :min="selectedNode?.portRange?.min || 1"
+              :max="selectedNode?.portRange?.max || 65535" placeholder="请输入远程端口" :disabled="!canEditConfig" />
+            <n-button size="medium" :loading="gettingFreePort" :disabled="!canEditConfig" @click="handleGetFreePort">
+              获取空闲端口
+            </n-button>
+          </n-space>
         </n-form-item>
 
         <n-divider>高级配置</n-divider>
@@ -137,17 +150,12 @@
       <!-- 修改提交按钮区域 -->
       <div class="submit-section">
         <n-space justify="end">
-          <n-button v-if="isMobile && currentStep === 1" 
-                   type="primary" 
-                   :disabled="!formValue.nodeId"
-                   @click="currentStep = 2">
+          <n-button v-if="isMobile && currentStep === 1" type="primary" :disabled="!formValue.nodeId"
+            @click="currentStep = 2">
             下一步
           </n-button>
-          <n-button v-if="!isMobile || currentStep === 2" 
-                   type="primary" 
-                   :loading="loading" 
-                   @click="handleCreate"
-                   :disabled="!canEditConfig">
+          <n-button v-if="!isMobile || currentStep === 2" type="primary" :loading="loading" @click="handleCreate"
+            :disabled="!canEditConfig">
             <template #icon>
               <n-icon>
                 <CloudUploadOutline />
@@ -202,6 +210,8 @@ const nodeOptions = ref<{
   id: number;
   name: string;
   hostname: string;
+  description: string;
+  isOnline: boolean;
   allowedProtocols: string[];
   allowGroups: { name: string; friendlyName: string }[];
   portRange: {
@@ -307,6 +317,8 @@ const fetchNodes = async () => {
           id: node.nodeId,
           name: node.name,
           hostname: node.hostname,
+          description: node.description,
+          isOnline: node.isOnline,
           allowedProtocols,
           allowGroups,
           portRange: {
@@ -348,7 +360,7 @@ const handleNodeChange = (value: number | null) => {
       formValue.value.nodeId = value
       formValue.value.type = null
       formValue.value.remotePort = null
-      
+
       // 在移动端选择节点后自动进入下一步
       if (isMobile.value) {
         currentStep.value = 2
@@ -471,6 +483,25 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 const currentStep = ref<number>(1)
+
+const gettingFreePort = ref(false)
+
+const handleGetFreePort = async () => {
+  if (!canEditConfig.value) return
+  try {
+    gettingFreePort.value = true
+    const res = await AuthApi.getFreeNodePort({ nodeId: formValue.value.nodeId! })
+    if (res.data.code === 200) {
+      formValue.value.remotePort = res.data.data
+    } else {
+      message.error(res.data.message || '获取空闲端口失败')
+    }
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '获取空闲端口失败')
+  } finally {
+    gettingFreePort.value = false
+  }
+}
 </script>
 
 <style lang="scss" scoped>
