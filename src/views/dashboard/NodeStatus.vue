@@ -48,7 +48,7 @@
             <div class="stat-item">
               <div class="stat-label">在线隧道</div>
               <div class="stat-value">
-                <NNumberAnimation :from="0" :to="node.onlineCount" :precision="2" />
+                <NNumberAnimation :from="0" :to="node.onlineCount" />
               </div>
             </div>
             <div class="stat-item">
