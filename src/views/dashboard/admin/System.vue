@@ -1,66 +1,69 @@
 <template>
-  <n-card title="系统管理">
-    <n-tabs type="line" animated @update:value="handleTabUpdate">
-      <n-tab-pane name="basic" tab="基础设置">
-        <n-form ref="basicFormRef" :model="basicForm" :rules="basicRules" label-placement="left" label-width="auto"
-          require-mark-placement="right-hanging">
-          <n-form-item label="公告内容" path="notice">
-            <n-input v-model:value="basicForm.notice" type="textarea" placeholder="请输入公告内容" :rows="15" />
-          </n-form-item>
-          <n-space justify="end">
-            <n-button type="primary" @click="handleSaveBasic">保存设置</n-button>
-          </n-space>
-        </n-form>
-      </n-tab-pane>
+  <div>
+    <NCard title="系统管理">
+      <NTabs type="line" animated @update:value="handleTabUpdate">
+        <NTabPane name="basic" tab="基础设置">
+          <NForm ref="basicFormRef" :model="basicForm" :rules="basicRules" label-placement="left" label-width="auto"
+            require-mark-placement="right-hanging">
+            <NFormItem label="公告内容" path="notice">
+              <NInput v-model:value="basicForm.notice" type="textarea" placeholder="请输入公告内容" :rows="15" />
+            </NFormItem>
+            <NSpace justify="end">
+              <NButton type="primary" @click="handleSaveBasic">保存设置</NButton>
+            </NSpace>
+          </NForm>
+        </NTabPane>
 
-      <n-tab-pane name="security" tab="安全设置">
-        <n-form ref="securityFormRef" :model="securityForm" :rules="securityRules" label-placement="left"
-          label-width="auto" require-mark-placement="right-hanging">
-          <n-form-item label="注册开关" path="allowRegister">
-            <n-switch v-model:value="securityForm.allowRegister" />
-          </n-form-item>
-          <n-form-item label="签到功能" path="allowSign">
-            <n-switch v-model:value="securityForm.allowSign" />
-          </n-form-item>
+        <NTabPane name="security" tab="安全设置">
+          <NForm ref="securityFormRef" :model="securityForm" :rules="securityRules" label-placement="left"
+            label-width="auto" require-mark-placement="right-hanging">
+            <NFormItem label="注册开关" path="allowRegister">
+              <NSwitch v-model:value="securityForm.allowRegister" />
+            </NFormItem>
+            <NFormItem label="签到功能" path="allowSign">
+              <NSwitch v-model:value="securityForm.allowSign" />
+            </NFormItem>
 
-          <n-space justify="end">
-            <n-button type="primary" @click="handleSaveSecurity">保存设置</n-button>
-          </n-space>
-        </n-form>
-      </n-tab-pane>
+            <NSpace justify="end">
+              <NButton type="primary" @click="handleSaveSecurity">保存设置</NButton>
+            </NSpace>
+          </NForm>
+        </NTabPane>
 
-      <n-tab-pane name="email" tab="邮件设置">
-        
-        <n-divider>发信设置</n-divider>
-        <n-form ref="emailFormRef" :model="emailForm" :rules="emailRules" label-placement="left" label-width="auto"
-          require-mark-placement="right-hanging">
-          <n-form-item label="SMTP 服务器" path="smtpServer">
-            <n-input v-model:value="emailForm.smtpServer" placeholder="请输入SMTP服务器地址" />
-          </n-form-item>
-          <n-form-item label="SMTP 端口" path="smtpPort">
-            <n-input-number v-model:value="emailForm.smtpPort" :min="1" :max="65535" />
-          </n-form-item>
-          <n-form-item label="发件人邮箱" path="smtpFrom">
-            <n-input v-model:value="emailForm.smtpFrom" placeholder="请输入发件人邮箱" />
-          </n-form-item>
-          <n-form-item label="SMTP 密码" path="smtpPassword">
-            <n-input v-model:value="emailForm.smtpPassword" type="password" placeholder="请输入 SMTP 密码"
-              show-password-on="click" />
-          </n-form-item>
-          <n-form-item label="使用 SSL" path="smtpSSL">
-            <n-switch v-model:value="emailForm.smtpSSL" />
-          </n-form-item>
-          <n-space justify="end" style="margin-top: 18px">
-            <n-button type="primary" @click="handleSaveEmail">保存设置</n-button>
-          </n-space>
-        </n-form>
-        <n-divider>禁用邮箱提供商</n-divider>
-        <n-space vertical>
-          <n-dynamic-tags v-model:value="bannedProviders" :render-tag="renderBannedProvider" @update:value="handleTagsUpdate" />
-        </n-space>
-      </n-tab-pane>
-    </n-tabs>
-  </n-card>
+        <NTabPane name="email" tab="邮件设置">
+
+          <NDivider>发信设置</NDivider>
+          <NForm ref="emailFormRef" :model="emailForm" :rules="emailRules" label-placement="left" label-width="auto"
+            require-mark-placement="right-hanging">
+            <NFormItem label="SMTP 服务器" path="smtpServer">
+              <NInput v-model:value="emailForm.smtpServer" placeholder="请输入SMTP服务器地址" />
+            </NFormItem>
+            <NFormItem label="SMTP 端口" path="smtpPort">
+              <NInputNumber v-model:value="emailForm.smtpPort" :min="1" :max="65535" />
+            </NFormItem>
+            <NFormItem label="发件人邮箱" path="smtpFrom">
+              <NInput v-model:value="emailForm.smtpFrom" placeholder="请输入发件人邮箱" />
+            </NFormItem>
+            <NFormItem label="SMTP 密码" path="smtpPassword">
+              <NInput v-model:value="emailForm.smtpPassword" type="password" placeholder="请输入 SMTP 密码"
+                show-password-on="click" />
+            </NFormItem>
+            <NFormItem label="使用 SSL" path="smtpSSL">
+              <NSwitch v-model:value="emailForm.smtpSSL" />
+            </NFormItem>
+            <NSpace justify="end" style="margin-top: 18px">
+              <NButton type="primary" @click="handleSaveEmail">保存设置</NButton>
+            </NSpace>
+          </NForm>
+          <NDivider>禁用邮箱提供商</NDivider>
+          <NSpace vertical>
+            <NDynamicTags v-model:value="bannedProviders" :render-tag="renderBannedProvider"
+              @update:value="handleTagsUpdate" />
+          </NSpace>
+        </NTabPane>
+      </NTabs>
+    </NCard>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -228,7 +231,7 @@ const handleSaveEmail = async () => {
 
 const handleTagsUpdate = async (tags: string[]) => {
   const newTag = tags.find(tag => !bannedProvidersOri.value.includes(tag))
-  
+
   if (newTag) {
     try {
       if (bannedProvidersOri.value.includes(newTag)) {

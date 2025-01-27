@@ -1,4 +1,4 @@
-@use '../variables.scss' as *;
+@use '../variables' as *;
 
 .navbar {
     position: sticky;
@@ -30,17 +30,43 @@
 .logo h2 {
     margin: 0;
     font-size: 1.1rem;
-    text-align: left;
+    font-weight: 600;
     background: $primary-gradient;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .desktop-menu {
     display: flex;
     gap: 8px;
     align-items: center;
+}
+
+.pc-navbar {
+    @media (max-width: 700px) {
+        display: none;
+    }
+}
+
+.mobile-navbar {
+    display: none;
+    @media (max-width: 700px) {
+        display: block;
+    }
+}
+
+.mobile-header {
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 /* 移动端适配 */
@@ -50,7 +76,25 @@
         gap: 8px;
     }
 
+    .logo {
+        flex: none;
+    }
+
     .logo h2 {
-        text-align: left;
+        background: $text-color;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        transform: translateZ(0);
+        backface-visibility: hidden;
+    }
+}
+
+.nav-links {
+    .n-button {
+        font-size: 0.95rem;
     }
 }

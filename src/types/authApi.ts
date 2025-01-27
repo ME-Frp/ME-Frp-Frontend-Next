@@ -50,3 +50,12 @@ export interface NodeUsage {
   onlineCount: number;
   isOnline: boolean;
 }
+
+export interface IcpDomain {
+  domain: string;
+  natureName: string;
+  username: string;
+  icpId: string;
+  unitName: string;
+}
+

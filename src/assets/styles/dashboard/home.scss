@@ -1,4 +1,4 @@
-@use '../variables.scss' as *;
+@use '../variables' as *;
 
 .home {
   .welcome-banner {
@@ -23,37 +23,42 @@
   }
 
   .markdown-content {
-    margin: 0;
-
-    a {
+    :deep(a) {
       color: $primary-color;
       text-decoration: none;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: $primary-hover;
+      }
     }
 
     :deep(h1) {
-      font-size: 1.5em;
+      font-size: 1.6em;
       margin: 0;
     }
 
     :deep(h2) {
-      font-size: 1.3em;
+      font-size: 1.4em;
       margin: 0;
     }
 
     :deep(h3) {
-      font-size: 1.1em;
+      font-size: 1.2em;
       margin: 0;
     }
 
     :deep(p) {
       margin: 0;
-      line-height: 1.5;
+      line-height: 1.6;
+      font-size: 1.1em;
     }
 
     :deep(ul),
     :deep(ol) {
       padding-left: 1.5em;
       margin: 0;
+      font-size: 1.1em;
     }
 
     :deep(li) {
@@ -65,6 +70,7 @@
       padding: 0.2em 0.4em;
       border-radius: 3px;
       font-family: monospace;
+      font-size: 1.1em;
     }
 
     :deep(pre) {
@@ -85,21 +91,14 @@
       padding-left: 1em;
       margin: 0;
       color: #666;
-    }
-
-    :deep(a) {
-      color: #18a058;
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
+      font-size: 1.1em;
     }
 
     :deep(table) {
       border-collapse: collapse;
       width: 100%;
       margin: 0;
+      font-size: 1.1em;
     }
 
     :deep(th),

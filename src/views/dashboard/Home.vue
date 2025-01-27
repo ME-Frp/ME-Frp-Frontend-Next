@@ -8,9 +8,9 @@
         <UserInfoGrid ref="userInfoGridRef" />
       </NCard>
 
-      <n-card title="系统公告" class="notice-card">
+      <NCard title="系统公告" class="notice-card">
           <div class="markdown-content" v-html="renderedNotice" />
-      </n-card>
+      </NCard>
     </div>
   </div>
 </template>
@@ -59,6 +59,6 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '../../assets/styles/dashboard/home.scss';
 </style>

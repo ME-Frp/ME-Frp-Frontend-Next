@@ -44,109 +44,133 @@
 
       <!-- 网格视图 -->
       <div v-if="viewMode === 'grid'" class="proxy-grid">
-        <NCard v-for="proxy in filteredProxies" :key="proxy.proxyId" class="proxy-card">
-          <div class="proxy-header">
-            <h3 class="proxy-title">
-              {{ proxy.proxyName }}
-            </h3>
-            <div class="status-tags">
-              <NTag :type="proxy.isOnline ? 'success' : 'error'" size="small">
-                {{ proxy.isOnline ? '在线' : '离线' }}
-              </NTag>
-              <NTag v-if="proxy.isBanned" type="error" size="small" style="margin-left: 4px">
-                已封禁
-              </NTag>
-              <NTag v-if="proxy.isDisabled" type="warning" size="small" style="margin-left: 4px">
-                已禁用
-              </NTag>
-            </div>
-          </div>
-          <div class="proxy-info">
-            <div class="info-item">
-              <span class="label">ID:</span>
-              <span class="value">
-                <NTag type="info" size="small"># {{ proxy.proxyId }}</NTag>
-              </span>
-            </div>
-            <div class="info-item">
-              <span class="label">协议:</span>
-              <span class="value">{{ proxy.proxyType.toUpperCase() }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">远程端口：</span>
-              <span class="value">{{ proxy.remotePort }}</span>
-            </div>
-            <div class="info-item" style="display: flex; align-items: flex-start">
-              <span class="label">节点：</span>
-              <span class="value" style="flex: 1; word-break: break-all;">{{ getNodeLabel(proxy.nodeId) }}</span>
-            </div>
-          </div>
-          <div class="proxy-actions">
-            <NDropdown :options="dropdownOptions(proxy)" @select="key => handleSelect(key, proxy)" trigger="click">
-              <NButton secondary size="small">
-                <template #icon>
-                  <NIcon>
-                    <BuildOutline />
-                  </NIcon>
-                </template>
-                更多
-              </NButton>
-            </NDropdown>
-          </div>
-        </NCard>
-      </div>
-
-      <!-- 列表视图 -->
-      <NTable v-else>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>名称</th>
-            <th>类型</th>
-            <th>远程端口</th>
-            <th>节点</th>
-            <th>状态</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="proxy in filteredProxies" :key="proxy.proxyId">
-            <td>
-              <NTag type="info" size="medium"># {{ proxy.proxyId }}</NTag>
-            </td>
-            <td>{{ proxy.proxyName }}</td>
-            <td>{{ proxy.proxyType.toUpperCase() }}</td>
-            <td>{{ proxy.remotePort }}</td>
-            <td>{{ getNodeLabel(proxy.nodeId) }}</td>
-            <td>
-              <div style="display: flex; gap: 4px;">
+        <template v-if="filteredProxies.length">
+          <NCard v-for="proxy in filteredProxies" :key="proxy.proxyId" class="proxy-card">
+            <div class="proxy-header">
+              <h3 class="proxy-title">
+                {{ proxy.proxyName }}
+              </h3>
+              <div class="status-tags">
                 <NTag :type="proxy.isOnline ? 'success' : 'error'" size="small">
                   {{ proxy.isOnline ? '在线' : '离线' }}
                 </NTag>
-                <NTag v-if="proxy.isBanned" type="error" size="small">
+                <NTag v-if="proxy.isBanned" type="error" size="small" style="margin-left: 4px">
                   已封禁
                 </NTag>
-                <NTag v-if="proxy.isDisabled" type="warning" size="small">
+                <NTag v-if="proxy.isDisabled" type="warning" size="small" style="margin-left: 4px">
                   已禁用
                 </NTag>
               </div>
-            </td>
-            <td>
-              <NDropdown :options="dropdownOptions(proxy)" @select="key => handleSelect(key, proxy)" trigger="click" placement="bottom">
-                <div style="display: flex; align-items: center;">
-                  <NButton text>
-                    <template #icon>
-                      <NIcon>
-                        <BuildOutline />
-                      </NIcon>
-                    </template>
-                  </NButton>
-                </div>
+            </div>
+            <div class="proxy-info">
+              <div class="info-item">
+                <span class="label">ID:</span>
+                <span class="value">
+                  <NTag type="info" size="small"># {{ proxy.proxyId }}</NTag>
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="label">协议:</span>
+                <span class="value">{{ proxy.proxyType.toUpperCase() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">远程端口：</span>
+                <span class="value">{{ proxy.remotePort }}</span>
+              </div>
+              <div class="info-item" style="display: flex; align-items: flex-start">
+                <span class="label">节点：</span>
+                <span class="value" style="flex: 1; word-break: break-all;">{{ getNodeLabel(proxy.nodeId) }}</span>
+              </div>
+            </div>
+            <div class="proxy-actions">
+              <NDropdown :options="dropdownOptions(proxy)" @select="key => handleSelect(key, proxy)" trigger="click">
+                <NButton secondary size="small">
+                  <template #icon>
+                    <NIcon>
+                      <BuildOutline />
+                    </NIcon>
+                  </template>
+                  更多
+                </NButton>
               </NDropdown>
-            </td>
-          </tr>
-        </tbody>
-      </NTable>
+            </div>
+          </NCard>
+        </template>
+        <NEmpty v-else description="暂无隧道" class="no-data">
+          <template #extra>
+            <NButton secondary @click="() => router.push('/dashboard/create-proxy')">
+              <template #icon>
+                <NIcon><AddOutline /></NIcon>
+              </template>
+              创建
+            </NButton>
+          </template>
+        </NEmpty>
+      </div>
+
+      <!-- 列表视图 -->
+      <template v-else>
+        <NTable v-if="filteredProxies.length">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>名称</th>
+              <th>类型</th>
+              <th>远程端口</th>
+              <th>节点</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="proxy in filteredProxies" :key="proxy.proxyId">
+              <td>
+                <NTag type="info" size="medium"># {{ proxy.proxyId }}</NTag>
+              </td>
+              <td>{{ proxy.proxyName }}</td>
+              <td>{{ proxy.proxyType.toUpperCase() }}</td>
+              <td>{{ proxy.remotePort }}</td>
+              <td>{{ getNodeLabel(proxy.nodeId) }}</td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <NTag :type="proxy.isOnline ? 'success' : 'error'" size="small">
+                    {{ proxy.isOnline ? '在线' : '离线' }}
+                  </NTag>
+                  <NTag v-if="proxy.isBanned" type="error" size="small">
+                    已封禁
+                  </NTag>
+                  <NTag v-if="proxy.isDisabled" type="warning" size="small">
+                    已禁用
+                  </NTag>
+                </div>
+              </td>
+              <td>
+                <NDropdown :options="dropdownOptions(proxy)" @select="key => handleSelect(key, proxy)" trigger="click" placement="bottom">
+                  <div style="display: flex; align-items: center;">
+                    <NButton text>
+                      <template #icon>
+                        <NIcon>
+                          <BuildOutline />
+                        </NIcon>
+                      </template>
+                    </NButton>
+                  </div>
+                </NDropdown>
+              </td>
+            </tr>
+          </tbody>
+        </NTable>
+        <NEmpty v-else description="暂无隧道" class="no-data">
+          <template #extra>
+            <NButton secondary @click="() => router.push('/dashboard/create-proxy')">
+              <template #icon>
+                <NIcon><AddOutline /></NIcon>
+              </template>
+              创建
+            </NButton>
+          </template>
+        </NEmpty>
+      </template>
     </NCard>
 
     <!-- 远程地址信息弹窗 -->
@@ -258,11 +282,11 @@
         </NFormItem>
         <NFormItem label="其他选项">
           <div style="display: flex; gap: 16px;">
-            <NSwitch v-model:value="editForm.useEncryption" :rail-style="railStyle">
+            <NSwitch v-model:value="editForm.useEncryption" :rail-style="switchButtonRailStyle">
               <template #checked>启用加密</template>
               <template #unchecked>禁用加密</template>
             </NSwitch>
-            <NSwitch v-model:value="editForm.useCompression" :rail-style="railStyle">
+            <NSwitch v-model:value="editForm.useCompression" :rail-style="switchButtonRailStyle">
               <template #checked>启用压缩</template>
               <template #unchecked>禁用压缩</template>
             </NSwitch>
@@ -303,11 +327,12 @@
 
 <script setup lang="ts">
 import { ref, computed, h } from 'vue'
-import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, NDivider, NSwitch, NText, NPopconfirm } from 'naive-ui'
-import { GridOutline, ListOutline, BuildOutline, RefreshOutline, SearchOutline, InformationCircleOutline, CreateOutline, TrashOutline, PowerOutline } from '@vicons/ionicons5'
+import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, NDivider, NSwitch, NText, NPopconfirm, NEmpty } from 'naive-ui'
+import { GridOutline, ListOutline, BuildOutline, RefreshOutline, SearchOutline, InformationCircleOutline, CreateOutline, TrashOutline, PowerOutline, AddOutline } from '@vicons/ionicons5'
 import { AuthApi } from '../../shared/api/auth'
 import type { Proxy, UserNodeName } from '../../types'
-import { themeColors } from '../../constants/theme'
+import { switchButtonRailStyle } from '../../constants/theme'
+import { useRouter } from 'vue-router'
 
 const message = useMessage()
 const loading = ref(false)
@@ -336,6 +361,7 @@ const editForm = ref({
   proxyType: '',
   nodeId: 0
 })
+const router = useRouter()
 
 const proxyTypeOptions = [
   { label: 'TCP', value: 'tcp' },
@@ -645,14 +671,6 @@ const handleSelect = (key: string, proxy: Proxy) => {
       handleDeleteClick(proxy)
       break
   }
-}
-
-const railStyle = ({ focused, checked }: { focused: boolean; checked: boolean }) => {
-  const style = {
-    background: checked ? themeColors.primary : undefined,
-    boxShadow: focused ? `0 0 0 2px ${themeColors.primarySuppl}` : undefined
-  }
-  return style
 }
 </script>
 

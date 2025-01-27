@@ -1,39 +1,44 @@
 <template>
-  <NLayout position="absolute">
-    <TopMenu />
-    <NLayout has-sider position="absolute" style="top: 64px;">
-      <NLayoutSider v-if="!isMobile" :native-scrollbar="false" bordered collapse-mode="width" :collapsed-width="64"
-        :width="240" :collapsed="collapsed" show-trigger @collapse="collapsed = true" @expand="collapsed = false">
-        <LeftMenu
-          :collapsed-width="64"
-          :collapsed-icon-size="22"
-        />
-      </NLayoutSider>
-      <NLayout :native-scrollbar="false">
-        <NLayoutContent style="padding: 16px;">
-          <RouterView v-slot="{ Component }">
-            <component :is="Component" />
-          </RouterView>
-        </NLayoutContent>
+  <div>
+    <NLayout position="absolute">
+      <NLayoutHeader bordered style="height: 64px; padding: 0">
+        <TopMenu />
+      </NLayoutHeader>
+      <NLayout has-sider position="absolute" style="top: 64px">
+        <NLayoutSider v-if="!isMobile" bordered collapse-mode="width" :collapsed-width="64" :width="240"
+          :collapsed="collapsed" :native-scrollbar="false" show-trigger @update:collapsed="collapsed = $event">
+          <LeftMenu />
+        </NLayoutSider>
+        <NLayout :native-scrollbar="false">
+          <NLayoutContent :style="contentStyle">
+            <RouterView v-slot="{ Component }">
+              <transition name="fade" mode="out-in" appear>
+                  <component :is="Component" />
+              </transition>
+            </RouterView>
+          </NLayoutContent>
+        </NLayout>
       </NLayout>
     </NLayout>
-  </NLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { NLayout, NLayoutContent, NLayoutSider } from 'naive-ui'
+import { RouterView } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { NLayout, NLayoutContent, NLayoutSider, NLayoutHeader } from 'naive-ui'
 import TopMenu from '../components/TopMenu.vue'
 import LeftMenu from '../components/LeftMenu.vue'
 
 const collapsed = ref(false)
 const isMobile = ref(window.innerWidth <= 700)
 
+const contentStyle = computed(() => ({
+  padding: isMobile.value ? '16px' : '24px'
+}))
+
 const handleResize = () => {
   isMobile.value = window.innerWidth <= 700
-  if (isMobile.value) {
-    collapsed.value = true
-  }
 }
 
 onMounted(() => {
@@ -43,4 +48,8 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
-</script> 
+</script>
+
+<style lang="scss">
+@use "../assets/styles/dashboard.scss";
+</style>

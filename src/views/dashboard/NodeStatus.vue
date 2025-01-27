@@ -22,11 +22,29 @@
         </div>
         <div class="overview-item">
           <div class="overview-label">总入站流量</div>
-          <div class="overview-value">{{ formatTraffic(totalTrafficIn) }}</div>
+          <div class="overview-value">
+            <NNumberAnimation 
+              :from="0" 
+              :to="getTrafficValue(totalTrafficIn)" 
+              :precision="2"
+              :active="true"
+              :duration="1500"
+            />
+            <span class="unit">{{ getTrafficUnit(totalTrafficIn) }}</span>
+          </div>
         </div>
         <div class="overview-item">
           <div class="overview-label">总出站流量</div>
-          <div class="overview-value">{{ formatTraffic(totalTrafficOut) }}</div>
+          <div class="overview-value">
+            <NNumberAnimation 
+              :from="0" 
+              :to="getTrafficValue(totalTrafficOut)" 
+              :precision="2"
+              :active="true"
+              :duration="1500"
+            />
+            <span class="unit">{{ getTrafficUnit(totalTrafficOut) }}</span>
+          </div>
         </div>
       </div>
 
@@ -79,6 +97,23 @@ const totalOnlineCount = computed(() => nodes.value.reduce((sum, node) => sum + 
 const totalTrafficIn = computed(() => nodes.value.reduce((sum, node) => sum + node.totalTrafficIn, 0))
 const totalTrafficOut = computed(() => nodes.value.reduce((sum, node) => sum + node.totalTrafficOut, 0))
 
+// 获取流量单位
+const getTrafficUnit = (bytes: number): string => {
+  if (bytes === 0) return 'B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return sizes[i]
+}
+
+// 获取转换后的流量值
+const getTrafficValue = (bytes: number): number => {
+  if (bytes === 0) return 0
+  const k = 1024
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2))
+}
+
 const formatTraffic = (bytes: number): string => {
   if (bytes === 0) return '0 B'
   const k = 1024
@@ -115,23 +150,33 @@ onUnmounted(() => {
 .overview {
   display: flex;
   flex-direction: row;
+  gap: 16px;
+  flex-wrap: wrap;
 
   .overview-item {
     text-align: left;
-    padding: 8px 12px;
+    padding: 16px;
     background: var(--n-color);
     border-radius: 8px;
 
     .overview-label {
       font-size: 14px;
-      color: #666;
-      margin-bottom: 4px;
+      color: var(--n-text-color-2);
+      margin-bottom: 8px;
     }
 
     .overview-value {
-      font-size: 20px;
+      font-size: 24px;
       font-weight: 500;
       color: var(--n-text-color);
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+
+      .unit {
+        font-size: 14px;
+        color: var(--n-text-color-2);
+      }
     }
   }
 }

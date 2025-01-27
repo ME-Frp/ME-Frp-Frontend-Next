@@ -17,7 +17,7 @@
         <h2 class="logo">ME Frp</h2>
       </div>
       <div class="right">
-        <NDropdown :options="options" @select="handleUserMenuSelect">
+        <NDropdown :options="options" @select="handleUserMenuSelect" trigger="hover">
           <NButton text>
             <template #icon>
               <NIcon>
@@ -30,15 +30,23 @@
       </div>
     </div>
   </NLayoutHeader>
+
+  <!-- 移动端菜单抽屉 -->
+  <NDrawer v-model:show="showMobileMenu" :width="280" placement="left">
+    <NDrawerContent title="菜单">
+      <LeftMenu @select="showMobileMenu = false" />
+    </NDrawerContent>
+  </NDrawer>
 </template>
 
 <script setup lang="ts">
-import { h, ref, inject, computed } from 'vue'
+import { h, ref, inject, computed, Ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { NLayoutHeader, NIcon, NButton, NDropdown, useDialog, useMessage, NSwitch, NPopover, NMenu, MenuOption } from 'naive-ui'
-import { PersonCircleOutline, LogOutOutline, SunnyOutline, MoonOutline, MenuOutline } from '@vicons/ionicons5'
-import { themeColors } from '../constants/theme'
+import { NLayoutHeader, NIcon, NButton, NDropdown, useDialog, useMessage, NSwitch, NPopover, NMenu, MenuOption, NDrawer, NDrawerContent } from 'naive-ui'
+import { PersonCircleOutline, LogOutOutline, SunnyOutline, MoonOutline, MenuOutline, HomeOutline } from '@vicons/ionicons5'
+import { switchButtonRailStyle } from '../constants/theme'
 import { getMenuOptions, renderIcon } from '../shared/menuOptions'
+import LeftMenu from './LeftMenu.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -47,23 +55,13 @@ const menuOptions = ref(getMenuOptions())
 const dialog = useDialog()
 const message = useMessage()
 const username = localStorage.getItem('username')
+const showMobileMenu = ref(false)
+const isMobile = ref(window.innerWidth <= 700)
+
 // 注入主题相关函数
-const { toggleTheme } = inject('theme') as { theme: any, toggleTheme: (isDark: boolean) => void }
-
-// 当前主题状态
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-const isDark = ref(localStorage.getItem('theme') ? 
-  localStorage.getItem('theme') === 'dark' : 
-  prefersDark
-)
-
-// Switch 按钮样式
-const railStyle = ({ focused, checked }: { focused: boolean; checked: boolean }) => {
-  const style = {
-    background: checked ? themeColors.primary : undefined,
-    boxShadow: focused ? `0 0 0 2px ${themeColors.primarySuppl}` : undefined
-  }
-  return style
+const { isDarkMode, toggleTheme } = inject('theme') as {
+  isDarkMode: Ref<boolean>
+  toggleTheme: () => void
 }
 
 // 渲染下拉菜单中的主题切换选项
@@ -75,9 +73,9 @@ const renderThemeOption = () => {
       style: 'flex: 1; margin-right: 12px; font-size: 14px;' 
     }, '主题切换'),
     h(NSwitch, {
-      value: isDark.value,
+      value: isDarkMode.value,
       'onUpdate:value': handleThemeChange,
-      railStyle,
+      railStyle: switchButtonRailStyle,
       size: 'small'
     }, {
       checked: () => h(NIcon, null, { default: () => h(MoonOutline) }),
@@ -97,6 +95,15 @@ const options = [
     key: 'd1'
   },
   {
+    label: '返回首页',
+    key: 'home',
+    icon: renderIcon(HomeOutline)
+  },
+  {
+    type: 'divider',
+    key: 'd2'
+  },
+  {
     label: '个人资料',
     key: 'profile',
     icon: renderIcon(PersonCircleOutline)
@@ -109,9 +116,8 @@ const options = [
 ]
 
 // 处理主题切换
-const handleThemeChange = (value: boolean) => {
-  isDark.value = value
-  toggleTheme(value)
+const handleThemeChange = () => {
+  toggleTheme()
 }
 
 const handleUserMenuSelect = (key: string) => {
@@ -127,22 +133,41 @@ const handleUserMenuSelect = (key: string) => {
           localStorage.removeItem('username')
           localStorage.removeItem('group')
           message.success('已退出登录')
-          router.push('/auth/login')
+          router.push('/auth/login').then(() => {
+            window.location.reload()
+          })
         }
       })
       break
     case 'profile':
       router.push('/dashboard/profile')
       break
+    case 'home':
+      router.push('/')
+      break
   }
 }
+
 const handleMenuSelect = (_: any, item: MenuOption) => {
   router.push(item.link as string)
   showMenu.value = false
 }
+
 const currentKey = computed(() => {
   const key = route.path.replace('/dashboard/', '').replace('/', '-')
   if (key === 'home') return 'dashboard-home'
   return key
+})
+
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 700
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
 })
 </script>

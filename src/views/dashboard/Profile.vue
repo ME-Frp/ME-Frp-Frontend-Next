@@ -12,7 +12,7 @@
           账户密码用于登录，请妥善保管，一经泄露请及时重置。注意，更改密码后，访问密钥也会同时更改。
         </div>
         <div class="security-value">
-          <NButton size="medium" type="error" class="action-btn" @click="showPasswordResetModal">
+          <NButton size="medium" type="warning" secondary class="action-btn" @click="showPasswordResetModal">
             <template #icon>
               <NIcon>
                 <KeyOutline />
@@ -32,7 +32,7 @@
         </div>
         <div class="security-value">
           <div class="button-group">
-            <NButton size="medium" type="error" class="action-btn" @click="showTokenResetConfirm">
+            <NButton size="medium" type="warning" secondary class="action-btn" @click="showTokenResetConfirm">
               <template #icon>
                 <NIcon>
                   <RefreshOutline />
@@ -40,7 +40,7 @@
               </template>
               重置访问密钥
             </NButton>
-            <NButton size="medium" type="warning" class="action-btn" @click="copyToken">
+            <NButton size="medium" secondary class="action-btn" @click="copyToken">
               <template #icon>
                 <NIcon>
                   <CopyOutline />
@@ -51,32 +51,80 @@
           </div>
         </div>
       </div>
-      <NDivider /><div class="security-item">
+      <NDivider />
+      <div class="security-item">
         <div class="security-label">
           <span>域名白名单</span>
         </div>
         <div class="security-desc">
-          这里是用于 “中国大陆(不含港澳台)” 节点创建 HTTP(S) 隧道的备案域名白名单；非中国大陆节点建站，域名无需过白。
+          这里是用于 "中国大陆(不含港澳台)" 节点创建 HTTP/HTTPS 隧道的域名白名单。<br>
+          您的域名需要拥有工业和信息化部的备案记录才可添加。非中国大陆节点建站，域名无需过白。<br>
+          在填写时, 请直接填写根域名, 例如: mefrp.com, 不要填写 www.mefrp.com 等子域名。<br>
+          <strong>注意: ME Frp 不提供任何的域名备案服务, 请自行根据服务商要求备案。</strong>
         </div>
-        <div class="security-value">
-          
-        </div>
+        <NSpace vertical>
+          <NButton secondary @click="showAddDomainModal" style="margin-bottom: 12px">
+            <template #icon>
+              <NIcon>
+                <AddOutline />
+              </NIcon>
+            </template>
+            添加域名
+          </NButton>
+          <NSpace vertical v-if="icpDomains.length">
+            <NCard v-for="domain in icpDomains" :key="domain.domain" size="small" class="domaiNCard">
+              <NSpace justify="space-between" align="center" style="width: 100%; margin: 8px;">
+                <NSpace vertical size="small">
+                  <NText strong>{{ domain.domain }}</NText>
+                  <NSpace size="small">
+                    <NTag size="small" type="success">{{ domain.icpId }}</NTag>
+                    <NTag size="small" type="info">
+                      {{ domain.unitName }} - {{ domain.natureName }}
+                    </NTag>
+                  </NSpace>
+                </NSpace>
+                <NPopconfirm
+                  @positive-click="handleDeleteDomain(domain.domain)"
+                  positive-text="确定"
+                  negative-text="取消"
+                >
+                  <template #trigger>
+                    <NButton size="medium" type="error" secondary style="margin-right: 12px">
+                      <template #icon>
+                        <NIcon>
+                          <TrashOutline />
+                        </NIcon>
+                      </template>
+                      删除
+                    </NButton>
+                  </template>
+                  确定要删除域名 {{ domain.domain }} 吗？
+                </NPopconfirm>
+              </NSpace>
+            </NCard>
+          </NSpace>
+          <NEmpty v-else description="暂无已添加的域名" />
+        </NSpace>
       </div>
     </NCard>
-    <NModal v-model:show="showTokenResetModal" preset="dialog" type="warning" title="重置访问密钥" positive-text="确认" negative-text="取消"
-      @positive-click="handleTokenReset" @negative-click="closeModal">
+
+    <NModal v-model:show="showTokenResetModal" preset="dialog" type="warning" title="重置访问密钥" positive-text="确认"
+      negative-text="取消" @positive-click="handleTokenReset" @negative-click="closeModal">
       <div>重置后原有密钥将失效，请及时更新配置。是否继续？</div>
     </NModal>
     <NModal v-model:show="showPasswordModal" preset="card" title="重置密码" style="width: 400px">
       <NForm ref="formRef" :model="passwordForm" :rules="rules">
         <NFormItem label="原密码" path="oldPassword">
-          <NInput v-model:value="passwordForm.oldPassword" type="password" placeholder="请输入原密码" show-password-on="click" />
+          <NInput v-model:value="passwordForm.oldPassword" type="password" placeholder="请输入原密码"
+            show-password-on="click" />
         </NFormItem>
         <NFormItem label="新密码" path="newPassword">
-          <NInput v-model:value="passwordForm.newPassword" type="password" placeholder="请输入新密码" show-password-on="click" />
+          <NInput v-model:value="passwordForm.newPassword" type="password" placeholder="请输入新密码"
+            show-password-on="click" />
         </NFormItem>
         <NFormItem label="确认密码" path="confirmPassword">
-          <NInput v-model:value="passwordForm.confirmPassword" type="password" placeholder="请再次输入新密码" show-password-on="click" />
+          <NInput v-model:value="passwordForm.confirmPassword" type="password" placeholder="请再次输入新密码"
+            show-password-on="click" />
         </NFormItem>
       </NForm>
       <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px">
@@ -84,22 +132,55 @@
         <NButton type="primary" :loading="loading" @click="handlePasswordReset">确认</NButton>
       </div>
     </NModal>
+    <NModal v-model:show="showDomainModal" preset="card" title="添加域名" style="width: 400px">
+      <NForm ref="domainFormRef" :model="domainForm">
+        <NFormItem label="域名" path="domain">
+          <NInput v-model:value="domainForm.domain" placeholder="请输入需要添加的域名" />
+        </NFormItem>
+      </NForm>
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px">
+        <NButton @click="closeDomainModal">取消</NButton>
+        <NButton type="primary" :loading="domainLoading" @click="handleAddDomain">确认</NButton>
+      </div>
+    </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { NCard, NButton, NModal, useMessage, NIcon, NDivider, NForm, NFormItem, NInput } from 'naive-ui'
-import { RefreshOutline, CopyOutline, KeyOutline } from '@vicons/ionicons5'
+import { ref, onMounted } from 'vue'
+import {
+  NCard,
+  NButton,
+  NModal,
+  useMessage,
+  NIcon,
+  NDivider,
+  NForm,
+  NFormItem,
+  NInput,
+  NSpace,
+  NText,
+  NTag,
+  NEmpty,
+  NPopconfirm
+} from 'naive-ui'
+import { RefreshOutline, CopyOutline, KeyOutline, TrashOutline, AddOutline } from '@vicons/ionicons5'
 import type { FormInst } from 'naive-ui'
 import UserInfoGrid from '../../components/UserInfoGrid.vue'
 import { AuthApi } from '../../shared/api/auth'
+import { IcpDomain } from 'src/types'
 
 const message = useMessage()
 const showTokenResetModal = ref(false)
 const showPasswordModal = ref(false)
 const loading = ref(false)
 const formRef = ref<FormInst | null>(null)
+const showDomainModal = ref(false)
+const domainLoading = ref(false)
+const icpDomains = ref<IcpDomain[]>([])
+const domainForm = ref({
+  domain: ''
+})
 
 const passwordForm = ref({
   oldPassword: '',
@@ -205,8 +286,84 @@ const handleTokenReset = async () => {
     showTokenResetModal.value = false
   }
 }
+
+const showAddDomainModal = () => {
+  showDomainModal.value = true
+}
+
+const closeDomainModal = () => {
+  showDomainModal.value = false
+  domainForm.value.domain = ''
+}
+
+const loadIcpDomains = async () => {
+  try {
+    const response = await AuthApi.getIcpDomains()
+    if (response.data.code === 200) {
+      icpDomains.value = response.data.data || []
+    } else {
+      message.error(response.data.message || '获取域名列表失败')
+    }
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '获取域名列表失败')
+    icpDomains.value = []
+  }
+}
+
+const handleAddDomain = async () => {
+  if (!domainForm.value.domain) {
+    message.error('请输入域名')
+    return
+  }
+
+  domainLoading.value = true
+  try {
+    const response = await AuthApi.addIcpDomain({ domain: domainForm.value.domain })
+    if (response.data.code === 200) {
+      message.success('添加成功')
+      await loadIcpDomains()
+      closeDomainModal()
+    } else {
+      message.error(response.data.message || '添加失败')
+    }
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '添加失败')
+  } finally {
+    domainLoading.value = false
+  }
+}
+
+const handleDeleteDomain = async (domain: string) => {
+  try {
+    const response = await AuthApi.deleteIcpDomain({ domain })
+    if (response.data.code === 200) {
+      message.success('删除成功')
+      await loadIcpDomains()
+    } else {
+      message.error(response.data.message || '删除失败')
+    }
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '删除失败')
+  }
+}
+
+onMounted(() => {
+  loadIcpDomains()
+})
 </script>
 
 <style lang="scss" scoped>
 @use '../../assets/styles/dashboard/profile.scss';
+
+.domaiNCard {
+  width: 100%;
+
+  :deep(.NCard__content) {
+    padding: 8px 12px;
+  }
+
+  &:hover {
+    background-color: var(--n-color-hover);
+  }
+}
 </style>

@@ -1,141 +1,101 @@
 <template>
-  <n-card title="隧道管理">
-    <n-space vertical :size="12">
-      <n-input
-        v-model:value="filters.search"
-        placeholder="搜索隧道名、用户名或绑定域名"
-        clearable
-        style="width: 100%"
-        @update:value="handleSearch"
-      />
-      <n-select
-        v-model:value="filters.nodeId"
-        :options="nodeOptions"
-        placeholder="节点"
-        clearable
-        style="width: 100%"
-        @update:value="handleFilterChange"
-      />
-      <n-space>
-        <n-select
-          v-model:value="filters.proxyType"
-          :options="proxyTypeOptions"
-          placeholder="协议"
-          clearable
-          style="width: 120px"
-          @update:value="handleFilterChange"
-        />
-        <n-select
-          v-model:value="filters.isOnline"
-          :options="onlineOptions"
-          placeholder="在线状态"
-          clearable
-          style="width: 120px"
-          @update:value="handleFilterChange"
-        />
-        <n-select
-          v-model:value="filters.isBanned"
-          :options="banOptions"
-          placeholder="封禁状态"
-          clearable
-          style="width: 120px"
-          @update:value="handleFilterChange"
-        />
-      </n-space>
+  <div>
+    <NCard title="隧道管理">
+      <NSpace vertical :size="12">
+        <NInput v-model:value="filters.search" placeholder="搜索隧道名、用户名或绑定域名" clearable style="width: 100%"
+          @update:value="handleSearch" />
+        <NSelect v-model:value="filters.nodeId" :options="nodeOptions" placeholder="节点" clearable style="width: 100%"
+          @update:value="handleFilterChange" />
+        <NSpace>
+          <NSelect v-model:value="filters.proxyType" :options="proxyTypeOptions" placeholder="协议" clearable
+            style="width: 120px" @update:value="handleFilterChange" />
+          <NSelect v-model:value="filters.isOnline" :options="onlineOptions" placeholder="在线状态" clearable
+            style="width: 120px" @update:value="handleFilterChange" />
+          <NSelect v-model:value="filters.isBanned" :options="banOptions" placeholder="封禁状态" clearable
+            style="width: 120px" @update:value="handleFilterChange" />
+        </NSpace>
 
-      <n-data-table
-        remote
-        :columns="columns"
-        :data="proxies"
-        :loading="loading"
-        :pagination="pagination"
-        @update:page="handlePageChange"
-      />
-    </n-space>
-  </n-card>
+        <NDataTable remote :columns="columns" :data="proxies" :loading="loading" :pagination="pagination"
+          @update:page="handlePageChange" />
+      </NSpace>
+    </NCard>
 
-  <!-- 编辑隧道弹窗 -->
-  <n-modal v-model:show="showEditModal" preset="dialog" title="编辑隧道" style="width: 600px">
-    <n-layout :native-scrollbar="false" style="max-height: 70vh;">
-      <n-form
-        ref="editFormRef"
-        :model="editForm"
-        :rules="rules"
-        label-placement="left"
-        label-width="120"
-        require-mark-placement="right-hanging"
-        size="medium"
-        style="padding-top: 12px;"
-      >
-        <n-form-item label="隧道名称" path="proxyName">
-          <n-input v-model:value="editForm.proxyName" placeholder="请输入隧道名称" />
-        </n-form-item>
-        <n-form-item label="节点" path="nodeId">
-          <n-select v-model:value="editForm.nodeId" :options="nodeOptions" placeholder="请选择节点" />
-        </n-form-item>
-        <n-form-item label="本地地址" path="localIp">
-          <n-input v-model:value="editForm.localIp" placeholder="请输入本地地址" />
-        </n-form-item>
-        <n-form-item label="本地端口" path="localPort">
-          <n-input-number v-model:value="editForm.localPort" :min="1" :max="65535" placeholder="请输入本地端口" />
-        </n-form-item>
-        <n-form-item label="协议类型" path="proxyType">
-          <n-select v-model:value="editForm.proxyType" :options="proxyTypeOptions" placeholder="请选择协议类型" />
-        </n-form-item>
-        <n-form-item v-if="editForm.proxyType === 'http' || editForm.proxyType === 'https'" label="绑定域名" path="domain">
-          <n-dynamic-tags v-model:value="domainTags" :render-tag="renderDomainTag" />
-        </n-form-item>
-        <n-form-item v-else label="远程端口" path="remotePort">
-          <n-input-number v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
-        </n-form-item>
+    <!-- 编辑隧道弹窗 -->
+    <NModal v-model:show="showEditModal" preset="dialog" title="编辑隧道" style="width: 600px">
+      <NLayout :native-scrollbar="false" style="max-height: 70vh;">
+        <NForm ref="editFormRef" :model="editForm" :rules="rules" label-placement="left" label-width="120"
+          require-mark-placement="right-hanging" size="medium" style="padding-top: 12px;">
+          <NFormItem label="隧道名称" path="proxyName">
+            <NInput v-model:value="editForm.proxyName" placeholder="请输入隧道名称" />
+          </NFormItem>
+          <NFormItem label="节点" path="nodeId">
+            <NSelect v-model:value="editForm.nodeId" :options="nodeOptions" placeholder="请选择节点" />
+          </NFormItem>
+          <NFormItem label="本地地址" path="localIp">
+            <NInput v-model:value="editForm.localIp" placeholder="请输入本地地址" />
+          </NFormItem>
+          <NFormItem label="本地端口" path="localPort">
+            <NInputNumber v-model:value="editForm.localPort" :min="1" :max="65535" placeholder="请输入本地端口" />
+          </NFormItem>
+          <NFormItem label="协议类型" path="proxyType">
+            <NSelect v-model:value="editForm.proxyType" :options="proxyTypeOptions" placeholder="请选择协议类型" />
+          </NFormItem>
+          <NFormItem v-if="editForm.proxyType === 'http' || editForm.proxyType === 'https'" label="绑定域名"
+            path="domain">
+            <NDynamicTags v-model:value="domainTags" :render-tag="renderDomainTag" />
+          </NFormItem>
+          <NFormItem v-else label="远程端口" path="remotePort">
+            <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
+          </NFormItem>
 
-        <n-divider>高级配置</n-divider>
+          <NDivider>高级配置</NDivider>
 
-        <n-form-item label="访问密钥" path="accessKey">
-          <n-input v-model:value="editForm.accessKey" placeholder="请输入访问密钥" />
-        </n-form-item>
-        <n-form-item label="Host Header Rewrite" path="hostHeaderRewrite">
-          <n-input v-model:value="editForm.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值" />
-        </n-form-item>
-        <n-form-item label="X-From-Where" path="headerXFromWhere">
-          <n-input v-model:value="editForm.headerXFromWhere" placeholder="请输入 X-From-Where 请求头值" />
-        </n-form-item>
-        <n-form-item label="Proxy Protocol" path="proxyProtocolVersion">
-          <n-select v-model:value="editForm.proxyProtocolVersion" :options="[
-            { label: '不启用', value: '' },
-            { label: 'v1', value: 'v1' },
-            { label: 'v2', value: 'v2' }
-          ]" placeholder="Proxy Protocol Version" />
-        </n-form-item>
-        <n-form-item label="其他选项">
-          <div style="display: flex; gap: 16px;">
-            <n-switch v-model:value="editForm.useEncryption" :rail-style="railStyle">
-              <template #checked>启用加密</template>
-              <template #unchecked>禁用加密</template>
-            </n-switch>
-            <n-switch v-model:value="editForm.useCompression" :rail-style="railStyle">
-              <template #checked>启用压缩</template>
-              <template #unchecked>禁用压缩</template>
-            </n-switch>
-          </div>
-        </n-form-item>
-      </n-form>
-    </n-layout>
-    <template #action>
-      <n-button size="small" @click="showEditModal = false">取消</n-button>
-      <n-button size="small" type="primary" :loading="submitting" @click="handleEditSubmit">确定</n-button>
-    </template>
-  </n-modal>
+          <NFormItem label="访问密钥" path="accessKey">
+            <NInput v-model:value="editForm.accessKey" placeholder="请输入访问密钥" />
+          </NFormItem>
+          <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">
+            <NInput v-model:value="editForm.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值" />
+          </NFormItem>
+          <NFormItem label="X-From-Where" path="headerXFromWhere">
+            <NInput v-model:value="editForm.headerXFromWhere" placeholder="请输入 X-From-Where 请求头值" />
+          </NFormItem>
+          <NFormItem label="Proxy Protocol" path="proxyProtocolVersion">
+            <NSelect v-model:value="editForm.proxyProtocolVersion" :options="[
+              { label: '不启用', value: '' },
+              { label: 'v1', value: 'v1' },
+              { label: 'v2', value: 'v2' }
+            ]" placeholder="Proxy Protocol Version" />
+          </NFormItem>
+          <NFormItem label="其他选项">
+            <div style="display: flex; gap: 16px;">
+              <NSwitch v-model:value="editForm.useEncryption" :rail-style="switchButtonRailStyle">
+                <template #checked>启用加密</template>
+                <template #unchecked>禁用加密</template>
+              </NSwitch>
+              <NSwitch v-model:value="editForm.useCompression" :rail-style="switchButtonRailStyle">
+                <template #checked>启用压缩</template>
+                <template #unchecked>禁用压缩</template>
+              </NSwitch>
+            </div>
+          </NFormItem>
+        </NForm>
+      </NLayout>
+      <template #action>
+        <NButton size="small" @click="showEditModal = false">取消</NButton>
+        <NButton size="small" type="primary" :loading="submitting" @click="handleEditSubmit">确定</NButton>
+      </template>
+    </NModal>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, h } from 'vue'
-import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NInput, NSelect, useMessage, NTag, NModal, NForm, NFormItem, NInputNumber, NDynamicTags, NDivider, NSwitch } from 'naive-ui'
+import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NInput, NSelect, useMessage, NTag, NModal, NForm, NFormItem, NInputNumber, NDynamicTags, NDivider, NSwitch, NLayout, NLayoutContent } from 'naive-ui'
 import type { DataTableColumns, SelectOption, FormRules, FormInst } from 'naive-ui'
 import { AdminApi } from '../../../shared/api/admin'
 import { AuthApi } from '../../../shared/api/auth'
 import type { Proxy, FilterProxiesArgs, UserNode } from '../../../types'
-import { themeColors } from '../../../constants/theme'
+import { switchButtonRailStyle } from '../../../constants/theme'
 
 const message = useMessage()
 const loading = ref(false)
@@ -336,7 +296,7 @@ const rules: FormRules = {
 
 const renderStatus = (row: Proxy) => {
   const tags = []
-  
+
   // 在线状态标签
   tags.push(h(
     NTag,
@@ -347,7 +307,7 @@ const renderStatus = (row: Proxy) => {
     },
     { default: () => row.isOnline ? '在线' : '离线' }
   ))
-  
+
   // 封禁状态标签
   if (row.isBanned) {
     tags.push(h(
@@ -372,7 +332,7 @@ const renderStatus = (row: Proxy) => {
       { default: () => '已禁用' }
     ))
   }
-  
+
   return h(NSpace, { size: 4 }, { default: () => tags })
 }
 
@@ -437,7 +397,7 @@ const columns: DataTableColumns<Proxy> = [
           .map(domain => domain.trim())
           .filter(Boolean)
         return h(NSpace, { vertical: true, size: 4 }, {
-          default: () => domains.map(domain => 
+          default: () => domains.map(domain =>
             h(NTag, {
               type: 'info',
               style: 'max-width: 100%; word-break: break-all; cursor: pointer',
@@ -500,26 +460,6 @@ const columns: DataTableColumns<Proxy> = [
             h(
               NPopconfirm,
               {
-                onPositiveClick: () => handleToggleBan(row),
-                positiveText: '确定',
-                negativeText: '取消'
-              },
-              {
-                default: () => row.isBanned ? '确认解封此隧道？' : '确认封禁此隧道？',
-                trigger: () =>
-                  h(
-                    NButton,
-                    {
-                      size: 'small',
-                      type: row.isBanned ? 'success' : 'warning',
-                    },
-                    { default: () => row.isBanned ? '解封' : '封禁' }
-                  )
-              }
-            ),
-            h(
-              NPopconfirm,
-              {
                 onPositiveClick: () => handleToggleProxy(row),
                 positiveText: '确定',
                 negativeText: '取消'
@@ -531,6 +471,7 @@ const columns: DataTableColumns<Proxy> = [
                     NButton,
                     {
                       size: 'small',
+                      secondary: true,
                       type: row.isDisabled ? 'success' : 'warning',
                     },
                     { default: () => row.isDisabled ? '启用' : '禁用' }
@@ -551,10 +492,31 @@ const columns: DataTableColumns<Proxy> = [
                     NButton,
                     {
                       size: 'small',
+                      secondary: true,
                       type: 'info',
                       disabled: !row.isOnline
                     },
                     { default: () => '下线' }
+                  )
+              }
+            ),
+            h(
+              NPopconfirm,
+              {
+                onPositiveClick: () => handleToggleBan(row),
+                positiveText: '确定',
+                negativeText: '取消'
+              },
+              {
+                default: () => row.isBanned ? '确认解封此隧道？' : '确认封禁此隧道？',
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: row.isBanned ? 'success' : 'warning',
+                    },
+                    { default: () => row.isBanned ? '解封' : '封禁' }
                   )
               }
             ),
@@ -772,12 +734,4 @@ const renderDomainTag = (tag: string) => {
     { default: () => tag }
   )
 }
-
-const railStyle = ({ focused, checked }: { focused: boolean; checked: boolean }) => {
-  const style = {
-    background: checked ? themeColors.primary : undefined,
-    boxShadow: focused ? `0 0 0 2px ${themeColors.primarySuppl}` : undefined
-  }
-  return style
-}
-</script> 
+</script>

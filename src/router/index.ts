@@ -135,6 +135,24 @@ const routes: RouteRecordRaw[] = [
           }]
       },
     ]
+  },
+  {
+    path: '/terms',
+    name: 'Terms',
+    component: () => import('../views/Terms.vue'),
+    meta: { title: '服务条款' }
+  },
+  {
+    path: '/content',
+    name: 'Content',
+    component: () => import('../views/Content.vue'),
+    meta: { title: '内容策略' }
+  },
+  {
+    path: '/privacy',
+    name: 'Privacy',
+    component: () => import('../views/Privacy.vue'),
+    meta: { title: '隐私政策' }
   }
 ]
 

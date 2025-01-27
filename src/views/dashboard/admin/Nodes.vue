@@ -1,166 +1,139 @@
 <template>
-  <n-card title="节点管理">
-    <n-space vertical :size="12">
-      <n-space>
-        <n-input
-          v-model:value="searchKeyword"
-          placeholder="搜索节点名称或主机名"
-          style="width: 200px"
-          clearable
-          @update:value="handleSearch"
-        />
-        <n-select
-          v-model:value="selectedOnline"
-          placeholder="在线状态"
-          :options="onlineOptions"
-          style="width: 120px"
-          clearable
-          @update:value="handleFilterChange"
-        />
-        <n-select
-          v-model:value="selectedStatus"
-          placeholder="节点状态"
-          :options="statusOptions"
-          style="width: 120px"
-          clearable
-          @update:value="handleFilterChange"
-        />
-        <n-button type="primary" @click="showAddModal = true">
-          添加节点
-        </n-button>
-      </n-space>
+  <div>
+    <NCard title="节点管理">
+      <NSpace vertical :size="12">
+        <NSpace>
+          <NInput v-model:value="searchKeyword" placeholder="搜索节点名称或主机名" style="width: 200px" clearable
+            @update:value="handleSearch" />
+          <NSelect v-model:value="selectedOnline" placeholder="在线状态" :options="onlineOptions" style="width: 120px"
+            clearable @update:value="handleFilterChange" />
+          <NSelect v-model:value="selectedStatus" placeholder="节点状态" :options="statusOptions" style="width: 120px"
+            clearable @update:value="handleFilterChange" />
+          <NButton type="primary" @click="showAddModal = true">
+            添加节点
+          </NButton>
+        </NSpace>
 
-      <n-data-table remote :columns="columns" :data="nodes" :loading="loading" :pagination="pagination"
-        @update:page="handlePageChange" />
-    </n-space>
+        <NDataTable remote :columns="columns" :data="nodes" :loading="loading" :pagination="pagination"
+          @update:page="handlePageChange" />
+      </NSpace>
 
-    <n-modal v-model:show="showAddModal" preset="card" title="添加节点" style="width: 600px;">
-      <n-form ref="formRef" :model="formModel" :rules="rules" label-placement="left" label-width="auto"
-        require-mark-placement="right-hanging">
-        <n-form-item label="节点名称" path="name">
-          <n-input v-model:value="formModel.name" placeholder="请输入节点名称" />
-        </n-form-item>
-        <n-form-item label="主机名" path="hostname">
-          <n-input v-model:value="formModel.hostname" placeholder="请输入主机名" />
-        </n-form-item>
-        <n-form-item label="节点描述" path="description">
-          <n-input v-model:value="formModel.description" type="textarea" placeholder="请输入节点描述" />
-        </n-form-item>
-        <n-form-item label="Token" path="token">
-          <n-input v-model:value="formModel.token" placeholder="请输入Token" />
-        </n-form-item>
-        <n-form-item label="服务端口" path="servicePort">
-          <n-input-number v-model:value="formModel.servicePort" placeholder="请输入服务端口" />
-        </n-form-item>
-        <n-form-item label="管理端口" path="adminPort">
-          <n-input-number v-model:value="formModel.adminPort" placeholder="请输入管理端口" />
-        </n-form-item>
-        <n-form-item label="管理密码" path="adminPass">
-          <n-input v-model:value="formModel.adminPass" type="password" show-password-on="click" placeholder="请输入管理密码" />
-        </n-form-item>
-        <n-form-item label="允许用户组" path="allowGroup">
-          <n-button-group>
-            <n-button
-              v-for="group in groupOptions"
-              :key="group.value"
-              :type="formModel.allowGroup.includes(group.value) ? 'primary' : 'default'"
-              :disabled="group.value === 'admin'"
-              @click="toggleGroup(group.value)"
-            >
-              {{ group.label }}
-            </n-button>
-          </n-button-group>
-        </n-form-item>
-        <n-form-item label="允许端口" path="allowPort">
-          <n-input v-model:value="formModel.allowPort" placeholder="请输入允许的端口范围，如: 10000-20000" />
-        </n-form-item>
-        <n-form-item label="允许协议" path="allowType">
-          <n-button-group>
-            <n-button
-              v-for="protocol in protocolOptions"
-              :key="protocol.value"
-              :type="formModel.allowType.includes(protocol.value) ? 'primary' : 'default'"
-              @click="toggleProtocol(protocol.value)"
-            >
-              {{ protocol.label }}
-            </n-button>
-          </n-button-group>
-        </n-form-item>
-      </n-form>
-      <template #footer>
-        <n-space justify="end">
-          <n-button @click="showAddModal = false">取消</n-button>
-          <n-button type="primary" :loading="submitting" @click="handleAddNode">确定</n-button>
-        </n-space>
-      </template>
-    </n-modal>
+      <NModal v-model:show="showAddModal" preset="card" title="添加节点" style="width: 600px;">
+        <NForm ref="formRef" :model="formModel" :rules="rules" label-placement="left" label-width="auto"
+          require-mark-placement="right-hanging">
+          <NFormItem label="节点名称" path="name">
+            <NInput v-model:value="formModel.name" placeholder="请输入节点名称" />
+          </NFormItem>
+          <NFormItem label="主机名" path="hostname">
+            <NInput v-model:value="formModel.hostname" placeholder="请输入主机名" />
+          </NFormItem>
+          <NFormItem label="节点描述" path="description">
+            <NInput v-model:value="formModel.description" type="textarea" placeholder="请输入节点描述" />
+          </NFormItem>
+          <NFormItem label="Token" path="token">
+            <NInput v-model:value="formModel.token" placeholder="请输入Token" />
+          </NFormItem>
+          <NFormItem label="服务端口" path="servicePort">
+            <NInputNumber v-model:value="formModel.servicePort" placeholder="请输入服务端口" />
+          </NFormItem>
+          <NFormItem label="管理端口" path="adminPort">
+            <NInputNumber v-model:value="formModel.adminPort" placeholder="请输入管理端口" />
+          </NFormItem>
+          <NFormItem label="管理密码" path="adminPass">
+            <NInput v-model:value="formModel.adminPass" type="password" show-password-on="click"
+              placeholder="请输入管理密码" />
+          </NFormItem>
+          <NFormItem label="允许用户组" path="allowGroup">
+            <NButtonGroup>
+              <NButton v-for="group in groupOptions" :key="group.value"
+                :type="formModel.allowGroup.includes(group.value) ? 'primary' : 'default'"
+                :disabled="group.value === 'admin'" @click="toggleGroup(group.value)">
+                {{ group.label }}
+              </NButton>
+            </NButtonGroup>
+          </NFormItem>
+          <NFormItem label="允许端口" path="allowPort">
+            <NInput v-model:value="formModel.allowPort" placeholder="请输入允许的端口范围，如: 10000-20000" />
+          </NFormItem>
+          <NFormItem label="允许协议" path="allowType">
+            <NButtonGroup>
+              <NButton v-for="protocol in protocolOptions" :key="protocol.value"
+                :type="formModel.allowType.includes(protocol.value) ? 'primary' : 'default'"
+                @click="toggleProtocol(protocol.value)">
+                {{ protocol.label }}
+              </NButton>
+            </NButtonGroup>
+          </NFormItem>
+        </NForm>
+        <template #footer>
+          <NSpace justify="end">
+            <NButton @click="showAddModal = false">取消</NButton>
+            <NButton type="primary" :loading="submitting" @click="handleAddNode">确定</NButton>
+          </NSpace>
+        </template>
+      </NModal>
 
-    <n-modal v-model:show="showEditModal" preset="card" title="编辑节点" style="width: 600px;">
-      <n-form ref="formRef" :model="formModel" :rules="rules" label-placement="left" label-width="auto"
-        require-mark-placement="right-hanging">
-        <n-form-item label="节点名称" path="name">
-          <n-input v-model:value="formModel.name" placeholder="请输入节点名称" />
-        </n-form-item>
-        <n-form-item label="主机名" path="hostname">
-          <n-input v-model:value="formModel.hostname" placeholder="请输入主机名" />
-        </n-form-item>
-        <n-form-item label="节点描述" path="description">
-          <n-input v-model:value="formModel.description" type="textarea" placeholder="请输入节点描述" />
-        </n-form-item>
-        <n-form-item label="Token" path="token">
-          <n-input v-model:value="formModel.token" placeholder="请输入Token" />
-        </n-form-item>
-        <n-form-item label="服务端口" path="servicePort">
-          <n-input-number v-model:value="formModel.servicePort" placeholder="请输入服务端口" />
-        </n-form-item>
-        <n-form-item label="管理端口" path="adminPort">
-          <n-input-number v-model:value="formModel.adminPort" placeholder="请输入管理端口" />
-        </n-form-item>
-        <n-form-item label="管理密码" path="adminPass">
-          <n-input v-model:value="formModel.adminPass" type="password" show-password-on="click" placeholder="请输入管理密码" />
-        </n-form-item>
-        <n-form-item label="允许用户组" path="allowGroup">
-          <n-button-group>
-            <n-button
-              v-for="group in groupOptions"
-              :key="group.value"
-              :type="formModel.allowGroup.includes(group.value) ? 'primary' : 'default'"
-              :disabled="group.value === 'admin'"
-              @click="toggleGroup(group.value)"
-            >
-              {{ group.label }}
-            </n-button>
-          </n-button-group>
-        </n-form-item>
-        <n-form-item label="允许端口" path="allowPort">
-          <n-input v-model:value="formModel.allowPort" placeholder="请输入允许的端口范围，如: 10000-20000" />
-        </n-form-item>
-        <n-form-item label="允许协议" path="allowType">
-          <n-button-group>
-            <n-button
-              v-for="protocol in protocolOptions"
-              :key="protocol.value"
-              :type="formModel.allowType.includes(protocol.value) ? 'primary' : 'default'"
-              @click="toggleProtocol(protocol.value)"
-            >
-              {{ protocol.label }}
-            </n-button>
-          </n-button-group>
-        </n-form-item>
-      </n-form>
-      <template #footer>
-        <n-space justify="end">
-          <n-button @click="showEditModal = false">取消</n-button>
-          <n-button type="primary" :loading="submitting" @click="handleEditSubmit">确定</n-button>
-        </n-space>
-      </template>
-    </n-modal>
-  </n-card>
+      <NModal v-model:show="showEditModal" preset="card" title="编辑节点" style="width: 600px;">
+        <NForm ref="formRef" :model="formModel" :rules="rules" label-placement="left" label-width="auto"
+          require-mark-placement="right-hanging">
+          <NFormItem label="节点名称" path="name">
+            <NInput v-model:value="formModel.name" placeholder="请输入节点名称" />
+          </NFormItem>
+          <NFormItem label="主机名" path="hostname">
+            <NInput v-model:value="formModel.hostname" placeholder="请输入主机名" />
+          </NFormItem>
+          <NFormItem label="节点描述" path="description">
+            <NInput v-model:value="formModel.description" type="textarea" placeholder="请输入节点描述" />
+          </NFormItem>
+          <NFormItem label="Token" path="token">
+            <NInput v-model:value="formModel.token" placeholder="请输入Token" />
+          </NFormItem>
+          <NFormItem label="服务端口" path="servicePort">
+            <NInputNumber v-model:value="formModel.servicePort" placeholder="请输入服务端口" />
+          </NFormItem>
+          <NFormItem label="管理端口" path="adminPort">
+            <NInputNumber v-model:value="formModel.adminPort" placeholder="请输入管理端口" />
+          </NFormItem>
+          <NFormItem label="管理密码" path="adminPass">
+            <NInput v-model:value="formModel.adminPass" type="password" show-password-on="click"
+              placeholder="请输入管理密码" />
+          </NFormItem>
+          <NFormItem label="允许用户组" path="allowGroup">
+            <NButtonGroup>
+              <NButton v-for="group in groupOptions" :key="group.value"
+                :type="formModel.allowGroup.includes(group.value) ? 'primary' : 'default'"
+                :disabled="group.value === 'admin'" @click="toggleGroup(group.value)">
+                {{ group.label }}
+              </NButton>
+            </NButtonGroup>
+          </NFormItem>
+          <NFormItem label="允许端口" path="allowPort">
+            <NInput v-model:value="formModel.allowPort" placeholder="请输入允许的端口范围，如: 10000-20000" />
+          </NFormItem>
+          <NFormItem label="允许协议" path="allowType">
+            <NButtonGroup>
+              <NButton v-for="protocol in protocolOptions" :key="protocol.value"
+                :type="formModel.allowType.includes(protocol.value) ? 'primary' : 'default'"
+                @click="toggleProtocol(protocol.value)">
+                {{ protocol.label }}
+              </NButton>
+            </NButtonGroup>
+          </NFormItem>
+        </NForm>
+        <template #footer>
+          <NSpace justify="end">
+            <NButton @click="showEditModal = false">取消</NButton>
+            <NButton type="primary" :loading="submitting" @click="handleEditSubmit">确定</NButton>
+          </NSpace>
+        </template>
+      </NModal>
+    </NCard>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, h } from 'vue'
-import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag } from 'naive-ui'
+import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag, NIcon } from 'naive-ui'
 import type { DataTableColumns, FormRules, FormInst, SelectOption } from 'naive-ui'
 import { AdminApi } from '../../../shared/api/admin'
 import { AuthApi } from '../../../shared/api/auth'
@@ -284,10 +257,10 @@ const rules: FormRules = {
     trigger: ['blur', 'input'],
     validator: (rule, value) => {
       if (!value) return new Error('请输入端口范围')
-      
+
       // 支持多个端口范围，用逗号分隔
       const ranges = value.split(';').map(range => range.trim())
-      
+
       for (const range of ranges) {
         // 检查单个端口
         if (/^\d+$/.test(range)) {
@@ -297,25 +270,25 @@ const rules: FormRules = {
           }
           continue
         }
-        
+
         // 检查端口范围
         const match = range.match(/^(\d+)-(\d+)$/)
         if (!match) {
           return new Error('端口范围格式不正确，请使用 1-65535 或 80,443 或 1000-2000,3000-4000 的格式')
         }
-        
+
         const start = parseInt(match[1])
         const end = parseInt(match[2])
-        
+
         if (start < 1 || start > 65535 || end < 1 || end > 65535) {
           return new Error('端口必须在 1-65535 之间')
         }
-        
+
         if (start >= end) {
           return new Error('起始端口必须小于结束端口')
         }
       }
-      
+
       return true
     }
   },
@@ -386,7 +359,7 @@ const columns: DataTableColumns = [
             const option = groupOptions.value.find(opt => opt.value === group)
             return h(
               NTag,
-              { 
+              {
                 type: 'info',
                 size: 'small',
                 style: 'margin: 2px'
@@ -415,7 +388,7 @@ const columns: DataTableColumns = [
             const option = protocolOptions.find(opt => opt.value === type)
             return h(
               NTag,
-              { 
+              {
                 type: 'success',
                 size: 'small',
                 style: 'margin: 2px'
@@ -658,7 +631,7 @@ const fetchNodes = async () => {
       page: pagination.value.page,
       limit: pagination.value.pageSize
     }
-    
+
     if (searchKeyword.value) {
       params.keyword = searchKeyword.value
     }

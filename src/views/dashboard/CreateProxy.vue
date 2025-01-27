@@ -2,181 +2,180 @@
   <div class="content-grid">
     <!-- 修改步骤指示器区域 -->
     <div class="steps-container" v-if="isMobile">
-      <n-button secondary round v-if="currentStep === 2" @click="currentStep = 1" size="medium">
+      <NButton secondary round v-if="currentStep === 2" @click="currentStep = 1" size="medium">
         返回
         <template #icon>
           <NIcon>
             <ArrowBackOutline />
           </NIcon>
         </template>
-      </n-button>
-      <n-steps :current="currentStep" class="mobile-steps">
-        <n-step title="选择节点" />
-        <n-step title="隧道配置" />
-      </n-steps>
+      </NButton>
+      <NSteps :current="currentStep" class="mobile-steps">
+        <NStep title="选择节点" />
+        <NStep title="隧道配置" />
+      </NSteps>
     </div>
 
     <!-- 修改节点卡片的显示逻辑 -->
-    <n-card v-if="!isMobile || currentStep === 1" title="选择节点" class="node-card">
-      <n-space vertical>
-        <n-grid x-gap="12" y-gap="12" cols="1" style="padding-top: 14px;">
-          <n-grid-item v-for="node in nodeOptions" :key="node.value">
-            <n-card hoverable @click="handleNodeChange(node.value)"
+    <NCard v-if="!isMobile || currentStep === 1" title="选择节点" class="node-card">
+      <NSpace vertical>
+        <NGrid x-gap="12" y-gap="12" cols="1" style="padding-top: 14px;">
+          <NGridItem v-for="node in nodeOptions" :key="node.value">
+            <NCard hoverable @click="handleNodeChange(node.value)"
               :class="{ 'selected-node': formValue.nodeId === node.value }" class="node-item">
-              <n-space vertical>
+              <NSpace vertical>
                 <div class="node-header">
-                  <n-space align="center" justify="space-between">
-                    <n-space align="center">
-                      <n-space :size="4">
-                        <n-tag type="info" size="small"># {{ node.id }}</n-tag>
-                        <n-tag :type="node.isOnline ? 'success' : 'error'" size="small">
+                  <NSpace align="center" justify="space-between">
+                    <NSpace align="center">
+                      <NSpace :size="4">
+                        <NTag type="info" size="small"># {{ node.id }}</NTag>
+                        <NTag :type="node.isOnline ? 'success' : 'error'" size="small">
                           {{ node.isOnline ? '在线' : '离线' }}
-                        </n-tag>
-                      </n-space>
-                      <n-text>{{ node.name }}</n-text>
-                    </n-space>
-                  </n-space>
+                        </NTag>
+                      </NSpace>
+                      <NText>{{ node.name }}</NText>
+                    </NSpace>
+                  </NSpace>
                 </div>
-                <n-text depth="3" style="font-size: 13px;">{{ node.description }}</n-text>
-                <n-space vertical size="small">
+                <NText depth="3" style="font-size: 13px;">{{ node.description }}</NText>
+                <NSpace vertical size="small">
                   <div class="info-item">
                     <span class="label">用户组:</span>
-                    <n-space>
-                      <n-tag v-for="group in node.allowGroups" :key="group.name" size="small" type="info">
+                    <NSpace>
+                      <NTag v-for="group in node.allowGroups" :key="group.name" size="small" type="info">
                         {{ group.friendlyName }}
-                      </n-tag>
-                    </n-space>
+                      </NTag>
+                    </NSpace>
                   </div>
                   <div class="info-item">
                     <span class="label">支持协议:</span>
-                    <n-space>
-                      <n-tag v-for="protocol in node.allowedProtocols" :key="protocol" size="small" type="success">
+                    <NSpace>
+                      <NTag v-for="protocol in node.allowedProtocols" :key="protocol" size="small" type="success">
                         {{ protocol.toUpperCase() }}
-                      </n-tag>
-                    </n-space>
+                      </NTag>
+                    </NSpace>
                   </div>
                   <div class="info-item">
                     <span class="label">端口范围:</span>
-                    <n-tag type="warning" size="small">
+                    <NTag type="warning" size="small">
                       {{ node.portRange.min }} - {{ node.portRange.max }}
-                    </n-tag>
+                    </NTag>
                   </div>
-                </n-space>
-              </n-space>
-            </n-card>
-          </n-grid-item>
-        </n-grid>
-      </n-space>
-    </n-card>
+                </NSpace>
+              </NSpace>
+            </NCard>
+          </NGridItem>
+        </NGrid>
+      </NSpace>
+    </NCard>
 
     <!-- 修改配置卡片的显示逻辑 -->
-    <n-card v-if="!isMobile || currentStep === 2" title="隧道配置" class="config-card">
+    <NCard v-if="!isMobile || currentStep === 2" title="隧道配置" class="config-card">
       <!-- 基础配置 -->
-      <n-form ref="formRef" :model="formValue" :rules="rules" label-placement="left" label-width="120"
+      <NForm ref="formRef" :model="formValue" :rules="rules" label-placement="left" label-width="120"
         require-mark-placement="right-hanging">
-        <n-form-item label="隧道名称" path="name">
-          <n-input v-model:value="formValue.name" placeholder="请输入隧道名称" :disabled="!canEditConfig" />
-        </n-form-item>
+        <NFormItem label="隧道名称" path="name">
+          <NInput v-model:value="formValue.name" placeholder="请输入隧道名称" :disabled="!canEditConfig" />
+        </NFormItem>
 
-        <n-form-item label="本地地址" path="localAddr">
-          <n-input v-model:value="formValue.localAddr" placeholder="请输入本地地址" :disabled="!canEditConfig" />
-        </n-form-item>
+        <NFormItem label="本地地址" path="localAddr">
+          <NInput v-model:value="formValue.localAddr" placeholder="请输入本地地址" :disabled="!canEditConfig" />
+        </NFormItem>
 
-        <n-form-item label="本地端口" path="localPort">
-          <n-input-number v-model:value="formValue.localPort" :min="1" :max="65535" placeholder="请输入本地端口"
+        <NFormItem label="本地端口" path="localPort">
+          <NInputNumber v-model:value="formValue.localPort" :min="1" :max="65535" placeholder="请输入本地端口"
             :disabled="!canEditConfig" />
-        </n-form-item>
+        </NFormItem>
 
-        <n-form-item label="协议类型" path="type">
-          <n-select v-model:value="formValue.type" :options="allowedProxyTypeOptions" placeholder="请选择协议类型"
+        <NFormItem label="协议类型" path="type">
+          <NSelect v-model:value="formValue.type" :options="allowedProxyTypeOptions" placeholder="请选择协议类型"
             :disabled="!canEditConfig" />
-        </n-form-item>
+        </NFormItem>
 
-        <n-form-item v-if="formValue.type === 'http' || formValue.type === 'https'" label="绑定域名" path="domain">
-          <n-dynamic-tags v-model:value="domainTags" :render-tag="renderDomainTag" :disabled="!canEditConfig" />
-        </n-form-item>
+        <NFormItem v-if="formValue.type === 'http' || formValue.type === 'https'" label="绑定域名" path="domain">
+          <NDynamicTags v-model:value="domainTags" :render-tag="renderDomainTag" :disabled="!canEditConfig" />
+        </NFormItem>
 
-        <n-form-item v-else label="远程端口" path="remotePort">
-          <n-space align="center">
-            <n-input-number v-model:value="formValue.remotePort" :min="selectedNode?.portRange?.min || 1"
+        <NFormItem v-else label="远程端口" path="remotePort">
+          <NSpace align="center">
+            <NInputNumber v-model:value="formValue.remotePort" :min="selectedNode?.portRange?.min || 1"
               :max="selectedNode?.portRange?.max || 65535" placeholder="请输入远程端口" :disabled="!canEditConfig" />
-            <n-button size="medium" :loading="gettingFreePort" :disabled="!canEditConfig" @click="handleGetFreePort">
+            <NButton size="medium" :loading="gettingFreePort" :disabled="!canEditConfig" @click="handleGetFreePort">
               获取空闲端口
-            </n-button>
-          </n-space>
-        </n-form-item>
+            </NButton>
+          </NSpace>
+        </NFormItem>
 
-        <n-divider>高级配置</n-divider>
-        <n-text depth="3" style="padding-bottom: 15px; display: block;">
+        <NDivider>高级配置</NDivider>
+        <NText depth="3" style="padding-bottom: 15px; display: block;">
           提示：仅推荐技术用户使用，一般用户请勿随意填写。请确保您的配置正确，否则隧道可能无法启动。
-        </n-text>
+        </NText>
 
-        <n-form-item label="访问密钥" path="accessKey">
-          <n-input v-model:value="formValue.accessKey" placeholder="请输入访问密钥" :disabled="!canEditConfig" />
-        </n-form-item>
+        <NFormItem label="访问密钥" path="accessKey">
+          <NInput v-model:value="formValue.accessKey" placeholder="请输入访问密钥" :disabled="!canEditConfig" />
+        </NFormItem>
 
-        <n-form-item label="Host Header Rewrite" path="hostHeaderRewrite">
-          <n-input v-model:value="formValue.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值"
+        <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">
+          <NInput v-model:value="formValue.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值"
             :disabled="!canEditConfig" />
-        </n-form-item>
+        </NFormItem>
 
-        <n-form-item label="X-From-Where" path="headerXFromWhere">
-          <n-input v-model:value="formValue.headerXFromWhere" placeholder="请输入 X-From-Where 请求头值"
+        <NFormItem label="X-From-Where" path="headerXFromWhere">
+          <NInput v-model:value="formValue.headerXFromWhere" placeholder="请输入 X-From-Where 请求头值"
             :disabled="!canEditConfig" />
-        </n-form-item>
+        </NFormItem>
 
-        <n-form-item label="Proxy Protocol" path="proxyProtocolVersion">
-          <n-select v-model:value="formValue.proxyProtocolVersion" :options="[
+        <NFormItem label="Proxy Protocol" path="proxyProtocolVersion">
+          <NSelect v-model:value="formValue.proxyProtocolVersion" :options="[
             { label: '不启用', value: '' },
             { label: 'v1', value: 'v1' },
             { label: 'v2', value: 'v2' }
           ]" placeholder="Proxy Protocol Version" :disabled="!canEditConfig" />
-        </n-form-item>
+        </NFormItem>
 
-        <n-form-item label="其他选项">
+        <NFormItem label="其他选项">
           <div style="display: flex; gap: 16px;">
-            <n-switch v-model:value="formValue.useEncryption" :rail-style="railStyle" :disabled="!canEditConfig">
+            <NSwitch v-model:value="formValue.useEncryption" :rail-style="switchButtonRailStyle" :disabled="!canEditConfig">
               <template #checked>启用加密</template>
               <template #unchecked>禁用加密</template>
-            </n-switch>
-            <n-switch v-model:value="formValue.useCompression" :rail-style="railStyle" :disabled="!canEditConfig">
+            </NSwitch>
+            <NSwitch v-model:value="formValue.useCompression" :rail-style="switchButtonRailStyle" :disabled="!canEditConfig">
               <template #checked>启用压缩</template>
               <template #unchecked>禁用压缩</template>
-            </n-switch>
+            </NSwitch>
           </div>
-        </n-form-item>
-      </n-form>
+        </NFormItem>
+      </NForm>
 
       <!-- 修改提交按钮区域 -->
       <div class="submit-section">
-        <n-space justify="end">
-          <n-button v-if="isMobile && currentStep === 1" type="primary" :disabled="!formValue.nodeId"
+        <NSpace justify="end">
+          <NButton v-if="isMobile && currentStep === 1" type="primary" :disabled="!formValue.nodeId"
             @click="currentStep = 2">
             下一步
-          </n-button>
-          <n-button v-if="!isMobile || currentStep === 2" type="primary" :loading="loading" @click="handleCreate"
+          </NButton>
+          <NButton v-if="!isMobile || currentStep === 2" type="primary" :loading="loading" @click="handleCreate"
             :disabled="!canEditConfig">
             <template #icon>
-              <n-icon>
+              <NIcon>
                 <CloudUploadOutline />
-              </n-icon>
+              </NIcon>
             </template>
             创建隧道
-          </n-button>
-        </n-space>
+          </NButton>
+        </NSpace>
       </div>
-    </n-card>
+    </NCard>
   </div>
 </template>
 
 <script setup lang="ts">
-import { themeColors } from '../../constants/theme'
 import { ref, h, computed, onMounted, onUnmounted } from 'vue'
 import { NCard, NForm, NFormItem, NInput, NInputNumber, NSelect, NButton, NIcon, useMessage, type FormRules, type FormInst, NDivider, NSwitch, NTag, NSpace, NText, NGrid, NGridItem, NDynamicTags, NSteps, NStep } from 'naive-ui'
 import { CloudUploadOutline, ArrowBackOutline } from '@vicons/ionicons5'
 import { AuthApi } from '../../shared/api/auth'
 import type { CreateProxyArgs } from '../../types'
-
+import { switchButtonRailStyle } from '../../constants/theme'
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const loading = ref(false)
@@ -399,14 +398,6 @@ const renderDomainTag = (tag: string) => {
     },
     { default: () => tag }
   )
-}
-
-const railStyle = ({ focused, checked }: { focused: boolean; checked: boolean }) => {
-  const style = {
-    background: checked ? themeColors.primary : undefined,
-    boxShadow: focused ? `0 0 0 2px ${themeColors.primarySuppl}` : undefined
-  }
-  return style
 }
 
 const handleCreate = () => {

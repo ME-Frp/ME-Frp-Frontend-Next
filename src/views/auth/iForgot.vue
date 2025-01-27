@@ -9,33 +9,40 @@
           </div>
         </div>
       </div>
-      <NForm ref="formRef" :model="formValue" :rules="rules">
-        <NFormItem path="username" label="用户名">
-          <NInput v-model:value="formValue.username" placeholder="请输入用户名" />
-        </NFormItem>
+      
+      <!-- 邮箱验证码表单 -->
+      <NForm ref="emailFormRef" :model="emailForm" :rules="emailRules">
         <NFormItem path="email" label="邮箱">
           <NInputGroup>
-            <NInput v-model:value="formValue.email" placeholder="请输入邮箱" :disabled="emailCodeCountdown > 0"/>
+            <NInput v-model:value="emailForm.email" placeholder="请输入邮箱" :disabled="emailCodeCountdown > 0"/>
             <NButton type="primary" ghost :disabled="isEmailCodeSending || emailCodeCountdown > 0" 
               @click="handleSendEmailCode" :loading="isEmailCodeSending">
               {{ emailCodeButtonText }}
             </NButton>
           </NInputGroup>
         </NFormItem>
+      </NForm>
+
+      <!-- 重置密码表单 -->
+      <NForm ref="resetFormRef" :model="resetForm" :rules="resetRules">
+        <NFormItem path="username" label="用户名">
+          <NInput v-model:value="resetForm.username" placeholder="请输入用户名" />
+        </NFormItem>
         <NFormItem path="emailCode" label="验证码">
-          <NInput v-model:value="formValue.emailCode" placeholder="请输入邮箱验证码" />
+          <NInput v-model:value="resetForm.emailCode" placeholder="请输入邮箱验证码" />
         </NFormItem>
         <NFormItem path="password" label="新密码">
-          <NInput v-model:value="formValue.password" type="password" placeholder="请输入新密码" show-password-on="click" />
+          <NInput v-model:value="resetForm.password" type="password" placeholder="请输入新密码" show-password-on="click" />
         </NFormItem>
         <NButton type="primary" block secondary strong @click="handleSubmit" :loading="isSubmitting">
           重置密码
         </NButton>
-        <div class="form-footer login-link">
-          <span>记起密码了？</span>
-          <router-link to="/auth/login">返回登录</router-link>
-        </div>
       </NForm>
+
+      <div class="form-footer login-link">
+        <span>记起密码了？</span>
+        <router-link to="/auth/login">返回登录</router-link>
+      </div>
     </NCard>
   </div>
 </template>
@@ -50,10 +57,15 @@ import { PublicApi } from '../../shared/api/public'
 const router = useRouter()
 const message = useMessage()
 
-const formRef = ref<FormInst | null>(null)
-const formValue = ref({
+const emailFormRef = ref<FormInst | null>(null)
+const resetFormRef = ref<FormInst | null>(null)
+
+const emailForm = ref({
+  email: ''
+})
+
+const resetForm = ref({
   username: '',
-  email: '',
   emailCode: '',
   password: ''
 })
@@ -68,17 +80,20 @@ const emailCodeButtonText = computed(() => {
   return '获取验证码'
 })
 
-const rules: FormRules = {
-  username: {
-    required: true,
-    message: '请输入用户名',
-    trigger: 'blur'
-  },
+const emailRules: FormRules = {
   email: {
     required: true,
     message: '请输入邮箱',
     trigger: 'blur',
     type: 'email'
+  }
+}
+
+const resetRules: FormRules = {
+  username: {
+    required: true,
+    message: '请输入用户名',
+    trigger: 'blur'
   },
   emailCode: {
     required: true,
@@ -102,27 +117,20 @@ const startEmailCodeCountdown = () => {
   }, 1000)
 }
 
-const validateEmailAndUsername = async () => {
-  try {
-    await formRef.value?.validate((errors) => {
-      if (errors) {
-        throw errors
-      }
-    })
-    return true
-  } catch (errors) {
-    return false
-  }
-}
-
 const handleSendEmailCode = async () => {
+  
   try {
-    if (!await validateEmailAndUsername()) {
+    if (!emailForm.value.email) {
+      message.error('请输入邮箱')
+      return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailForm.value.email)) {
+      message.error('请输入有效的邮箱地址')
       return
     }
     isEmailCodeSending.value = true
-    const response = await PublicApi.getIForgotEmailCode(formValue.value.email)
     
+    const response = await PublicApi.getIForgotEmailCode(emailForm.value.email)
     if (response.data.code === 200) {
       message.success(response.data.message)
       startEmailCodeCountdown()
@@ -132,8 +140,6 @@ const handleSendEmailCode = async () => {
   } catch (error: any) {
     if (error?.response?.data?.message) {
       message.error(error.response.data.message)
-    } else {
-      message.error('验证码发送失败，请重试')
     }
   } finally {
     isEmailCodeSending.value = false
@@ -141,14 +147,17 @@ const handleSendEmailCode = async () => {
 }
 
 const handleSubmit = async () => {
+  if (!resetFormRef.value) return
+  
   try {
-    await formRef.value?.validate()
+    await resetFormRef.value.validate()
     isSubmitting.value = true
+    
     const response = await PublicApi.iForgot({
-      username: formValue.value.username,
-      email: formValue.value.email,
-      password: formValue.value.password,
-      emailCode: formValue.value.emailCode
+      username: resetForm.value.username,
+      email: emailForm.value.email,
+      password: resetForm.value.password,
+      emailCode: resetForm.value.emailCode
     })
     
     if (response.data.code === 200) {

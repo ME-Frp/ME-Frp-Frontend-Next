@@ -1,139 +1,141 @@
 <template>
-  <n-card title="用户管理">
-    <n-space vertical :size="12">
-      <div style="display: flex;">
-        <n-input
-          v-model:value="filters.search"
-          placeholder="搜索用户名或邮箱"
-          clearable
-          style="flex: 1;"
-          @update:value="handleSearch"
-        >
-          <template #prefix>
-            <n-icon :component="Search" />
-          </template>
-        </n-input>
-      </div>
-      <n-space>
-        <n-select
-          v-model:value="filters.group"
-          :options="groupOptions"
-          placeholder="用户组"
-          clearable
-          style="width: 200px"
-          @update:value="handleGroupFilter"
+  <div class="users">
+    <NCard title="用户管理">
+      <NSpace vertical :size="12">
+        <div style="display: flex;">
+          <NInput
+            v-model:value="filters.search"
+            placeholder="搜索用户名或邮箱"
+            clearable
+            style="flex: 1;"
+            @update:value="handleSearch"
+          >
+            <template #prefix>
+              <NIcon :component="Search" />
+            </template>
+          </NInput>
+        </div>
+        <NSpace>
+          <NSelect
+            v-model:value="filters.group"
+            :options="groupOptions"
+            placeholder="用户组"
+            clearable
+            style="width: 200px"
+            @update:value="handleGroupFilter"
+          />
+          <NSelect
+            v-model:value="filters.isRealname"
+            :options="realnameOptions"
+            placeholder="实名状态"
+            clearable
+            style="width: 200px"
+            @update:value="handleRealnameFilter"
+          />
+          <NSelect
+            v-model:value="filters.status"
+            :options="statusOptions"
+            placeholder="账户状态"
+            clearable
+            style="width: 200px"
+            @update:value="handleStatusFilter"
+          />
+        </NSpace>
+        <NDataTable
+          remote
+          :columns="columns"
+          :data="users"
+          :loading="loading"
+          :pagination="pagination"
         />
-        <n-select
-          v-model:value="filters.isRealname"
-          :options="realnameOptions"
-          placeholder="实名状态"
-          clearable
-          style="width: 200px"
-          @update:value="handleRealnameFilter"
-        />
-        <n-select
-          v-model:value="filters.status"
-          :options="statusOptions"
-          placeholder="账户状态"
-          clearable
-          style="width: 200px"
-          @update:value="handleStatusFilter"
-        />
-      </n-space>
-      <n-data-table
-        remote
-        :columns="columns"
-        :data="users"
-        :loading="loading"
-        :pagination="pagination"
-      />
-    </n-space>
-  </n-card>
+      </NSpace>
+    </NCard>
 
-  <!-- 添加编辑用户的模态框 -->
-  <n-modal v-model:show="showEditModal" preset="card" title="编辑用户" style="width: 600px;">
-    <n-form
-      ref="formRef"
-      :model="editForm"
-      :rules="rules"
-      label-placement="left"
-      label-width="auto"
-      require-mark-placement="right-hanging"
-    >
-      <n-form-item label="用户名" path="username">
-        <n-input v-model:value="editForm.username" placeholder="请输入用户名" />
-      </n-form-item>
-      <n-form-item label="邮箱" path="email">
-        <n-input v-model:value="editForm.email" placeholder="请输入邮箱" />
-      </n-form-item>
-      <n-form-item label="用户组" path="group">
-        <n-select
-          v-model:value="editForm.group"
-          :options="groupOptions"
-          placeholder="请选择用户组"
-        />
-      </n-form-item>
-      <n-form-item label="账户状态" path="status">
-        <n-select
-          v-model:value="editForm.status"
-          :options="statusOptions"
-          placeholder="请选择账户状态"
-        />
-      </n-form-item>
-      <n-form-item label="实名状态" path="isRealname">
-        <n-switch v-model:value="editForm.isRealname" />
-      </n-form-item>
-      <n-form-item label="流量限制" path="traffic">
-        <n-space align="center">
-          <n-input-number
-            v-model:value="editForm.traffic"
-            placeholder="请输入流量限制"
+    <!-- 添加编辑用户的模态框 -->
+    <NModal v-model:show="showEditModal" preset="card" title="编辑用户" style="width: 600px;">
+      <NForm
+        ref="formRef"
+        :model="editForm"
+        :rules="rules"
+        label-placement="left"
+        label-width="auto"
+        require-mark-placement="right-hanging"
+      >
+        <NFormItem label="用户名" path="username">
+          <NInput v-model:value="editForm.username" placeholder="请输入用户名" />
+        </NFormItem>
+        <NFormItem label="邮箱" path="email">
+          <NInput v-model:value="editForm.email" placeholder="请输入邮箱" />
+        </NFormItem>
+        <NFormItem label="用户组" path="group">
+          <NSelect
+            v-model:value="editForm.group"
+            :options="groupOptions"
+            placeholder="请选择用户组"
+          />
+        </NFormItem>
+        <NFormItem label="账户状态" path="status">
+          <NSelect
+            v-model:value="editForm.status"
+            :options="statusOptions"
+            placeholder="请选择账户状态"
+          />
+        </NFormItem>
+        <NFormItem label="实名状态" path="isRealname">
+          <NSwitch v-model:value="editForm.isRealname" :rail-style="switchButtonRailStyle" />
+        </NFormItem>
+        <NFormItem label="流量限制" path="traffic">
+          <NSpace align="center">
+            <NInputNumber
+              v-model:value="editForm.traffic"
+              placeholder="请输入流量限制"
+              :min="0"
+            />
+            <span>GB</span>
+          </NSpace>
+        </NFormItem>
+        <NFormItem label="出站带宽" path="outBound">
+          <NSpace align="center">
+            <NInputNumber
+              v-model:value="editForm.outBound"
+              placeholder="请输入出站带宽"
+              :min="0"
+            />
+            <span>Mbps</span>
+          </NSpace>
+        </NFormItem>
+        <NFormItem label="入站带宽" path="inBound">
+          <NSpace align="center">
+            <NInputNumber
+              v-model:value="editForm.inBound"
+              placeholder="请输入入站带宽"
+              :min="0"
+            />
+            <span>Mbps</span>
+          </NSpace>
+        </NFormItem>
+        <NFormItem label="隧道数量" path="maxProxies">
+          <NInputNumber
+            v-model:value="editForm.maxProxies"
+            placeholder="请输入隧道数量"
             :min="0"
           />
-          <span>GB</span>
-        </n-space>
-      </n-form-item>
-      <n-form-item label="出站带宽" path="outBound">
-        <n-space align="center">
-          <n-input-number
-            v-model:value="editForm.outBound"
-            placeholder="请输入出站带宽"
-            :min="0"
-          />
-          <span>Mbps</span>
-        </n-space>
-      </n-form-item>
-      <n-form-item label="入站带宽" path="inBound">
-        <n-space align="center">
-          <n-input-number
-            v-model:value="editForm.inBound"
-            placeholder="请输入入站带宽"
-            :min="0"
-          />
-          <span>Mbps</span>
-        </n-space>
-      </n-form-item>
-      <n-form-item label="隧道数量" path="maxProxies">
-        <n-input-number
-          v-model:value="editForm.maxProxies"
-          placeholder="请输入隧道数量"
-          :min="0"
-        />
-      </n-form-item>
-    </n-form>
-    <template #footer>
-      <n-space justify="end">
-        <n-button @click="showEditModal = false">取消</n-button>
-        <n-button
-          type="primary"
-          :loading="submitting"
-          @click="handleEditSubmit"
-        >
-          确定
-        </n-button>
-      </n-space>
-    </template>
-  </n-modal>
+        </NFormItem>
+      </NForm>
+      <template #footer>
+        <NSpace justify="end">
+          <NButton @click="showEditModal = false">取消</NButton>
+          <NButton
+            type="primary"
+            :loading="submitting"
+            @click="handleEditSubmit"
+          >
+            确定
+          </NButton>
+        </NSpace>
+      </template>
+    </NModal>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -145,6 +147,7 @@ import { AdminApi } from '../../../shared/api/admin'
 import { AuthApi } from '../../../shared/api/auth'
 import type { UserInfo } from '../../../types/authApi'
 import type { FilterUsersArgs } from '../../../types/adminApi'
+import { switchButtonRailStyle } from '../../../constants/theme'
 const message = useMessage()
 const loading = ref(false)
 const users = ref<UserInfo[]>([])

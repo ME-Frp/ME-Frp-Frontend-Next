@@ -1,10 +1,21 @@
-@use 'variables.scss' as *;
+@use 'variables' as *;
+
 html,
 body,
 #app {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 .header-content {
@@ -33,9 +44,9 @@ body,
   display: none;
 
   @media (max-width: 700px) {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -79,6 +90,6 @@ body,
 }
 
 .right {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }

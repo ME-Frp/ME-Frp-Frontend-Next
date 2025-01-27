@@ -1,6 +1,6 @@
 import baseApi from './config';
 import type { ApiResponse } from './config';
-import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData, UserNodeName, NodeUsage } from '../../types';
+import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData, UserNodeName, NodeUsage, IcpDomain } from '../../types';
 
 
 export const AuthApi = {
@@ -86,6 +86,26 @@ export const AuthApi = {
     // 强制下线隧道
     kickProxy: (proxyId: number) => {
         return baseApi.post<ApiResponse<void>>('/auth/proxy/kick', { proxyId });
+    },
+
+    // 获取ICP备案域名列表
+    getIcpDomains: () => {
+        return baseApi.get<ApiResponse<IcpDomain[]>>('/auth/user/icpDomain/list');
+    },
+
+    // 添加ICP备案域名
+    addIcpDomain: (data: { domain: string }) => {
+        return baseApi.post<ApiResponse<void>>('/auth/user/icpDomain/add', data);
+    },
+
+    // 删除ICP备案域名
+    deleteIcpDomain: (data: { domain: string }) => {
+        return baseApi.post<ApiResponse<void>>('/auth/user/icpDomain/delete', data);
+    },
+
+    // 获取ICP备案域名所有者
+    getIcpDomainOwner: (data: { domain: string }) => {
+        return baseApi.post<ApiResponse<void>>('/auth/user/icpDomain/owner', data);
     },
 };
 

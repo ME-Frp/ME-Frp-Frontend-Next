@@ -29,3 +29,10 @@ export interface Sponsor {
     amount: string
     message: string
 }
+
+export interface Statistics {
+  users: number
+  nodes: number
+  proxies: number
+  traffic: number
+}
