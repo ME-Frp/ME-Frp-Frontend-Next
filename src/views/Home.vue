@@ -3,7 +3,7 @@
     <!-- 主标题区域 -->
     <div class="hero-section">
       <div class="hero-content">
-        <h1 class="main-title">ME Frp 镜缘映射</h1>
+        <h1 class="main-title">ME Frp 幻缘映射</h1>
         <p class="subtitle">免费 · 公益 · 好用 · 低延迟 · 稳定的内网穿透服务</p>
         <div class="hero-buttons">
           <NButton type="primary" size="large" class="start-button" @click="router.push('/auth/login')">
@@ -91,7 +91,7 @@
     <!-- 开始使用 CTA -->
     <div class="cta-section">
       <h2>准备好开始了吗？</h2>
-      <p>加入我们，体验高速稳定的内网穿透服务</p>
+      <p>加入我们, 体验高速稳定的内网穿透服务</p>
       <NButton type="primary" size="large" @click="router.push('/auth/register')">
         立即注册
       </NButton>
@@ -100,7 +100,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, markRaw, onMounted } from 'vue'
+import { ref, markRaw, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { NButton, NIcon, NNumberAnimation } from 'naive-ui'
 import {
@@ -122,32 +122,32 @@ const features = ref([
   {
     icon: markRaw(SpeedometerOutline),
     title: '高性能',
-    description: '基于 Golang 开发，性能优异，内存占用低'
+    description: '基于 Golang 开发, 性能优异, 内存占用低'
   },
   {
     icon: markRaw(ShieldOutline),
     title: '安全稳定', 
-    description: 'BGP 线路接入，多重防护，稳定可靠，支持 DDoS 防御'
+    description: 'BGP 线路接入, 多重防护, 稳定可靠, 支持 DDoS 防御'
   },
   {
     icon: markRaw(CodeSlashOutline),
     title: '简单易用',
-    description: '界面简洁直观，一键配置快速使用，支持多种操作系统'
+    description: '界面简洁直观, 一键配置快速使用, 支持多种操作系统'
   },
   {
     icon: markRaw(ServerOutline),
     title: '优质节点',
-    description: '多地域节点覆盖，低延迟，高带宽'
+    description: '多地域节点覆盖, 低延迟, 高带宽'
   },
   {
     icon: markRaw(GitNetworkOutline),
     title: '全新界面',
-    description: '基于现代化技术栈开发的全新 5.0 界面，美观易用'
+    description: '基于现代化技术栈开发的全新 5.0 界面, 美观易用'
   },
   {
     icon: markRaw(HeartOutline),
     title: '即时维护',
-    description: '我们尽力及时修复故障，保障服务稳定运行'
+    description: '我们尽力及时修复故障, 保障服务稳定运行'
   }
 ])
 
@@ -194,19 +194,21 @@ onMounted(async () => {
     if (res.data.code === 200) {
       const data = res.data.data
       const traffic = formatTraffic(data.traffic)
-      stats.value = {
-        totalNodes: data.nodes,
-        totalUsers: data.users,
-        trafficNumber: traffic.number,
-        trafficUnit: traffic.unit
-      }
+      nextTick(() => {
+        stats.value = {
+          totalNodes: data.nodes,
+          totalUsers: data.users,
+          trafficNumber: traffic.number,
+          trafficUnit: traffic.unit
+        }
+      })
     }
   } catch (err) {
     console.error('Failed to fetch statistics:', err)
   }
 })
 
-// 格式化流量，返回数字和单位
+// 格式化流量, 返回数字和单位
 function formatTraffic(bytes: number): { number: number; unit: string } {
   if (bytes === 0) return { number: 0, unit: 'B' }
   const k = 1024

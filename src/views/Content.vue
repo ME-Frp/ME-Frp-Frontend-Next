@@ -13,7 +13,7 @@ import { marked } from 'marked'
 import { NCard } from 'naive-ui'
 
 const markdownContent = `
-# ME Frp (镜缘映射) 内容策略
+# ME Frp (幻缘映射) 内容策略
 
 **注：** 本内容策略最终解释权归 ME Frp 所有。上次更新时间: 2025-01-26
 

@@ -41,12 +41,14 @@
             <NFormItem label="SMTP 端口" path="smtpPort">
               <NInputNumber v-model:value="emailForm.smtpPort" :min="1" :max="65535" />
             </NFormItem>
-            <NFormItem label="发件人邮箱" path="smtpFrom">
-              <NInput v-model:value="emailForm.smtpFrom" placeholder="请输入发件人邮箱" />
+            <NFormItem label="发件人邮箱" path="smtpAccount">
+              <NInput v-model:value="emailForm.smtpAccount" placeholder="请输入发件人邮箱" />
+            </NFormItem>
+            <NFormItem label="发件人昵称" path="smtpFrom">
+              <NInput v-model:value="emailForm.smtpFrom" placeholder="请输入发件人昵称" />
             </NFormItem>
             <NFormItem label="SMTP 密码" path="smtpPassword">
-              <NInput v-model:value="emailForm.smtpPassword" type="password" placeholder="请输入 SMTP 密码"
-                show-password-on="click" />
+              <NInput v-model:value="emailForm.smtpPassword" placeholder="请输入 SMTP 密码"/>
             </NFormItem>
             <NFormItem label="使用 SSL" path="smtpSSL">
               <NSwitch v-model:value="emailForm.smtpSSL" />
@@ -90,6 +92,7 @@ const securityForm = ref({
 const emailForm = ref({
   smtpServer: '',
   smtpPort: 465,
+  smtpAccount: '',
   smtpFrom: '',
   smtpPassword: '',
   smtpSSL: true,
@@ -139,7 +142,7 @@ const emailRules: FormRules = {
       return true
     }
   },
-  smtpFrom: {
+  smtpAccount: {
     required: true,
     type: 'string',
     message: '请输入发件人邮箱',
@@ -151,6 +154,12 @@ const emailRules: FormRules = {
       }
       return true
     }
+  },
+  smtpFrom: {
+    required: true,
+    type: 'string',
+    message: '请输入发件人昵称',
+    trigger: ['blur', 'input']
   },
   smtpPassword: {
     required: true,
@@ -209,6 +218,10 @@ const handleSaveEmail = async () => {
       AdminApi.updateSystemConfig({
         key: 'smtpPort',
         value: String(emailForm.value.smtpPort)
+      }),
+      AdminApi.updateSystemConfig({
+        key: 'smtpAccount',
+        value: emailForm.value.smtpAccount
       }),
       AdminApi.updateSystemConfig({
         key: 'smtpFrom',
@@ -301,18 +314,21 @@ const fetchEmailSettings = async () => {
       { data: { data: smtp } },
       { data: { data: smtpPort } },
       { data: { data: smtpFrom } },
+      { data: { data: smtpAccount } },
       { data: { data: smtpPassword } },
       { data: { data: smtpSSL } }
     ] = await Promise.all([
       AdminApi.getSystemConfig('smtpServer'),
       AdminApi.getSystemConfig('smtpPort'),
       AdminApi.getSystemConfig('smtpFrom'),
+      AdminApi.getSystemConfig('smtpAccount'),
       AdminApi.getSystemConfig('smtpPassword'),
       AdminApi.getSystemConfig('smtpSSL')
     ])
 
     emailForm.value.smtpServer = smtp
     emailForm.value.smtpPort = Number(smtpPort)
+    emailForm.value.smtpAccount = smtpAccount
     emailForm.value.smtpFrom = smtpFrom
     emailForm.value.smtpPassword = smtpPassword
     emailForm.value.smtpSSL = smtpSSL === 'true'

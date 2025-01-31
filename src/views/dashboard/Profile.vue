@@ -3,13 +3,32 @@
     <NCard title="个人中心" class="info-card">
       <UserInfoGrid />
     </NCard>
+    <NCard title="实名认证" class="security-card">
+      <div class="security-item">
+        <div class="security-desc">
+          实名认证后可获得更多权限，包括更高的带宽限制和更多的节点使用权限。<br>
+          注意：实名认证信息将会使用 RSA 加密存储, 一旦认证成功, 无法读取。<br>
+          如果此处显示的状态与上方不一致, 请立刻<a href="mailto:support@mefrp.com">联系管理员</a>。
+        </div>
+        <div class="security-value">
+          <NSpace align="center">
+            <NTag :type="realnameTime ? 'success' : 'warning'">
+              {{ realnameTime ? `已实名认证 (${formatTime(realnameTime)})` : '未实名认证' }}
+            </NTag>
+            <NButton v-if="!realnameTime" type="primary" secondary @click="showRealnameModal">
+              立即认证
+            </NButton>
+          </NSpace>
+        </div>
+      </div>
+    </NCard>
     <NCard title="账户与安全" class="security-card">
       <div class="security-item">
         <div class="security-label">
           <span>账户密码</span>
         </div>
         <div class="security-desc">
-          账户密码用于登录，请妥善保管，一经泄露请及时重置。注意，更改密码后，访问密钥也会同时更改。
+          账户密码用于登录, 请妥善保管, 一经泄露请及时重置。注意, 更改密码后, 访问密钥也会同时更改。
         </div>
         <div class="security-value">
           <NButton size="medium" type="warning" secondary class="action-btn" @click="showPasswordResetModal">
@@ -28,7 +47,7 @@
           <span>访问密钥</span>
         </div>
         <div class="security-desc">
-          访问密钥用于验证您的身份，请妥善保管，一经泄露请及时重置。
+          访问密钥用于验证您的身份, 请妥善保管, 一经泄露请及时重置。
         </div>
         <div class="security-value">
           <div class="button-group">
@@ -58,7 +77,7 @@
         </div>
         <div class="security-desc">
           这里是用于 "中国大陆(不含港澳台)" 节点创建 HTTP/HTTPS 隧道的域名白名单。<br>
-          您的域名需要拥有工业和信息化部的备案记录才可添加。非中国大陆节点建站，域名无需过白。<br>
+          您的域名需要拥有工业和信息化部的备案记录才可添加。非中国大陆节点建站, 域名无需过白。<br>
           在填写时, 请直接填写根域名, 例如: mefrp.com, 不要填写 www.mefrp.com 等子域名。<br>
           <strong>注意: ME Frp 不提供任何的域名备案服务, 请自行根据服务商要求备案。</strong>
         </div>
@@ -83,11 +102,7 @@
                     </NTag>
                   </NSpace>
                 </NSpace>
-                <NPopconfirm
-                  @positive-click="handleDeleteDomain(domain.domain)"
-                  positive-text="确定"
-                  negative-text="取消"
-                >
+                <NPopconfirm @positive-click="handleDeleteDomain(domain.domain)" positive-text="确定" negative-text="取消">
                   <template #trigger>
                     <NButton size="medium" type="error" secondary style="margin-right: 12px">
                       <template #icon>
@@ -110,7 +125,7 @@
 
     <NModal v-model:show="showTokenResetModal" preset="dialog" type="warning" title="重置访问密钥" positive-text="确认"
       negative-text="取消" @positive-click="handleTokenReset" @negative-click="closeModal">
-      <div>重置后原有密钥将失效，请及时更新配置。是否继续？</div>
+      <div>重置后原有密钥将失效, 请及时更新配置。是否继续？</div>
     </NModal>
     <NModal v-model:show="showPasswordModal" preset="card" title="重置密码" style="width: 400px">
       <NForm ref="formRef" :model="passwordForm" :rules="rules">
@@ -141,6 +156,25 @@
       <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px">
         <NButton @click="closeDomainModal">取消</NButton>
         <NButton type="primary" :loading="domainLoading" @click="handleAddDomain">确认</NButton>
+      </div>
+    </NModal>
+    <NModal v-model:show="showRealnameForm" preset="card" title="实名认证" style="width: 400px" :maskClosable="false">
+      <NForm ref="realnameFormRef" :model="realnameForm" :rules="realnameRules">
+        <NFormItem label="真实姓名" path="realname">
+          <NInput v-model:value="realnameForm.realname" placeholder="请输入真实姓名" maxlength="20" />
+        </NFormItem>
+        <NFormItem label="身份证号" path="idCard">
+          <NInput v-model:value="realnameForm.idCard" placeholder="请输入18位身份证号" maxlength="18" />
+        </NFormItem>
+        <div class="form-tips">
+          提示：请确保填写的信息真实有效，实名认证通过后将无法修改。
+        </div>
+      </NForm>
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px">
+        <NButton @click="closeRealnameModal">取消</NButton>
+        <NButton type="primary" :loading="realnameLoading" @click="handleRealnameSubmit">
+          提交认证
+        </NButton>
       </div>
     </NModal>
   </div>
@@ -182,6 +216,15 @@ const domainForm = ref({
   domain: ''
 })
 
+function formatTime(timestamp: number): string {
+  if (!timestamp) return ''
+  const date = new Date(timestamp * 1000)
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  })
+}
 const passwordForm = ref({
   oldPassword: '',
   newPassword: '',
@@ -233,7 +276,7 @@ const handlePasswordReset = () => {
         newPassword: passwordForm.value.newPassword
       })
       if (response.data.code === 200) {
-        message.success('密码重置成功，请重新登录')
+        message.success('密码重置成功, 请重新登录')
         localStorage.removeItem('token')
         closePasswordModal()
         new Promise(resolve => setTimeout(resolve, 1000))
@@ -347,8 +390,98 @@ const handleDeleteDomain = async (domain: string) => {
   }
 }
 
+// 实名认证相关
+const realnameTime = ref(0)
+const showRealnameForm = ref(false)
+const realnameLoading = ref(false)
+const realnameFormRef = ref<FormInst | null>(null)
+const realnameForm = ref({
+  realname: '',
+  idCard: ''
+})
+
+const realnameRules = {
+  realname: {
+    required: true,
+    message: '请输入真实姓名',
+    trigger: ['blur', 'input'],
+    validator: (_rule: any, value: string) => {
+      if (!value.trim()) {
+        return new Error('姓名不能为空')
+      }
+      if (value.length < 2) {
+        return new Error('姓名长度不能小于2个字符')
+      }
+      return true
+    }
+  },
+  idCard: {
+    required: true,
+    message: '请输入身份证号',
+    trigger: ['blur', 'input'],
+    validator: (_rule: any, value: string) => {
+      const reg = /(^\d{17}(\d|X|x)$)/
+      if (!reg.test(value)) {
+        return new Error('请输入正确的18位身份证号')
+      }
+      return true
+    }
+  }
+}
+
+const loadRealnameStatus = async () => {
+  try {
+    const response = await AuthApi.getRealnameInfo()
+    if (response.data.code === 200) {
+      realnameTime.value = response.data.data || 0
+    }
+  } catch (error) {
+    message.error('获取实名认证状态失败')
+  }
+}
+
+const showRealnameModal = () => {
+  showRealnameForm.value = true
+}
+
+const closeRealnameModal = () => {
+  showRealnameForm.value = false
+  realnameForm.value = {
+    realname: '',
+    idCard: ''
+  }
+  realnameFormRef.value?.restoreValidation()
+}
+
+const handleRealnameSubmit = () => {
+  realnameFormRef.value?.validate(async (errors) => {
+    if (errors) return
+
+    realnameLoading.value = true
+    try {
+      const response = await AuthApi.submitRealname({
+        realname: realnameForm.value.realname.trim(),
+        idCard: realnameForm.value.idCard.toUpperCase()
+      })
+
+      if (response.data.code === 200) {
+        message.success('实名认证提交成功')
+        closeRealnameModal()
+        await loadRealnameStatus()
+      } else {
+        message.error(response.data.message || '实名认证失败')
+      }
+    } catch (error: any) {
+      message.error(error?.response?.data?.message || '实名认证失败')
+    } finally {
+      realnameLoading.value = false
+    }
+  })
+}
+
 onMounted(() => {
   loadIcpDomains()
+  loadRealnameStatus()
 })
 </script>
 
@@ -365,5 +498,12 @@ onMounted(() => {
   &:hover {
     background-color: var(--n-color-hover);
   }
+}
+
+.form-tips {
+  font-size: 12px;
+  color: var(--n-text-color-3);
+  margin-top: 8px;
+  line-height: 1.5;
 }
 </style>

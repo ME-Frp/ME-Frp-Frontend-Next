@@ -53,7 +53,7 @@
             </NButtonGroup>
           </NFormItem>
           <NFormItem label="允许端口" path="allowPort">
-            <NInput v-model:value="formModel.allowPort" placeholder="请输入允许的端口范围，如: 10000-20000" />
+            <NInput v-model:value="formModel.allowPort" placeholder="请输入允许的端口范围, 如: 10000-20000" />
           </NFormItem>
           <NFormItem label="允许协议" path="allowType">
             <NButtonGroup>
@@ -108,7 +108,7 @@
             </NButtonGroup>
           </NFormItem>
           <NFormItem label="允许端口" path="allowPort">
-            <NInput v-model:value="formModel.allowPort" placeholder="请输入允许的端口范围，如: 10000-20000" />
+            <NInput v-model:value="formModel.allowPort" placeholder="请输入允许的端口范围, 如: 10000-20000" />
           </NFormItem>
           <NFormItem label="允许协议" path="allowType">
             <NButtonGroup>
@@ -258,7 +258,7 @@ const rules: FormRules = {
     validator: (rule, value) => {
       if (!value) return new Error('请输入端口范围')
 
-      // 支持多个端口范围，用逗号分隔
+      // 支持多个端口范围, 用逗号分隔
       const ranges = value.split(';').map(range => range.trim())
 
       for (const range of ranges) {
@@ -274,7 +274,7 @@ const rules: FormRules = {
         // 检查端口范围
         const match = range.match(/^(\d+)-(\d+)$/)
         if (!match) {
-          return new Error('端口范围格式不正确，请使用 1-65535 或 80,443 或 1000-2000,3000-4000 的格式')
+          return new Error('端口范围格式不正确, 请使用 1-65535 或 80,443 或 1000-2000,3000-4000 的格式')
         }
 
         const start = parseInt(match[1])

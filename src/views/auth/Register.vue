@@ -156,7 +156,7 @@ const handleSendEmailCode = async () => {
     if (error?.response?.data?.message) {
       message.error(error.response.data.message)
     } else {
-      message.error(error.message || '验证码发送失败，请重试')
+      message.error(error.message || '验证码发送失败, 请重试')
     }
   } finally {
     isEmailCodeSending.value = false
@@ -185,7 +185,7 @@ const handleSubmit = async () => {
     if (error?.response?.data?.message) {
       message.error(error.response.data.message)
     } else {
-      message.error('注册失败，请重试')
+      message.error('注册失败, 请重试')
     }
   } finally {
     isSubmitting.value = false

@@ -1,0 +1,21 @@
+@use '../variables' as *;
+
+.help {
+    .single-card {
+        margin-bottom: 20px;
+
+        :deep(a) {
+            color: $primary-color;
+            text-decoration: none;
+            transition: color 0.3s ease;
+
+            &:hover {
+                color: $primary-hover;
+            }
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+    }
+}

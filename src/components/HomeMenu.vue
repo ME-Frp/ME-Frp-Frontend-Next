@@ -4,7 +4,7 @@
     <div class="navbar-content">
       <div class="logo">
         <RouterLink to="/" class="logo-link">
-          <h2>ME Frp 镜缘映射</h2>
+          <h2>ME Frp 幻缘映射</h2>
         </RouterLink>
       </div>
 
@@ -53,7 +53,7 @@
       </NPopover>
       <div class="logo">
         <RouterLink to="/" class="logo-link">
-          <h2>ME Frp 镜缘映射</h2>
+          <h2>ME Frp 幻缘映射</h2>
         </RouterLink>
       </div>
     </div>

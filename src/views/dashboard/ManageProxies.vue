@@ -261,7 +261,7 @@
 
         <NDivider>高级配置</NDivider>
         <NText depth="3" style="padding-bottom: 15px; display: block;">
-          提示：仅推荐技术用户使用，一般用户请勿随意填写。请确保您的配置正确，否则隧道可能无法启动。
+          提示：仅推荐技术用户使用, 一般用户请勿随意填写。请确保您的配置正确, 否则隧道可能无法启动。
         </NText>
 
         <NFormItem label="访问密钥" path="accessKey">

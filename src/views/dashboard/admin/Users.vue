@@ -400,6 +400,8 @@ const handleEditSubmit = () => {
     if (!errors) {
       submitting.value = true
       try {
+        editForm.value.outBound *= 128
+        editForm.value.inBound *= 128
         await AdminApi.updateUser(editForm.value)
         message.success('更新用户成功')
         showEditModal.value = false
@@ -426,8 +428,8 @@ const handleEdit = async (user: UserInfo) => {
         status: userDetail.status,
         isRealname: userDetail.isRealname,
         traffic: userDetail.traffic,
-        outBound: userDetail.outBound,
-        inBound: userDetail.inBound,
+        outBound: userDetail.outBound / 128,
+        inBound: userDetail.inBound / 128,
         maxProxies: userDetail.maxProxies
       }
       showEditModal.value = true
@@ -462,7 +464,7 @@ const fetchUserGroups = async () => {
   }
 }
 
-// 处理用户数据，添加 friendlyGroup
+// 处理用户数据, 添加 friendlyGroup
 const processUsers = (users: UserInfo[]) => {
   return users.map(user => ({
     ...user,

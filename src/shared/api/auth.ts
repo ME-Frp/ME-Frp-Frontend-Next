@@ -2,6 +2,13 @@ import baseApi from './config';
 import type { ApiResponse } from './config';
 import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData, UserNodeName, NodeUsage, IcpDomain } from '../../types';
 
+// 在 UserInfo 类型中添加实名信息接口
+interface RealnameInfo {
+  realname: string;
+  idCard: string;
+  time: number;
+  status: number;
+}
 
 export const AuthApi = {
     // 获取公告
@@ -107,6 +114,17 @@ export const AuthApi = {
     getIcpDomainOwner: (data: { domain: string }) => {
         return baseApi.post<ApiResponse<void>>('/auth/user/icpDomain/owner', data);
     },
+
+    // 获取实名认证信息
+    getRealnameInfo: () => {
+        return baseApi.get<ApiResponse<number>>('/auth/user/info/realname');
+    },
+
+    // 提交实名认证
+    submitRealname: (data: { realname: string; idCard: string }) => {
+        return baseApi.post<ApiResponse<void>>('/auth/user/realname/verify', data);
+    },
 };
 
+export type { RealnameInfo };
 export default AuthApi;

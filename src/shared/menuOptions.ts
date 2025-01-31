@@ -1,5 +1,5 @@
 import { h, Component } from 'vue'
-import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline,IdCardOutline,CreateOutline, CashOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline } from '@vicons/ionicons5'
+import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline,IdCardOutline,CreateOutline, CashOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline, WalletOutline, HelpCircleOutline } from '@vicons/ionicons5'
 import { NIcon, type MenuOption } from 'naive-ui'
 
 const baseMenuOptions: MenuOption[] = [
@@ -34,17 +34,22 @@ const baseMenuOptions: MenuOption[] = [
     link: '/dashboard/downloads',
   },
   {
+    label: '帮助中心',
+    icon: renderIcon(HelpCircleOutline),
+    key: 'help',
+    link: '/dashboard/help',
+  },
+  {
     label: '用户中心',
     icon: renderIcon(IdCardOutline),
     key: 'profile',
     link: '/dashboard/profile',
   },
   {
-    label: '赞助我们',
-    key: 'donate',
-    icon: renderIcon(CashOutline),
-    link: '/dashboard/donate',
-    disabled: true
+    label: '增值服务',
+    key: 'cash',
+    icon: renderIcon(WalletOutline),
+    link: '/dashboard/cash',
   },
   {
     label: '关于面板',

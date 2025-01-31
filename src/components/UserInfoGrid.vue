@@ -49,12 +49,12 @@
 
         <div class="user-info-item">
           <div class="user-info-label">入站带宽</div>
-          <div class="user-info-value">{{ userInfo.inBound }} Mbps</div>
+          <div class="user-info-value">{{ userInfo.inBound / 128 }} Mbps</div>
         </div>
 
         <div class="user-info-item">
           <div class="user-info-label">出站带宽</div>
-          <div class="user-info-value">{{ userInfo.outBound }} Mbps</div>
+          <div class="user-info-value">{{ userInfo.outBound / 128 }} Mbps</div>
         </div>
       </template>
     </div>
@@ -69,7 +69,7 @@
           </template>
           {{ signButtonText }}
         </NButton>
-        <NText depth="3" style="font-size: 13px;">签到一次可以获得 5 - 10 GB 的流量</NText>
+        <NText depth="3" style="font-size: 13px;">签到一次可以获得 5~10 GB 的流量</NText>
       </NSpace>
     </div>
   </div>
@@ -132,12 +132,12 @@ const signButtonText = computed(() => signLoading.value ? '签到中...' : (isSi
 // 执行签到
 const handleSign = async () => {
   if (!isSignAvailable.value || signLoading.value) return
-  
+
   try {
     signLoading.value = true
     const response = await AuthApi.sign()
     if (response.data.code === 200) {
-      message.success(`签到成功，获得 ${response.data.data.extraTraffic } GB 流量`)
+      message.success(`签到成功, 获得 ${response.data.data.extraTraffic} GB 流量`)
       isSignAvailable.value = false
       // 刷新用户信息以更新流量显示
       await fetchUserInfo()
@@ -148,7 +148,7 @@ const handleSign = async () => {
     if (error?.response?.data?.message) {
       message.error(error.response.data.message)
     } else {
-      message.error('签到失败，请重试')
+      message.error('签到失败, 请重试')
     }
   } finally {
     signLoading.value = false
@@ -170,7 +170,7 @@ const fetchUserInfo = async () => {
     if (error?.response?.data?.message) {
       message.error(error.response.data.message)
     } else {
-      message.error('获取用户信息失败，请重试')
+      message.error('获取用户信息失败, 请重试')
     }
   } finally {
     loading.value = false

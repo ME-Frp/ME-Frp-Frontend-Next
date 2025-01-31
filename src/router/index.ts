@@ -75,16 +75,22 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '文件下载' }
       },
       {
+        path: 'help',
+        name: 'help',
+        component: () => import('../views/dashboard/Help.vue'),
+        meta: { title: '帮助中心' }
+      },
+      {
         path: 'profile',
         name: 'profile',
         component: () => import('../views/dashboard/Profile.vue'),
         meta: { title: '个人中心' }
       },
       {
-        path: 'donate',
-        name: 'donate',
-        component: () => import('../views/dashboard/Donate.vue'),
-        meta: { title: '赞助我们' }
+        path: 'cash',
+        name: 'cash',
+        component: () => import('../views/dashboard/Cash.vue'),
+        meta: { title: '增值服务' }
       },
       {
         path: 'about',
@@ -181,7 +187,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (to.path === '/') {
-    document.title = 'ME Frp | 镜缘映射 - 免费内网穿透_免费端口映射_半公益_高速_Minecraft我的世界联机_泰拉瑞亚联机_远程桌面_开发调试_建站'
+    document.title = 'ME Frp | 幻缘映射 - 免费内网穿透_免费端口映射_半公益_高速_Minecraft我的世界联机_泰拉瑞亚联机_远程桌面_开发调试_建站'
   } else if (to.path === '/auth/login') {
     document.title = '登录到 ME Frp 5.0'
   } else if (to.path === '/auth/register') {
