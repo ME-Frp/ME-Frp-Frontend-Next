@@ -133,7 +133,7 @@
 
 <script lang="ts" setup>
 import { ref, h } from 'vue'
-import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag, NIcon } from 'naive-ui'
+import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag } from 'naive-ui'
 import type { DataTableColumns, FormRules, FormInst, SelectOption } from 'naive-ui'
 import { AdminApi } from '../../../shared/api/admin'
 import { AuthApi } from '../../../shared/api/auth'
@@ -217,7 +217,7 @@ const rules: FormRules = {
     required: true,
     message: '请输入服务端口',
     trigger: ['blur', 'input'],
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       if (typeof value !== 'number' || value < 1 || value > 65535) {
         return new Error('端口范围必须在 1-65535 之间')
       }
@@ -228,7 +228,7 @@ const rules: FormRules = {
     required: true,
     message: '请输入管理端口',
     trigger: ['blur', 'input'],
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       if (typeof value !== 'number' || value < 1 || value > 65535) {
         return new Error('端口范围必须在 1-65535 之间')
       }
@@ -244,7 +244,7 @@ const rules: FormRules = {
     required: true,
     message: '请选择允许的用户组',
     trigger: ['blur', 'input'],
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       if (!Array.isArray(value) || value.length === 0) {
         return new Error('请至少选择一个用户组')
       }
@@ -255,7 +255,7 @@ const rules: FormRules = {
     required: true,
     message: '请输入允许的端口范围',
     trigger: ['blur', 'input'],
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       if (!value) return new Error('请输入端口范围')
 
       // 支持多个端口范围, 用逗号分隔
@@ -296,7 +296,7 @@ const rules: FormRules = {
     required: true,
     message: '请选择允许的协议',
     trigger: ['blur', 'input'],
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       if (!Array.isArray(value) || value.length === 0) {
         return new Error('请至少选择一个协议')
       }

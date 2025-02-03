@@ -1,7 +1,7 @@
 import baseApi from './config'
 import type { ApiResponse } from './config';
 import type { UserInfo } from '../../types/authApi'
-import type { GetUsersData, FilterUsersArgs, UpdateUserArgs, GetNodesData, AddNodeArgs, GetNodesArgs, UpdateNodeArgs, FilterProxiesArgs, GetProxiesData, UpdateProxyArgs, UpdateSystemConfigArgs, SystemConfig } from '../../types'
+import type { GetUsersData, FilterUsersArgs, UpdateUserArgs, GetNodesData, AddNodeArgs, GetNodesArgs, UpdateNodeArgs, FilterProxiesArgs, GetProxiesData, UpdateProxyArgs, UpdateSystemConfigArgs } from '../../types'
 
 export const AdminApi = {
   // 搜索用户

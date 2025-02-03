@@ -31,11 +31,11 @@
         </NDescriptions>
         <div>
           <span>
-            ME Frp 5.0 除 <strong>设计框架/程序框架及 <a href="https://github.com/fatedier/frp">Frp 项目原有代码</a></strong> 以外,
+            ME Frp 5.0 除 <strong>设计框架/程序框架及 <a href="https://github.com/fatedier/frp" target="_blank">Frp 项目原有代码</a></strong> 以外,
             其他所有组件均为自主研发, 受《中华人民共和国著作权法》保护。
           </span><br>
           <span>
-            中国内网穿透联盟致力于聚集各个行业同僚, 可在 <a href="https://xn--v6qw21h0gd43u.xn--fiqs8s">内网穿透.中国</a> 了解更多信息。
+            中国内网穿透联盟致力于聚集各个行业同僚, 可在 <a href="https://xn--v6qw21h0gd43u.xn--fiqs8s" target="_blank">内网穿透.中国</a> 了解更多信息。
           </span><br>
           <span>
             如需了解我们的相关规定, 请访问相应链接: <RouterLink to="/terms">服务条款</RouterLink>&nbsp;
@@ -77,11 +77,11 @@
         </NDescriptions>
         <div>
           <span>
-            如果您有捐赠节点的意向, 可联系 <a href="mailto:support@mefrp.com">support@mefrp.com</a>, 或加入 QQ 群 <a
-              href="https://qm.qq.com/q/9iibikyupG">1019501085</a> 进行咨询。
+            如果您有捐赠节点的意向, 可联系 <a href="mailto:support@mefrp.com" target="_blank">support@mefrp.com</a>, 或加入 QQ 群 <a
+              href="https://qm.qq.com/q/9iibikyupG" target="_blank">1019501085</a> 进行咨询。
           </span><br>
           <span>
-            中国内网穿透联盟致力于聚集各个行业同僚, 可在 <a href="https://xn--v6qw21h0gd43u.xn--fiqs8s">内网穿透.中国</a> 了解更多信息。
+            中国内网穿透联盟致力于聚集各个行业同僚, 可在 <a href="https://xn--v6qw21h0gd43u.xn--fiqs8s" target="_blank">内网穿透.中国</a> 了解更多信息。
           </span>
         </div>
       </NSpace>
@@ -93,7 +93,6 @@
         <thead>
           <tr>
             <th>姓名</th>
-            <th>邮箱</th>
             <th>赞助事项</th>
             <th>留言</th>
           </tr>
@@ -101,7 +100,6 @@
         <tbody>
           <tr v-for="sponsor in oldSponsors" :key="sponsor.id">
             <td>{{ sponsor.name }}</td>
-            <td>{{ sponsor.email }}</td>
             <td>{{ sponsor.thing }}</td>
             <td>{{ sponsor.comment }}</td>
           </tr>

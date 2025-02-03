@@ -1,4 +1,5 @@
 import type { UserInfo } from './authApi'
+import type { Proxy } from './proxy'
 
 export interface GetUsersData {
     users: UserInfo[];
@@ -73,30 +74,6 @@ export interface UpdateUserArgs {
     maxProxies?: number;
 }
 
-export interface Proxy {
-    proxyId: number;
-    proxyName: string;
-    username: string;
-    nodeId: number;
-    localIp: string;
-    localPort: number;
-    remotePort: number;
-    domain?: string;
-    proxyType: string;
-    isOnline: boolean;
-    /** 隧道是否被封禁（管理员手动封禁） */
-    isBanned: boolean;
-    location: string;
-    accessKey: string;
-    lastStartTime: string;
-    lastCloseTime: string;
-    hostHeaderRewrite: string;
-    headerXFromWhere: string;
-    useEncryption: boolean;
-    useCompression: boolean;
-    proxyProtocolVersion: string;
-}
-
 export interface FilterProxiesArgs {
     page: number;
     limit: number;
@@ -118,16 +95,3 @@ export interface UpdateSystemConfigArgs {
     key: string;
     value: string;
 }
-
-export interface SystemConfig {
-    allowRegister: boolean;
-    allowSign: boolean;
-    notice: string;
-    smtp: string;
-    smtpFrom: string;
-    smtpPassword: string;
-    smtpPort: number;
-    smtpSSL: boolean;
-}
-
-export type SystemConfigKey = keyof SystemConfig;

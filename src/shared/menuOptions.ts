@@ -1,5 +1,5 @@
 import { h, Component } from 'vue'
-import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline,IdCardOutline,CreateOutline, CashOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline, WalletOutline, HelpCircleOutline } from '@vicons/ionicons5'
+import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline, IdCardOutline, CreateOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline, WalletOutline, HelpCircleOutline } from '@vicons/ionicons5'
 import { NIcon, type MenuOption } from 'naive-ui'
 
 const baseMenuOptions: MenuOption[] = [

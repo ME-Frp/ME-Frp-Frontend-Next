@@ -135,7 +135,7 @@ const emailRules: FormRules = {
     type: 'number',
     message: '请输入 SMTP 端口',
     trigger: ['blur', 'input'],
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       if (!value || value < 1 || value > 65535) {
         return new Error('端口号必须在 1-65535 之间')
       }
@@ -147,7 +147,7 @@ const emailRules: FormRules = {
     type: 'string',
     message: '请输入发件人邮箱',
     trigger: ['blur', 'input'],
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
       if (!emailRegex.test(value)) {
         return new Error('请输入正确的邮箱地址')

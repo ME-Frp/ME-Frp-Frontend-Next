@@ -47,17 +47,6 @@ export interface CreateProxyArgs {
     useCompression?: boolean;
 }
 
-export interface UserNode {
-    nodeId: number;
-    name: string;
-    hostname: string;
-    allowedProtocols: string[];
-    portRange: {
-        min: number;
-        max: number;
-    };
-}
-
 export interface Proxy {
     proxyId: number;
     proxyName: string;

@@ -243,7 +243,7 @@ const rules: FormRules = {
     required: true,
     message: '请输入邮箱',
     trigger: ['blur', 'input'],
-    validator: (rule: any, value: string) => {
+    validator: (_rule: any, value: string) => {
       if (!value) return true
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(value)) {
@@ -348,11 +348,6 @@ const columns: DataTableColumns<UserInfo> = [
     }
   }
 ]
-
-const handlePageChange = (page: number) => {
-  pagination.value.page = page
-  loadData()
-}
 
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 

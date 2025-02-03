@@ -7,7 +7,7 @@
             <HomeMenu v-if="!isDashboard" />
             <RouterView v-slot="{ Component }">
               <transition name="fade" mode="out-in" appear>
-                  <component :is="Component" />
+                <component :is="Component" />
               </transition>
             </RouterView>
             <HomeFooter v-if="!isDashboard" />
@@ -49,24 +49,17 @@ const isDashboard = computed(() => route.path.startsWith('/dashboard'))
 
 // 主题状态
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
-const isDarkMode = ref(
-  localStorage.getItem('theme') !== null
-    ? localStorage.getItem('theme') === 'dark'
-    : prefersDark.matches
-)
+const isDarkMode = ref(prefersDark.matches)
 const theme = computed(() => isDarkMode.value ? darkTheme : null)
 
 // 监听系统主题变化
 prefersDark.addEventListener('change', (e) => {
-  if (localStorage.getItem('theme') === null) {
-    isDarkMode.value = e.matches
-  }
+  isDarkMode.value = e.matches
 })
 
 // 主题切换函数
 const toggleTheme = () => {
   isDarkMode.value = !isDarkMode.value
-  localStorage.setItem('theme', isDarkMode.value ? 'dark' : 'light')
 }
 
 // 提供给全局使用

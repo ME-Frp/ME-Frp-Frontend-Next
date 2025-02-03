@@ -27,7 +27,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/auth/iforgot',
-    name: 'forgot',
+    name: 'iforgot',
     component: () => import('../views/auth/iForgot.vue'),
     meta: {
       title: '找回密码',
@@ -167,7 +167,7 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const token = localStorage.getItem('token')
   const isAdmin = localStorage.getItem('group') === 'admin'
 

@@ -1,6 +1,6 @@
 <template>
   <!-- PC端导航栏 -->
-  <NLayoutHeader bordered class="navbar pc-navbar">
+  <NLayoutHeader bordered class="navbar pc-navbar" style="user-select: none">
     <div class="navbar-content">
       <div class="logo">
         <RouterLink to="/" class="logo-link">
@@ -37,7 +37,7 @@
   </NLayoutHeader>
 
   <!-- 移动端导航栏 -->
-  <NLayoutHeader bordered class="navbar mobile-navbar">
+  <NLayoutHeader bordered class="navbar mobile-navbar" style="user-select: none">
     <div class="mobile-header">
       <NPopover trigger="click" placement="bottom-start" :show="showMenu" @update:show="showMenu = $event">
         <template #trigger>
@@ -164,5 +164,5 @@ function handleMenuSelect(key: string) {
 </script>
 
 <style lang="scss" scoped>
-@use '../assets/styles/components/homeMenu.scss';
+@use '../assets/styles/components/homeMenu.scss' as *;
 </style>

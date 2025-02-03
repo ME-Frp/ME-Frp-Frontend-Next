@@ -1,6 +1,6 @@
 <template>
   <NMenu :collapsed-width="64" :collapsed-icon-size="24" :options="menuOptions" :value="currentKey" :icon-size="22"
-    @update:value="handleMenuSelect" />
+    @update:value="handleMenuSelect" style="user-select: none" />
 </template>
 
 <script setup lang="ts">

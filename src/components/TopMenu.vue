@@ -1,5 +1,5 @@
 <template>
-  <NLayoutHeader bordered position="absolute" style="height: 64px; z-index: 999;">
+  <NLayoutHeader bordered position="absolute" style="height: 64px; z-index: 999; user-select: none">
     <div class="header-content">
       <div class="left">
         <NPopover trigger="click" placement="bottom-start" :show="showMenu" @update:show="showMenu = $event">

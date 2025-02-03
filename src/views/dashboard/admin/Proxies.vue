@@ -89,8 +89,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h } from 'vue'
-import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NInput, NSelect, useMessage, NTag, NModal, NForm, NFormItem, NInputNumber, NDynamicTags, NDivider, NSwitch, NLayout, NLayoutContent } from 'naive-ui'
+import { ref, h, RendererElement, RendererNode, VNode } from 'vue'
+import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NInput, NSelect, useMessage, NTag, NModal, NForm, NFormItem, NInputNumber, NDynamicTags, NDivider, NSwitch, NLayout } from 'naive-ui'
 import type { DataTableColumns, SelectOption, FormRules, FormInst } from 'naive-ui'
 import { AdminApi } from '../../../shared/api/admin'
 import { AuthApi } from '../../../shared/api/auth'
@@ -246,7 +246,7 @@ const rules: FormRules = {
     required: true,
     message: '请输入本地端口',
     trigger: ['blur', 'input'],
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       if (typeof value !== 'number' || value < 1 || value > 65535) {
         return new Error('端口范围必须在 1-65535 之间')
       }
@@ -257,7 +257,7 @@ const rules: FormRules = {
     required: true,
     message: '请输入远程端口',
     trigger: ['blur', 'input'],
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       if (['http', 'https'].includes(editForm.value.proxyType)) {
         return true
       }
@@ -271,7 +271,7 @@ const rules: FormRules = {
     required: true,
     message: '请输入绑定域名',
     trigger: ['blur', 'input'],
-    validator: (rule, value) => {
+    validator: (_rule, _value) => {
       if (!['http', 'https'].includes(editForm.value.proxyType)) {
         return true
       }
@@ -295,7 +295,7 @@ const rules: FormRules = {
 }
 
 const renderStatus = (row: Proxy) => {
-  const tags = []
+  const tags: VNode<RendererNode, RendererElement, { [key: string]: any }>[] = []
 
   // 在线状态标签
   tags.push(h(
@@ -691,7 +691,7 @@ const renderDomainTag = (tag: string) => {
       round: false,
       closable: true,
       style: 'cursor: pointer',
-      onDblclick: (e) => {
+      onDblclick: (e: { target: HTMLElement }) => {
         const tagEl = e.target as HTMLElement
         const input = document.createElement('input')
         input.style.width = '100px'

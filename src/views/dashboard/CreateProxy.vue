@@ -1,7 +1,7 @@
 <template>
   <div class="content-grid">
     <!-- 修改步骤指示器区域 -->
-    <div class="steps-container" v-if="isMobile">
+    <div class="steps-container" v-if="isMobile" style="user-select: none">
       <NButton secondary round v-if="currentStep === 2" @click="currentStep = 1" size="medium">
         返回
         <template #icon>
@@ -70,7 +70,7 @@
     </NCard>
 
     <!-- 修改配置卡片的显示逻辑 -->
-    <NCard v-if="!isMobile || currentStep === 2" title="隧道配置" class="config-card">
+    <NCard v-if="!isMobile || currentStep === 2" title="隧道配置" class="config-card" style="user-select: none">
       <!-- 基础配置 -->
       <NForm ref="formRef" :model="formValue" :rules="rules" label-placement="left" label-width="120"
         require-mark-placement="right-hanging">
@@ -235,7 +235,7 @@ const rules: FormRules = {
     type: 'number',
     message: '请输入本地端口',
     trigger: 'blur',
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       if (typeof value !== 'number' || value < 1 || value > 65535) {
         return new Error('端口范围必须在 1-65535 之间')
       }
@@ -247,7 +247,7 @@ const rules: FormRules = {
     type: 'number',
     message: '请输入远程端口',
     trigger: 'blur',
-    validator: (rule, value) => {
+    validator: (_rule, value) => {
       if (['http', 'https'].includes(formValue.value.type || '')) {
         return true
       }

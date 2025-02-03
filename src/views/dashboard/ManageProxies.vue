@@ -201,7 +201,7 @@
         </div>
         <div class="modal-info-item">
           <span class="label">节点主机名：</span>
-          <span class="value">{{ nodeOptions.find(node => node.value === selectedProxy.nodeId)?.hostname || '-' }}</span>
+          <span class="value">{{ nodeOptions.find(node => node.value === selectedProxy?.nodeId)?.hostname || '-' }}</span>
         </div>
         <div class="modal-info-item">
           <span class="label">远程端口：</span>
@@ -327,7 +327,7 @@
 
 <script setup lang="ts">
 import { ref, computed, h } from 'vue'
-import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, NDivider, NSwitch, NText, NPopconfirm, NEmpty } from 'naive-ui'
+import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, NDivider, NSwitch, NText, NEmpty } from 'naive-ui'
 import { GridOutline, ListOutline, BuildOutline, RefreshOutline, SearchOutline, InformationCircleOutline, CreateOutline, TrashOutline, PowerOutline, AddOutline } from '@vicons/ionicons5'
 import { AuthApi } from '../../shared/api/auth'
 import type { Proxy, UserNodeName } from '../../types'
@@ -362,13 +362,6 @@ const editForm = ref({
   nodeId: 0
 })
 const router = useRouter()
-
-const proxyTypeOptions = [
-  { label: 'TCP', value: 'tcp' },
-  { label: 'UDP', value: 'udp' },
-  { label: 'HTTP', value: 'http' },
-  { label: 'HTTPS', value: 'https' }
-]
 
 const rules = {
   proxyName: {
@@ -454,11 +447,6 @@ const handleRefresh = async () => {
 const getNodeLabel = (nodeId: number) => {
   const node = nodeOptions.value.find(node => node.value === nodeId)
   return node ? `#${nodeId} - ${node.label}` : `#${nodeId}`
-}
-
-const handleViewInfo = (proxy: Proxy) => {
-  selectedProxy.value = proxy
-  showModal.value = true
 }
 
 // 获取节点列表

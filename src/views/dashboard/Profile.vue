@@ -3,7 +3,7 @@
     <NCard title="个人中心" class="info-card">
       <UserInfoGrid />
     </NCard>
-    <NCard title="实名认证" class="security-card">
+    <NCard title="实名认证" class="security-card" style="user-select: none">
       <div class="security-item">
         <div class="security-desc">
           实名认证后可获得更多权限，包括更高的带宽限制和更多的节点使用权限。<br>
@@ -23,7 +23,7 @@
       </div>
     </NCard>
     <NCard title="账户与安全" class="security-card">
-      <div class="security-item">
+      <div class="security-item" style="user-select: none">
         <div class="security-label">
           <span>账户密码</span>
         </div>
@@ -42,7 +42,7 @@
         </div>
       </div>
       <NDivider />
-      <div class="security-item">
+      <div class="security-item" style="user-select: none">
         <div class="security-label">
           <span>访问密钥</span>
         </div>
@@ -72,10 +72,10 @@
       </div>
       <NDivider />
       <div class="security-item">
-        <div class="security-label">
+        <div class="security-label" style="user-select: none">
           <span>域名白名单</span>
         </div>
-        <div class="security-desc">
+        <div class="security-desc" style="user-select: none">
           这里是用于 "中国大陆(不含港澳台)" 节点创建 HTTP/HTTPS 隧道的域名白名单。<br>
           您的域名需要拥有工业和信息化部的备案记录才可添加。非中国大陆节点建站, 域名无需过白。<br>
           在填写时, 请直接填写根域名, 例如: mefrp.com, 不要填写 www.mefrp.com 等子域名。<br>
@@ -202,7 +202,7 @@ import { RefreshOutline, CopyOutline, KeyOutline, TrashOutline, AddOutline } fro
 import type { FormInst } from 'naive-ui'
 import UserInfoGrid from '../../components/UserInfoGrid.vue'
 import { AuthApi } from '../../shared/api/auth'
-import { IcpDomain } from 'src/types'
+import { IcpDomain } from '../../types'
 
 const message = useMessage()
 const showTokenResetModal = ref(false)
