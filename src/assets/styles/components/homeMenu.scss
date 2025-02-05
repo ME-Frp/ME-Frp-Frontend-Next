@@ -57,6 +57,7 @@
 
 .mobile-navbar {
     display: none;
+
     @media (max-width: 700px) {
         display: block;
     }
@@ -98,4 +99,17 @@
     .n-button {
         font-size: 0.95rem;
     }
+}
+
+.mobile-menu {
+    min-width: 160px;
+    margin: -8px -16px;
+}
+
+:deep(.mobile-menu .n-menu-item) {
+    padding: 8px 16px;
+}
+
+:deep(.mobile-menu .n-menu) {
+    --n-item-height: 42px;
 }

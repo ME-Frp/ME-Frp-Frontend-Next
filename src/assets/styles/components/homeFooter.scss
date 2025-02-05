@@ -1,8 +1,10 @@
+@use '../variables' as *;
+
 .footer {
     /* margin-top: 20px; */
     padding-bottom: 20px;
-    background-color: var(--n-color);
-    border-top: 1px solid var(--n-border-color);
+    background-color: $bg-color;
+    border-top: 1px solid $border-color;
 }
 
 .footer-content {
@@ -14,16 +16,16 @@
 
 .footer p {
     margin: 8px 0;
-    color: var(--n-text-color-2);
+    color: $text-color-2;
     font-size: 0.9rem;
 }
 
 .footer a {
-    color: var(--n-text-color-2);
+    color: $text-color-2;
     text-decoration: none;
-    transition: color 0.3s ease;
-}
+    transition: $transition-all;
 
-.footer a:hover {
-    color: #2196F3;
+    &:hover {
+        color: $primary-color;
+    }
 }

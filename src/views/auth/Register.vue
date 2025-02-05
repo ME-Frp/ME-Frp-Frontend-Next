@@ -41,6 +41,12 @@
             show-password-on="click"
           />
         </NFormItem>
+        <div class="form-footer">
+          <span>注册即代表您同意我们的</span>
+          <RouterLink to="/terms">服务条款</RouterLink>
+          <span>与</span>
+          <RouterLink to="/privacy">隐私政策</RouterLink>
+        </div>
         <NButton 
           type="primary" 
           block 
@@ -53,7 +59,7 @@
         </NButton>
         <div class="form-footer login-link">
           <span>已有账号？</span>
-          <router-link to="/auth/login">立即登录</router-link>
+          <RouterLink to="/auth/login">立即登录</RouterLink>
         </div>
       </NForm>
     </NCard>

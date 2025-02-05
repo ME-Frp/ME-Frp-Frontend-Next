@@ -7,7 +7,7 @@
     min-height: calc(100vh - 64px - 64px);
 
     :deep(.n-card) {
-        transition: background-color .3s var(--n-bezier);
+        transition: $transition-all;
     }
 }
 
@@ -18,7 +18,7 @@
     :deep(a) {
         color: $primary-color;
         text-decoration: none;
-        transition: color 0.3s ease;
+        transition: $transition-all;
 
         &:hover {
             color: $primary-hover;
@@ -27,7 +27,7 @@
 
     :deep(h1) {
         text-align: center;
-        color: var(--n-text-color);
+        color: $text-color;
         margin: 0 0 32px;
         font-size: 2rem;
         background: $primary-gradient;
@@ -39,19 +39,19 @@
     }
 
     :deep(h2) {
-        color: var(--n-text-color);
+        color: $text-color;
         margin: 24px 0 16px;
         font-size: 1.4rem;
     }
 
     :deep(h3) {
-        color: var(--n-text-color);
+        color: $text-color;
         margin: 20px 0 14px;
         font-size: 1.2rem;
     }
 
     :deep(p) {
-        color: var(--n-text-color-2);
+        color: $text-color-2;
         margin: 8px 0;
         line-height: 1.7;
     }
@@ -68,7 +68,7 @@
     }
 
     :deep(strong) {
-        color: var(--n-text-color);
+        color: $text-color;
     }
 }
 

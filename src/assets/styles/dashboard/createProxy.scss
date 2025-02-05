@@ -7,7 +7,6 @@
   align-items: start;
 
   .node-card {
-
     :deep(.n-card-header) {
       border-bottom: 1px solid $border-color;
     }
@@ -66,7 +65,7 @@
   }
 
   .selected-node {
-    box-shadow: 0 0 8px rgba(var(--n-primary-color-rgb), 0.2);
+    box-shadow: 0 0 8px rgba($primary-color, 0.2);
     background-color: rgba($primary-color, 0.05);
     border-color: $primary-color !important;
 
@@ -82,7 +81,7 @@
 
     .label {
       width: 80px;
-      color: var(--n-text-color-2);
+      color: $text-color-2;
     }
   }
 

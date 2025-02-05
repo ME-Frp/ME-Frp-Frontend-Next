@@ -10,7 +10,7 @@ body,
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.15s ease;
+  transition: $transition-all;
 }
 
 .fade-enter-from,

@@ -5,6 +5,7 @@
       <div class="hero-content">
         <h1 class="main-title">ME Frp 幻缘映射</h1>
         <p class="subtitle">免费 · 公益 · 好用 · 低延迟 · 稳定的内网穿透服务</p>
+        <p class="thirdtitle">五年技术沉淀 · 稳定可靠</p>
         <div class="hero-buttons">
           <NButton type="primary" size="large" class="start-button" @click="router.push('/auth/login')">
             开始使用

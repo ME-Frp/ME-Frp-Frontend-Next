@@ -1,3 +1,5 @@
+@use '../variables' as *;
+
 .auth-container {
     min-height: calc(100vh - 64px);
     display: flex;
@@ -24,7 +26,7 @@
 .logo-link h2 {
     margin: 0 0 0px;
     font-size: 1.5rem;
-    background: linear-gradient(45deg, #2196F3, #42A5F5);
+    background: $primary-gradient;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -33,17 +35,28 @@
 .form-footer {
     display: flex;
     justify-content: center;
-    margin: 16px 0 0;
+    margin-top: 16px;
+    margin-bottom: 8px;
     gap: 8px;
+    font-size: 14px;
+
+    span {
+        color: $text-color-2;
+    }
+
+    a {
+        color: $primary-color;
+        text-decoration: none;
+        transition: $transition-all;
+
+        &:hover {
+            color: $primary-pressed;
+        }
+    }
 }
 
-.login-link span {
-    color: var(--n-text-color-2);
-}
-
-.login-link a {
-    color: #2196F3;
-    text-decoration: none;
+.login-link {
+    margin-top: 8px;
 }
 
 .title-with-icon {
@@ -55,5 +68,5 @@
 }
 
 .title-with-icon :deep(svg) {
-    color: #2196F3;
+    color: $primary-color;
 }

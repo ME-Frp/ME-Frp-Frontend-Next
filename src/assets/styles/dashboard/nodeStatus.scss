@@ -1,3 +1,5 @@
+@use '../variables' as *;
+
 .overview {
     display: flex;
     flex-direction: row;
@@ -7,26 +9,26 @@
     .overview-item {
         text-align: left;
         padding: 16px;
-        background: var(--n-color);
+        background: $bg-color;
         border-radius: 8px;
 
         .overview-label {
             font-size: 14px;
-            color: var(--n-text-color-2);
+            color: $text-color-2;
             margin-bottom: 8px;
         }
 
         .overview-value {
             font-size: 24px;
             font-weight: 500;
-            color: var(--n-text-color);
+            color: $text-color;
             display: flex;
             align-items: baseline;
             gap: 4px;
 
             .unit {
                 font-size: 14px;
-                color: var(--n-text-color-2);
+                color: $text-color-2;
             }
         }
     }
@@ -40,7 +42,7 @@
 }
 
 .node-card {
-    transition: all 0.3s ease;
+    transition: $transition-all;
 
     &.offline {
         opacity: 0.7;
@@ -69,14 +71,14 @@
 
             .stat-label {
                 font-size: 13px;
-                color: #666;
+                color: $text-color-2;
                 margin-bottom: 4px;
             }
 
             .stat-value {
                 font-size: 15px;
                 font-weight: 500;
-                color: var(--n-text-color);
+                color: $text-color;
             }
         }
     }

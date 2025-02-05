@@ -14,7 +14,7 @@
         :deep(a) {
             color: $primary-color;
             text-decoration: none;
-            transition: color 0.3s ease;
+            transition: $transition-all;
 
             &:hover {
                 color: $primary-hover;

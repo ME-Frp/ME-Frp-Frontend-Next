@@ -6,7 +6,7 @@
     font-size: 1.5em;
     margin-bottom: 10px;
     padding: 8px 0;
-    background-color: var(--n-color-hover);
+    background-color: $bg-color-hover;
     border-radius: 4px;
   }
 
@@ -27,7 +27,7 @@
     :deep(a) {
       color: $primary-color;
       text-decoration: none;
-      transition: color 0.3s ease;
+      transition: $transition-all;
 
       &:hover {
         color: $primary-hover;
@@ -88,10 +88,10 @@
     }
 
     :deep(blockquote) {
-      border-left: 4px solid #ddd;
+      border-left: 4px solid $border-color;
       padding-left: 1em;
       margin: 0;
-      color: #666;
+      color: $text-color-2;
       font-size: 1.1em;
     }
 
@@ -104,7 +104,7 @@
 
     :deep(th),
     :deep(td) {
-      border: 1px solid #ddd;
+      border: 1px solid $border-color;
       padding: 0.5em;
     }
 
