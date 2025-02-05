@@ -13,7 +13,7 @@ switch (process.env.NODE_ENV) {
         baseURL = "http://localhost:8080/api";
         break;
     case 'production':
-        baseURL = "https://mefrp-preview-api.lxhtt.cn/api";
+        baseURL = "https://preapi.mefrp.com/api";
         break;
 }
 // 创建axios实例
