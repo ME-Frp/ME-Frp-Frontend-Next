@@ -11,7 +11,6 @@ export interface LoginData {
 }
 
 export interface iForgotData {
-    username: string;
     email: string;
     password: string;
     emailCode: string;

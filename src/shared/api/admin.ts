@@ -3,6 +3,17 @@ import type { ApiResponse } from './config';
 import type { UserInfo } from '../../types/authApi'
 import type { GetUsersData, FilterUsersArgs, UpdateUserArgs, GetNodesData, AddNodeArgs, GetNodesArgs, UpdateNodeArgs, FilterProxiesArgs, GetProxiesData, UpdateProxyArgs, UpdateSystemConfigArgs } from '../../types'
 
+export interface UpdateProductVersionArgs {
+  product: 'core' | 'launcher'
+  version: string
+}
+
+export interface DownloadSource {
+  id: string
+  name: string
+  url: string
+}
+
 export const AdminApi = {
   // 搜索用户
   filterUsers: (params: FilterUsersArgs) => {
@@ -107,5 +118,25 @@ export const AdminApi = {
   // 删除被禁用的邮箱提供商
   removeBannedEmailProvider: (provider: string) => {
     return baseApi.post<ApiResponse<void>>('/admin/system/bannedEmailProviders/delete', { provider })
+  },
+
+  updateProductVersion(params: UpdateProductVersionArgs) {
+    return baseApi.post('/api/admin/product/update', params)
+  },
+
+  getDownloadSources() {
+    return baseApi.get('/api/auth/downloadSources')
+  },
+
+  addDownloadSource(params: { source: DownloadSource }) {
+    return baseApi.post('/api/auth/downloadSources/add', params)
+  },
+
+  deleteDownloadSource(sourceId: string) {
+    return baseApi.post('/api/auth/downloadSources/delete', { sourceId })
+  },
+
+  updateDownloadSource(params: { source: DownloadSource }) {
+    return baseApi.post('/api/auth/downloadSources/update', params)
   }
 }

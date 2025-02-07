@@ -63,6 +63,24 @@
               @update:value="handleTagsUpdate" />
           </NSpace>
         </NTabPane>
+        <NTabPane name="apps" tab="应用设置">
+          <NForm ref="appsFormRef" :model="appsForm" :rules="appsRules" label-placement="left"
+            label-width="auto" require-mark-placement="right-hanging">
+            <NFormItem label="Frp 版本" path="frpVersion">
+              <NInput v-model:value="appsForm.frpVersion" />
+            </NFormItem>
+            <NDivider>下载源</NDivider>
+            <NSpace vertical>
+              <NDynamicTags v-model:value="downloadSources" :render-tag="renderDownloadSource"
+                @update:value="handleDownloadSourceUpdate" />
+            </NSpace>
+
+            <NSpace justify="end">
+              <NButton type="primary" @click="handleSaveApps">保存设置</NButton>
+            </NSpace>
+          </NForm>
+        </NTabPane>
+
       </NTabs>
     </NCard>
   </div>
@@ -79,6 +97,7 @@ const message = useMessage()
 const basicFormRef = ref<FormInst | null>(null)
 const securityFormRef = ref<FormInst | null>(null)
 const emailFormRef = ref<FormInst | null>(null)
+const appsFormRef = ref<FormInst | null>(null)
 
 const basicForm = ref({
   notice: ''
@@ -99,9 +118,15 @@ const emailForm = ref({
   smtpProvider: 'custom'
 })
 
+const appsForm = ref({
+  frpVersion: '',
+})
+
 const bannedProviders = ref<string[]>([])
+const downloadSources = ref<string[]>([])
 
 const bannedProvidersOri = ref<string[]>([])
+const downloadSourcesOri = ref<string[]>([])
 
 const basicRules: FormRules = {
   notice: {
@@ -175,6 +200,15 @@ const emailRules: FormRules = {
   }
 }
 
+const appsRules: FormRules = {
+  frpVersion: {
+    required: true,
+    type: 'string',
+    message: '请输入 Frp 版本',
+    trigger: ['blur', 'input']
+  }
+}
+
 const handleSaveBasic = async () => {
   try {
     await basicFormRef.value?.validate()
@@ -242,6 +276,19 @@ const handleSaveEmail = async () => {
   }
 }
 
+const handleSaveApps = async () => {
+  try {
+    await appsFormRef.value?.validate()
+    await AdminApi.updateProductVersion({
+      product: 'core',
+      version: appsForm.value.frpVersion
+    })
+    message.success('保存应用设置成功')
+  } catch (error) {
+    message.error('保存应用设置失败')
+  }
+}
+
 const handleTagsUpdate = async (tags: string[]) => {
   const newTag = tags.find(tag => !bannedProvidersOri.value.includes(tag))
 
@@ -279,6 +326,16 @@ const fetchBannedProviders = async () => {
     bannedProviders.value = data
   } catch (error: any) {
     message.error('获取被禁用邮箱提供商列表失败')
+  }
+}
+
+const fetchDownloadSources = async () => {
+  try {
+    const { data: { data } } = await AdminApi.getDownloadSources()
+    downloadSourcesOri.value = data.map((item: any) => item.url)
+    downloadSources.value = data.map((item: any) => item.url)
+  } catch (error: any) {
+    message.error('获取下载源列表失败')
   }
 }
 
@@ -337,6 +394,51 @@ const fetchEmailSettings = async () => {
   }
 }
 
+const fetchAppsSettings = async () => {
+  try {
+    const { data: { data: frpVersion } } = await AdminApi.getSystemConfig('frpVersion')
+    appsForm.value.frpVersion = frpVersion
+  } catch (error) {
+    message.error('获取应用设置失败')
+  }
+}
+
+const handleDownloadSourceUpdate = async (sources: string[]) => {
+  const newSource = sources.find(source => !downloadSourcesOri.value.includes(source))
+
+  if (newSource) {
+    try {
+      if (downloadSourcesOri.value.includes(newSource)) {
+        message.error('该下载源已存在')
+        downloadSources.value = downloadSourcesOri.value
+        return
+      }
+      await AdminApi.addDownloadSource({
+        source: {
+          id: '',
+          name: newSource,
+          url: newSource
+        }
+      })
+      message.success('添加成功')
+      await fetchDownloadSources()
+    } catch (error: any) {
+      message.error(error?.response?.data?.message || '添加失败')
+      downloadSources.value = downloadSourcesOri.value
+    }
+  }
+}
+
+const handleRemoveDownloadSource = async (source: string) => {
+  try {
+    await AdminApi.deleteDownloadSource(source)
+    message.success('删除成功')
+    await fetchDownloadSources()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '删除失败')
+  }
+}
+
 const handleTabUpdate = (tab: string) => {
   switch (tab) {
     case 'basic':
@@ -349,6 +451,10 @@ const handleTabUpdate = (tab: string) => {
       fetchEmailSettings()
       fetchBannedProviders()
       break
+    case 'apps':
+      fetchAppsSettings()
+      fetchDownloadSources()
+      break
   }
 }
 
@@ -359,6 +465,18 @@ const renderBannedProvider = (tag: string) => {
       type: 'error',
       closable: true,
       onClose: () => handleRemoveProvider(tag)
+    },
+    { default: () => tag }
+  )
+}
+
+const renderDownloadSource = (tag: string) => {
+  return h(
+    NTag,
+    {
+      type: 'error',
+      closable: true,
+      onClose: () => handleRemoveDownloadSource(tag)
     },
     { default: () => tag }
   )

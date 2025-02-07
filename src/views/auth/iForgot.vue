@@ -25,9 +25,6 @@
 
       <!-- 重置密码表单 -->
       <NForm ref="resetFormRef" :model="resetForm" :rules="resetRules">
-        <NFormItem path="username" label="用户名">
-          <NInput v-model:value="resetForm.username" placeholder="请输入用户名" />
-        </NFormItem>
         <NFormItem path="emailCode" label="验证码">
           <NInput v-model:value="resetForm.emailCode" placeholder="请输入邮箱验证码" />
         </NFormItem>
@@ -65,7 +62,6 @@ const emailForm = ref({
 })
 
 const resetForm = ref({
-  username: '',
   emailCode: '',
   password: ''
 })
@@ -154,7 +150,6 @@ const handleSubmit = async () => {
     isSubmitting.value = true
     
     const response = await PublicApi.iForgot({
-      username: resetForm.value.username,
       email: emailForm.value.email,
       password: resetForm.value.password,
       emailCode: resetForm.value.emailCode

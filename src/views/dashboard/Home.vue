@@ -12,7 +12,8 @@
           style="margin-bottom: 16px"
         >
           您的账户尚未完成实名认证, 请尽快完成实名认证。<br>
-          实名认证后, 您将获得更多节点权限, 且双向带宽将提升至 30Mbps。
+          实名认证后, 您将获得更多节点权限, 且双向带宽将提升至 30Mbps。<br>
+          <NButton text type="primary" @click="goToRealname">立即前往</NButton>
         </NAlert>
         <UserInfoGrid ref="userInfoGridRef" />
       </NCard>
@@ -25,12 +26,15 @@
 </template>
 
 <script setup lang="ts">
-import { NCard, NAlert } from 'naive-ui'
+import { NCard, NAlert, NButton } from 'naive-ui'
 import { ref, onMounted, computed } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { AuthApi } from '../../shared/api/auth'
 import UserInfoGrid from '../../components/UserInfoGrid.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const notices = ref<string>('')
 const username = localStorage.getItem('username')
@@ -41,6 +45,10 @@ marked.setOptions({
   gfm: true,
   breaks: true
 })
+
+const goToRealname = () => {
+  router.push('/dashboard/profile')
+}
 
 const renderedNotice = computed(() => {
   if (!notices.value) return ''
