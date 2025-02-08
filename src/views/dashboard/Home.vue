@@ -38,7 +38,8 @@ const router = useRouter()
 
 const notices = ref<string>('')
 const username = localStorage.getItem('username')
-const userGroup = ref<string>('')
+const userInfoGridRef = ref<null | { userInfo: { group: string } }>(null)
+const userGroup = computed(() => userInfoGridRef.value?.userInfo?.group || '')
 
 // 配置 marked
 marked.setOptions({
@@ -72,21 +73,8 @@ const fetchNotice = async (): Promise<void> => {
   }
 }
 
-// 获取用户组信息
-const fetchUserGroup = async () => {
-  try {
-    const response = await AuthApi.getUserInfo()
-    if (response.data.code === 200) {
-      userGroup.value = response.data.data.group
-    }
-  } catch (error) {
-    console.error('获取用户组信息失败:', error)
-  }
-}
-
 onMounted(() => {
   fetchNotice()
-  fetchUserGroup()
 })
 </script>
 

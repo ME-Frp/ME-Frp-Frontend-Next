@@ -31,7 +31,8 @@
         </NDescriptions>
         <div>
           <span>
-            ME Frp 5.0 除 <strong>设计框架/程序框架及 <a href="https://github.com/fatedier/frp" target="_blank">Frp 项目原有代码</a></strong> 以外,
+            ME Frp 5.0 除 <strong>设计框架/程序框架及 <a href="https://github.com/fatedier/frp" target="_blank">Frp
+                项目原有代码</a></strong> 以外,
             其他所有组件均为自主研发, 受《中华人民共和国著作权法》保护。
           </span><br>
           <span>
@@ -81,14 +82,17 @@
               href="https://qm.qq.com/q/9iibikyupG" target="_blank">1019501085</a> 进行咨询。
           </span><br>
           <span>
-            中国内网穿透联盟致力于聚集各个行业同僚, 可在 <a href="https://xn--v6qw21h0gd43u.xn--fiqs8s" target="_blank">内网穿透.中国</a> 了解更多信息。
+            中国内网穿透联盟致力于聚集各个友好的行业同僚, 可在 <a href="https://xn--v6qw21h0gd43u.xn--fiqs8s" target="_blank">内网穿透.中国</a> 了解更多信息。
           </span>
         </div>
       </NSpace>
     </NCard>
 
-    <NCard title="早期赞助者" class="single-card">
-      <NAlert title="感谢以下赞助者在 ME Frp 4.0 乃至以前对我们的支持。没有他们的支持, ME Frp 很难运营到现在。" type="info" style="margin-bottom: 16px" />
+    <NCard title="早期赞助者 (排序不分先后)" class="single-card">
+      <NAlert title="鸣谢" type="info" style="margin-bottom: 16px">
+        感谢以下赞助者在 ME Frp 4.0 乃至以前对我们的支持。没有他们的支持, ME Frp 很难运营到现在。<br>
+        如果您在先前有赞助却没有出现在此名单上，请 <a href='mailto:support@mefrp.com' target='_blank'>联系我们 (邮箱)</a> 。
+      </NAlert>
       <NTable>
         <thead>
           <tr>

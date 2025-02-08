@@ -481,7 +481,11 @@ const handleGetFreePort = async () => {
   if (!canEditConfig.value) return
   try {
     gettingFreePort.value = true
-    const res = await AuthApi.getFreeNodePort({ nodeId: formValue.value.nodeId! })
+    const protocol = formValue.value.type === 'udp' ? 'udp' : 'tcp'
+    const res = await AuthApi.getFreeNodePort({ 
+      nodeId: formValue.value.nodeId!,
+      protocol
+    })
     if (res.data.code === 200) {
       formValue.value.remotePort = res.data.data
     } else {

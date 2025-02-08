@@ -26,20 +26,24 @@ export interface UserNode {
   isOnline: boolean;
   isDisabled: boolean;
 }
+
 export interface UserNodeName {
   nodeId: number;
   name: string;
   hostname: string;
 }
+
 export interface GetUserGroupsData {
-  groups: {
-    name: string;
-    friendlyName: string;
-    maxProxies: number;
-    baseTraffic: number;
-    outBound: number;
-    inBound: number;
-  }[];
+  groups: UserGroup[];
+}
+
+export interface UserGroup {
+  name: string;
+  friendlyName: string;
+  maxProxies: number;
+  baseTraffic: number;
+  outBound: number;
+  inBound: number;
 }
 
 export interface NodeUsage {
@@ -59,3 +63,33 @@ export interface IcpDomain {
   unitName: string;
 }
 
+export interface DownloadSource {
+  id: string
+  path: string
+  name: string
+}
+
+export interface GetNodeFreePortArgs {
+  nodeId: number
+  protocol: 'tcp' | 'udp'
+}
+
+export interface CreateProxyArgs {
+  nodeId: number
+  proxyName: string
+  localIp: string
+  localPort: number
+  remotePort: number
+  domain?: string
+  proxyType: string
+  accessKey?: string
+  hostHeaderRewrite?: string
+  headerXFromWhere?: string
+  proxyProtocolVersion?: string
+  useEncryption: boolean
+  useCompression: boolean
+}
+
+export interface UpdateProxyArgs extends CreateProxyArgs {
+  proxyId: number
+}

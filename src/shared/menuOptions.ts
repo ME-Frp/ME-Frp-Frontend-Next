@@ -1,5 +1,5 @@
 import { h, Component } from 'vue'
-import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline, IdCardOutline, CreateOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline, WalletOutline, HelpCircleOutline } from '@vicons/ionicons5'
+import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline, IdCardOutline, CreateOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline, WalletOutline, HelpCircleOutline, BuildOutline  } from '@vicons/ionicons5'
 import { NIcon, type MenuOption } from 'naive-ui'
 
 const baseMenuOptions: MenuOption[] = [
@@ -81,6 +81,12 @@ const adminMenuOptions: MenuOption = {
       key: 'admin-proxies',
       link: '/dashboard/admin/proxies',
       icon: renderIcon(AppsOutline)
+    },
+    {
+      label: '产品管理',
+      key: 'admin-products',
+      link: '/dashboard/admin/products',
+      icon: renderIcon(BuildOutline)
     },
     {
       label: '系统管理',

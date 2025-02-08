@@ -2,7 +2,7 @@
   <div>
     <NCard title="系统管理">
       <NTabs type="line" animated @update:value="handleTabUpdate">
-        <NTabPane name="basic" tab="基础设置">
+        <NTabPane name="basic" tab="基础">
           <NForm ref="basicFormRef" :model="basicForm" :rules="basicRules" label-placement="left" label-width="auto"
             require-mark-placement="right-hanging">
             <NFormItem label="公告内容" path="notice">
@@ -14,14 +14,14 @@
           </NForm>
         </NTabPane>
 
-        <NTabPane name="security" tab="安全设置">
+        <NTabPane name="security" tab="安全">
           <NForm ref="securityFormRef" :model="securityForm" :rules="securityRules" label-placement="left"
             label-width="auto" require-mark-placement="right-hanging">
             <NFormItem label="注册开关" path="allowRegister">
-              <NSwitch v-model:value="securityForm.allowRegister" />
+              <NSwitch v-model:value="securityForm.allowRegister" :rail-style="switchButtonRailStyle" />
             </NFormItem>
             <NFormItem label="签到功能" path="allowSign">
-              <NSwitch v-model:value="securityForm.allowSign" />
+              <NSwitch v-model:value="securityForm.allowSign" :rail-style="switchButtonRailStyle" />
             </NFormItem>
 
             <NSpace justify="end">
@@ -30,7 +30,7 @@
           </NForm>
         </NTabPane>
 
-        <NTabPane name="email" tab="邮件设置">
+        <NTabPane name="email" tab="邮件">
 
           <NDivider>发信设置</NDivider>
           <NForm ref="emailFormRef" :model="emailForm" :rules="emailRules" label-placement="left" label-width="auto"
@@ -48,10 +48,11 @@
               <NInput v-model:value="emailForm.smtpFrom" placeholder="请输入发件人昵称" />
             </NFormItem>
             <NFormItem label="SMTP 密码" path="smtpPassword">
-              <NInput v-model:value="emailForm.smtpPassword" placeholder="请输入 SMTP 密码"/>
+              <NInput v-model:value="emailForm.smtpPassword" placeholder="请输入 SMTP 密码" type="password"
+                show-password-on="click" />
             </NFormItem>
             <NFormItem label="使用 SSL" path="smtpSSL">
-              <NSwitch v-model:value="emailForm.smtpSSL" />
+              <NSwitch v-model:value="emailForm.smtpSSL" :rail-style="switchButtonRailStyle" />
             </NFormItem>
             <NSpace justify="end" style="margin-top: 18px">
               <NButton type="primary" @click="handleSaveEmail">保存设置</NButton>
@@ -63,41 +64,136 @@
               @update:value="handleTagsUpdate" />
           </NSpace>
         </NTabPane>
-        <NTabPane name="apps" tab="应用设置">
-          <NForm ref="appsFormRef" :model="appsForm" :rules="appsRules" label-placement="left"
-            label-width="auto" require-mark-placement="right-hanging">
-            <NFormItem label="Frp 版本" path="frpVersion">
-              <NInput v-model:value="appsForm.frpVersion" />
-            </NFormItem>
-            <NDivider>下载源</NDivider>
-            <NSpace vertical>
-              <NDynamicTags v-model:value="downloadSources" :render-tag="renderDownloadSource"
-                @update:value="handleDownloadSourceUpdate" />
-            </NSpace>
 
-            <NSpace justify="end">
-              <NButton type="primary" @click="handleSaveApps">保存设置</NButton>
-            </NSpace>
-          </NForm>
+        <NTabPane name="downloads" tab="下载源">
+          <NSpace vertical>
+            <NForm inline>
+              <NFormItem label="ID">
+                <NInput v-model:value="addSourceForm.id" placeholder="请输入下载源 ID" />
+              </NFormItem>
+              <NFormItem label="名称">
+                <NInput v-model:value="addSourceForm.name" placeholder="请输入下载源名称" />
+              </NFormItem>
+              <NFormItem>
+                <NButton type="primary" @click="handleAddDownloadSource">添加</NButton>
+              </NFormItem>
+            </NForm>
+            <NDataTable :columns="downloadSourceColumns" :data="downloadSourcesData" :bordered="false" />
+          </NSpace>
+        </NTabPane>
+
+        <NTabPane name="groups" tab="用户组">
+          <NSpace vertical>
+            <NButton type="primary" @click="showAddGroupModal = true">添加用户组</NButton>
+            <NDataTable :columns="groupColumns" :data="groupsData" :bordered="false" />
+          </NSpace>
         </NTabPane>
 
       </NTabs>
     </NCard>
+
+    <NModal v-model:show="showEditModal" preset="dialog" title="修改下载源">
+      <NForm ref="editSourceFormRef" :model="editSourceForm" :rules="addSourceRules">
+        <NFormItem label="ID" path="id">
+          <NInput v-model:value="editSourceForm.id" placeholder="请输入下载源 ID" />
+        </NFormItem>
+        <NFormItem label="Path" path="path">
+          <NInput v-model:value="editSourceForm.path" placeholder="请输入下载源 Path" />
+        </NFormItem>
+        <NFormItem label="名称" path="name">
+          <NInput v-model:value="editSourceForm.name" placeholder="请输入下载源名称" />
+        </NFormItem>
+      </NForm>
+      <template #action>
+        <NButton @click="showEditModal = false">取消</NButton>
+        <NButton type="primary" @click="handleEditSource">确定</NButton>
+      </template>
+    </NModal>
+
+    <NModal v-model:show="showAddGroupModal" preset="dialog" title="添加用户组">
+      <NForm ref="groupFormRef" :model="groupForm" :rules="groupRules">
+        <NFormItem label="组名" path="name">
+          <NInput v-model:value="groupForm.name" placeholder="请输入用户组名称" />
+        </NFormItem>
+        <NFormItem label="显示名称" path="friendlyName">
+          <NInput v-model:value="groupForm.friendlyName" placeholder="请输入显示名称" />
+        </NFormItem>
+        <NFormItem label="基础流量" path="baseTraffic">
+          <NInputNumber v-model:value="groupForm.baseTraffic" :min="0" />
+        </NFormItem>
+        <NFormItem label="最大隧道数" path="maxProxies">
+          <NInputNumber v-model:value="groupForm.maxProxies" :min="0" />
+        </NFormItem>
+        <NFormItem label="出站带宽" path="outBound">
+          <NSpace align="center">
+            <NInputNumber v-model:value="groupForm.outBound" :min="0" />
+            <span>Mbps</span>
+          </NSpace>
+        </NFormItem>
+        <NFormItem label="入站带宽" path="inBound">
+          <NSpace align="center">
+            <NInputNumber v-model:value="groupForm.inBound" :min="0" />
+            <span>Mbps</span>
+          </NSpace>
+        </NFormItem>
+      </NForm>
+      <template #action>
+        <NButton @click="showAddGroupModal = false">取消</NButton>
+        <NButton type="primary" @click="handleAddGroup">确定</NButton>
+      </template>
+    </NModal>
+
+    <NModal v-model:show="showEditGroupModal" preset="dialog" title="修改用户组">
+      <NForm ref="editGroupFormRef" :model="editGroupForm" :rules="groupRules">
+        <NFormItem label="组名" path="name">
+          <NInput v-model:value="editGroupForm.name" placeholder="请输入用户组名称" />
+        </NFormItem>
+        <NFormItem label="显示名称" path="friendlyName">
+          <NInput v-model:value="editGroupForm.friendlyName" placeholder="请输入显示名称" />
+        </NFormItem>
+        <NFormItem label="基础流量" path="baseTraffic">
+          <NInputNumber v-model:value="editGroupForm.baseTraffic" :min="0" />
+        </NFormItem>
+        <NFormItem label="最大隧道数" path="maxProxies">
+          <NInputNumber v-model:value="editGroupForm.maxProxies" :min="0" />
+        </NFormItem>
+        <NFormItem label="出站带宽" path="outBound">
+          <NSpace align="center">
+            <NInputNumber v-model:value="editGroupForm.outBound" :min="0" />
+            <span>Mbps</span>
+          </NSpace>
+        </NFormItem>
+        <NFormItem label="入站带宽" path="inBound">
+          <NSpace align="center">
+            <NInputNumber v-model:value="editGroupForm.inBound" :min="0" />
+            <span>Mbps</span>
+          </NSpace>
+        </NFormItem>
+      </NForm>
+      <template #action>
+        <NButton @click="showEditGroupModal = false">取消</NButton>
+        <NButton type="primary" @click="handleEditGroup">确定</NButton>
+      </template>
+    </NModal>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, h } from 'vue'
-import { NCard, NTabs, NTabPane, NForm, NFormItem, NInput, NInputNumber, NSwitch, NSpace, NButton, useMessage, NTag, NDynamicTags, NDivider } from 'naive-ui'
-import type { FormRules, FormInst } from 'naive-ui'
+import { NCard, NTabs, NTabPane, NForm, NFormItem, NInput, NInputNumber, NSwitch, NSpace, NButton, useMessage, NTag, NDynamicTags, NDivider, NDataTable, NModal } from 'naive-ui'
+import type { FormRules, FormInst, DataTableColumns } from 'naive-ui'
+import { switchButtonRailStyle } from '../../../constants/theme'
 import { AdminApi } from '../../../shared/api/admin'
+import { AuthApi } from '../../../shared/api/auth'
+import type { DownloadSource, Group } from '../../../types'
 
 const message = useMessage()
 
 const basicFormRef = ref<FormInst | null>(null)
 const securityFormRef = ref<FormInst | null>(null)
 const emailFormRef = ref<FormInst | null>(null)
-const appsFormRef = ref<FormInst | null>(null)
+const editSourceFormRef = ref<FormInst | null>(null)
+const groupFormRef = ref<FormInst | null>(null)
 
 const basicForm = ref({
   notice: ''
@@ -118,15 +214,41 @@ const emailForm = ref({
   smtpProvider: 'custom'
 })
 
-const appsForm = ref({
-  frpVersion: '',
+const bannedProviders = ref<string[]>([])
+const bannedProvidersOri = ref<string[]>([])
+
+const downloadSourcesData = ref<DownloadSource[]>([])
+const showEditModal = ref(false)
+const addSourceForm = ref({
+  id: '',
+  name: '',
+  path: ''
+})
+const editSourceForm = ref({
+  id: '',
+  name: '',
+  path: ''
 })
 
-const bannedProviders = ref<string[]>([])
-const downloadSources = ref<string[]>([])
-
-const bannedProvidersOri = ref<string[]>([])
-const downloadSourcesOri = ref<string[]>([])
+const showAddGroupModal = ref(false)
+const showEditGroupModal = ref(false)
+const groupForm = ref<Group>({
+  name: '',
+  friendlyName: '',
+  maxProxies: 0,
+  baseTraffic: 0,
+  outBound: 0,
+  inBound: 0
+})
+const editGroupForm = ref<Group>({
+  name: '',
+  friendlyName: '',
+  maxProxies: 0,
+  baseTraffic: 0,
+  outBound: 0,
+  inBound: 0
+})
+const groupsData = ref<Group[]>([])
 
 const basicRules: FormRules = {
   notice: {
@@ -200,14 +322,140 @@ const emailRules: FormRules = {
   }
 }
 
-const appsRules: FormRules = {
-  frpVersion: {
+const addSourceRules: FormRules = {
+  id: {
     required: true,
-    type: 'string',
-    message: '请输入 Frp 版本',
+    message: '请输入下载源 ID',
+    trigger: ['blur', 'input']
+  },
+  name: {
+    required: true,
+    message: '请输入下载源名称',
     trigger: ['blur', 'input']
   }
 }
+
+const groupRules: FormRules = {
+  name: {
+    required: true,
+    message: '请输入用户组名称',
+    trigger: ['blur', 'input']
+  }
+}
+
+const downloadSourceColumns: DataTableColumns<DownloadSource> = [
+  {
+    title: 'ID',
+    key: 'id'
+  },
+  {
+    title: '名称',
+    key: 'name'
+  },
+  {
+    title: '操作',
+    key: 'actions',
+    render: (row) => {
+      return h(NSpace, {}, {
+        default: () => [
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'primary',
+              onClick: () => {
+                editSourceForm.value.id = row.id
+                editSourceForm.value.name = row.name
+                showEditModal.value = true
+              }
+            },
+            { default: () => '修改' }
+          ),
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'error',
+              onClick: () => handleRemoveDownloadSource(row.id)
+            },
+            { default: () => '删除' }
+          )
+        ]
+      })
+    }
+  }
+]
+
+// 格式化流量数值
+function formatTraffic(traffic: number): string {
+  const value = traffic
+  if (isNaN(value)) return String(traffic)
+  if (value >= 1024) {
+    return `${(value / 1024).toFixed(2)} GB`
+  }
+  return `${value.toFixed(2)} MB`
+}
+
+const groupColumns: DataTableColumns<Group> = [
+  {
+    title: '组名',
+    key: 'name'
+  },
+  {
+    title: '显示名称',
+    key: 'friendlyName'
+  },
+  {
+    title: '最大隧道数',
+    key: 'maxProxies'
+  },
+  {
+    title: '基础流量',
+    key: 'baseTraffic',
+    render: (row) => formatTraffic(row.baseTraffic)
+  },
+  {
+    title: '出站带宽',
+    key: 'outBound',
+    render: (row) => `${row.outBound} Mbps`
+  },
+  {
+    title: '入站带宽',
+    key: 'inBound',
+    render: (row) => `${row.inBound} Mbps`
+  },
+  {
+    title: '操作',
+    key: 'actions',
+    render: (row) => {
+      return h(NSpace, {}, {
+        default: () => [
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'primary',
+              onClick: () => {
+                editGroupForm.value = { ...row }
+                showEditGroupModal.value = true
+              }
+            },
+            { default: () => '修改' }
+          ),
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'error',
+              onClick: () => handleRemoveGroup(row.name)
+            },
+            { default: () => '删除' }
+          )
+        ]
+      })
+    }
+  }
+]
 
 const handleSaveBasic = async () => {
   try {
@@ -276,19 +524,6 @@ const handleSaveEmail = async () => {
   }
 }
 
-const handleSaveApps = async () => {
-  try {
-    await appsFormRef.value?.validate()
-    await AdminApi.updateProductVersion({
-      product: 'core',
-      version: appsForm.value.frpVersion
-    })
-    message.success('保存应用设置成功')
-  } catch (error) {
-    message.error('保存应用设置失败')
-  }
-}
-
 const handleTagsUpdate = async (tags: string[]) => {
   const newTag = tags.find(tag => !bannedProvidersOri.value.includes(tag))
 
@@ -331,9 +566,8 @@ const fetchBannedProviders = async () => {
 
 const fetchDownloadSources = async () => {
   try {
-    const { data: { data } } = await AdminApi.getDownloadSources()
-    downloadSourcesOri.value = data.map((item: any) => item.url)
-    downloadSources.value = data.map((item: any) => item.url)
+    const { data: { data } } = await AuthApi.getDownloadSources()
+    downloadSourcesData.value = data
   } catch (error: any) {
     message.error('获取下载源列表失败')
   }
@@ -394,48 +628,127 @@ const fetchEmailSettings = async () => {
   }
 }
 
-const fetchAppsSettings = async () => {
-  try {
-    const { data: { data: frpVersion } } = await AdminApi.getSystemConfig('frpVersion')
-    appsForm.value.frpVersion = frpVersion
-  } catch (error) {
-    message.error('获取应用设置失败')
+const handleAddDownloadSource = async () => {
+  if (!addSourceForm.value.id || !addSourceForm.value.name) {
+    message.error('请填写完整信息')
+    return
   }
-}
 
-const handleDownloadSourceUpdate = async (sources: string[]) => {
-  const newSource = sources.find(source => !downloadSourcesOri.value.includes(source))
-
-  if (newSource) {
-    try {
-      if (downloadSourcesOri.value.includes(newSource)) {
-        message.error('该下载源已存在')
-        downloadSources.value = downloadSourcesOri.value
-        return
+  try {
+    await AdminApi.addDownloadSource({
+      source: {
+        id: addSourceForm.value.id,
+        path: addSourceForm.value.path,
+        name: addSourceForm.value.name
       }
-      await AdminApi.addDownloadSource({
-        source: {
-          id: '',
-          name: newSource,
-          url: newSource
-        }
-      })
-      message.success('添加成功')
-      await fetchDownloadSources()
-    } catch (error: any) {
-      message.error(error?.response?.data?.message || '添加失败')
-      downloadSources.value = downloadSourcesOri.value
-    }
+    })
+    message.success('添加成功')
+    addSourceForm.value.id = ''
+    addSourceForm.value.name = ''
+    addSourceForm.value.path = ''
+    await fetchDownloadSources()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '添加失败')
   }
 }
 
-const handleRemoveDownloadSource = async (source: string) => {
+const handleEditSource = async () => {
+  if (!editSourceForm.value.id || !editSourceForm.value.name) {
+    message.error('请填写完整信息')
+    return
+  }
+
   try {
-    await AdminApi.deleteDownloadSource(source)
+    await AdminApi.updateDownloadSource({
+      source: {
+        id: editSourceForm.value.id,
+        path: editSourceForm.value.path,
+        name: editSourceForm.value.name,
+      }
+    })
+    message.success('修改成功')
+    showEditModal.value = false
+    editSourceForm.value.id = ''
+    editSourceForm.value.name = ''
+    await fetchDownloadSources()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '修改失败')
+  }
+}
+
+const handleRemoveDownloadSource = async (sourceId: string) => {
+  try {
+    await AdminApi.deleteDownloadSource(sourceId)
     message.success('删除成功')
     await fetchDownloadSources()
   } catch (error: any) {
     message.error(error?.response?.data?.message || '删除失败')
+  }
+}
+
+const handleAddGroup = async () => {
+  try {
+    // 转换带宽单位从 Mbps 到 B/s
+    const formData = {
+      ...groupForm.value,
+      outBound: groupForm.value.outBound * 128,
+      inBound: groupForm.value.inBound * 128
+    }
+    await AdminApi.addGroup(formData)
+    message.success('添加成功')
+    showAddGroupModal.value = false
+    groupForm.value = {
+      name: '',
+      friendlyName: '',
+      maxProxies: 0,
+      baseTraffic: 0,
+      outBound: 0,
+      inBound: 0
+    }
+    await fetchGroups()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '添加失败')
+  }
+}
+
+const handleEditGroup = async () => {
+  try {
+    // 转换带宽单位从 Mbps 到 B/s
+    const formData = {
+      ...editGroupForm.value,
+      outBound: editGroupForm.value.outBound * 128,
+      inBound: editGroupForm.value.inBound * 128
+    }
+    await AdminApi.updateGroup(formData)
+    message.success('修改成功')
+    showEditGroupModal.value = false
+    await fetchGroups()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '修改失败')
+  }
+}
+
+const handleRemoveGroup = async (name: string) => {
+  try {
+    await AdminApi.deleteGroup(name)
+    message.success('删除成功')
+    await fetchGroups()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '删除失败')
+  }
+}
+
+const fetchGroups = async () => {
+  try {
+    const { data: { data } } = await AuthApi.getUserGroups()
+    // 转换带宽单位从 B/s 到 Mbps
+    groupsData.value = data.groups.map(group => ({
+      ...group,
+      outBound: group.outBound / 128,
+      inBound: group.inBound / 128
+    }))
+  } catch (error: any) {
+    message.error('获取用户组列表失败')
   }
 }
 
@@ -451,9 +764,11 @@ const handleTabUpdate = (tab: string) => {
       fetchEmailSettings()
       fetchBannedProviders()
       break
-    case 'apps':
-      fetchAppsSettings()
+    case 'downloads':
       fetchDownloadSources()
+      break
+    case 'groups':
+      fetchGroups()
       break
   }
 }
@@ -465,18 +780,6 @@ const renderBannedProvider = (tag: string) => {
       type: 'error',
       closable: true,
       onClose: () => handleRemoveProvider(tag)
-    },
-    { default: () => tag }
-  )
-}
-
-const renderDownloadSource = (tag: string) => {
-  return h(
-    NTag,
-    {
-      type: 'error',
-      closable: true,
-      onClose: () => handleRemoveDownloadSource(tag)
     },
     { default: () => tag }
   )

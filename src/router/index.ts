@@ -138,7 +138,17 @@ const routes: RouteRecordRaw[] = [
               title: '系统管理',
               requiresAdmin: true
             }
-          }]
+          },
+          {
+            path: 'products',
+            name: 'admin-products',
+            component: () => import('../views/dashboard/admin/Products.vue'),
+            meta: {
+              title: '产品管理',
+              requiresAdmin: true
+            }
+          }
+        ]
       },
     ]
   },

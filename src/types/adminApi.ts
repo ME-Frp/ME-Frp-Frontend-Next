@@ -6,6 +6,7 @@ export interface GetUsersData {
     totalPages: number;
     totalUsers: number;
 }
+
 export interface FilterUsersArgs {
     page: number;
     limit: number;
@@ -94,4 +95,23 @@ export interface GetProxiesData {
 export interface UpdateSystemConfigArgs {
     key: string;
     value: string;
+}
+
+export interface Product {
+    productId: string
+    system: string
+    arch: string
+    name: string
+    desc: string
+    path: string
+    version: string
+}
+
+export interface Group {
+    name: string
+    friendlyName: string
+    maxProxies: number
+    baseTraffic: number
+    outBound: number
+    inBound: number
 }

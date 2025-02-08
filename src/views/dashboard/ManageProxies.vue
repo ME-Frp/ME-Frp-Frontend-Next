@@ -253,7 +253,10 @@
           <NInputNumber v-model:value="editForm.localPort" :min="1" :max="65535" placeholder="请输入本地端口" />
         </NFormItem>
         <NFormItem label="远程端口" path="remotePort">
-          <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
+            <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
+            <NButton size="medium" :loading="gettingFreePort" @click="handleGetFreePortForEdit">
+              获取空闲端口
+            </NButton>
         </NFormItem>
         <NFormItem v-if="editForm.proxyType === 'http' || editForm.proxyType === 'https'" label="绑定域名" path="domain">
           <NInput v-model:value="editForm.domain" placeholder="请输入绑定域名" />
@@ -362,6 +365,7 @@ const editForm = ref({
   nodeId: 0
 })
 const router = useRouter()
+const gettingFreePort = ref(false)
 
 const rules = {
   proxyName: {
@@ -658,6 +662,26 @@ const handleSelect = (key: string, proxy: Proxy) => {
     case 'delete':
       handleDeleteClick(proxy)
       break
+  }
+}
+
+const handleGetFreePortForEdit = async () => {
+  try {
+    gettingFreePort.value = true
+    const protocol = editForm.value.proxyType === 'udp' ? 'udp' : 'tcp'
+    const res = await AuthApi.getFreeNodePort({ 
+      nodeId: editForm.value.nodeId,
+      protocol
+    })
+    if (res.data.code === 200) {
+      editForm.value.remotePort = res.data.data
+    } else {
+      message.error(res.data.message || '获取空闲端口失败')
+    }
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '获取空闲端口失败')
+  } finally {
+    gettingFreePort.value = false
   }
 }
 </script>

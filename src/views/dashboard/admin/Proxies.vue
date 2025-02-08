@@ -22,7 +22,6 @@
 
     <!-- 编辑隧道弹窗 -->
     <NModal v-model:show="showEditModal" preset="dialog" title="编辑隧道" style="width: 600px">
-      <NLayout :native-scrollbar="false" style="max-height: 70vh;">
         <NForm ref="editFormRef" :model="editForm" :rules="rules" label-placement="left" label-width="120"
           require-mark-placement="right-hanging" size="medium" style="padding-top: 12px;">
           <NFormItem label="隧道名称" path="proxyName">
@@ -45,7 +44,10 @@
             <NDynamicTags v-model:value="domainTags" :render-tag="renderDomainTag" />
           </NFormItem>
           <NFormItem v-else label="远程端口" path="remotePort">
-            <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
+              <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
+              <NButton size="medium" :loading="gettingFreePort" @click="handleGetFreePortForEdit">
+                获取空闲端口
+              </NButton>
           </NFormItem>
 
           <NDivider>高级配置</NDivider>
@@ -79,7 +81,6 @@
             </div>
           </NFormItem>
         </NForm>
-      </NLayout>
       <template #action>
         <NButton size="small" @click="showEditModal = false">取消</NButton>
         <NButton size="small" type="primary" :loading="submitting" @click="handleEditSubmit">确定</NButton>
@@ -90,7 +91,7 @@
 
 <script lang="ts" setup>
 import { ref, h, RendererElement, RendererNode, VNode } from 'vue'
-import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NInput, NSelect, useMessage, NTag, NModal, NForm, NFormItem, NInputNumber, NDynamicTags, NDivider, NSwitch, NLayout } from 'naive-ui'
+import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NInput, NSelect, useMessage, NTag, NModal, NForm, NFormItem, NInputNumber, NDynamicTags, NDivider, NSwitch } from 'naive-ui'
 import type { DataTableColumns, SelectOption, FormRules, FormInst } from 'naive-ui'
 import { AdminApi } from '../../../shared/api/admin'
 import { AuthApi } from '../../../shared/api/auth'
@@ -733,5 +734,27 @@ const renderDomainTag = (tag: string) => {
     },
     { default: () => tag }
   )
+}
+
+const gettingFreePort = ref(false)
+
+const handleGetFreePortForEdit = async () => {
+  try {
+    gettingFreePort.value = true
+    const protocol = editForm.value.proxyType === 'udp' ? 'udp' : 'tcp'
+    const res = await AuthApi.getFreeNodePort({ 
+      nodeId: editForm.value.nodeId,
+      protocol
+    })
+    if (res.data.code === 200) {
+      editForm.value.remotePort = res.data.data
+    } else {
+      message.error(res.data.message || '获取空闲端口失败')
+    }
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '获取空闲端口失败')
+  } finally {
+    gettingFreePort.value = false
+  }
 }
 </script>

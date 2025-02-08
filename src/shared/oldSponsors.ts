@@ -292,6 +292,24 @@ export const oldSponsors: Sponsor[] = [
         id: 48,
         name: "爱发电用户_0f570",
         thing: "15 元",
-        comment: "加油加油"
+        comment: "新年望 ME Frp 越来越好"
+    },
+    {
+        id: 49,
+        name: "hupan666",
+        thing: "30 元",
+        comment: "加油，一直做下去！"
+    },
+    {
+        id: 50,
+        name: "Dubi906w",
+        thing: "10 元",
+        comment: "未填写"
+    },
+    {
+        id: 51,
+        name: "凌天空",
+        thing: "5 元",
+        comment: "未填写"
     },
 ];

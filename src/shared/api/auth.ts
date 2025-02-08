@@ -1,6 +1,7 @@
 import baseApi from './config';
 import type { ApiResponse } from './config';
-import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData, UserNodeName, NodeUsage, IcpDomain } from '../../types';
+import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData, UserNodeName, NodeUsage, IcpDomain, DownloadSource, GetNodeFreePortArgs } from '../../types';
+import type { Product } from '../../types/adminApi';
 
 // 在 UserInfo 类型中添加实名信息接口
 interface RealnameInfo {
@@ -51,7 +52,7 @@ export const AuthApi = {
     },
 
     // 获取空闲节点端口
-    getFreeNodePort: (data: { nodeId: number }) => {
+    getFreeNodePort: (data: GetNodeFreePortArgs) => {
         return baseApi.post<ApiResponse<number>>('/auth/node/freePort', data);
     },
 
@@ -123,6 +124,16 @@ export const AuthApi = {
     // 提交实名认证
     submitRealname: (data: { realname: string; idCard: string }) => {
         return baseApi.post<ApiResponse<void>>('/auth/user/realname/verify', data);
+    },
+
+    // 获取产品列表
+    getProducts: () => {
+        return baseApi.get<ApiResponse<Product[]>>('/auth/products')
+    },
+
+    // 获取下载源列表
+    getDownloadSources: () => {
+        return baseApi.get<ApiResponse<DownloadSource[]>>('/auth/downloadSources')
     },
 };
 
