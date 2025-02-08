@@ -71,6 +71,9 @@
               <NFormItem label="ID">
                 <NInput v-model:value="addSourceForm.id" placeholder="请输入下载源 ID" />
               </NFormItem>
+              <NFormItem label="Path">
+                <NInput v-model:value="addSourceForm.path" placeholder="请输入下载源 Path" />
+              </NFormItem>
               <NFormItem label="名称">
                 <NInput v-model:value="addSourceForm.name" placeholder="请输入下载源名称" />
               </NFormItem>
@@ -629,7 +632,7 @@ const fetchEmailSettings = async () => {
 }
 
 const handleAddDownloadSource = async () => {
-  if (!addSourceForm.value.id || !addSourceForm.value.name) {
+  if (!addSourceForm.value.id || !addSourceForm.value.name || !addSourceForm.value.path) {
     message.error('请填写完整信息')
     return
   }
