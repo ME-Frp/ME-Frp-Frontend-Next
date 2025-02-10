@@ -123,7 +123,7 @@ export const AuthApi = {
 
     // 提交实名认证
     submitRealname: (data: { realname: string; idCard: string }) => {
-        return baseApi.post<ApiResponse<void>>('/auth/user/realname/verify', data);
+        return baseApi.post<ApiResponse<void>>('/auth/user/realname/legacy', data);
     },
 
     // 获取产品列表
