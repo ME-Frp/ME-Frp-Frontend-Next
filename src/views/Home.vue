@@ -46,6 +46,18 @@
       <div class="stat-item">
         <div class="stat-number">
           <NNumberAnimation
+            ref="proxiesCount"
+            :from="0"
+            :to="stats.proxies"
+            :duration="1500"
+            :active="true"
+          />
+        </div>
+        <div class="stat-label">总隧道</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">
+          <NNumberAnimation
             ref="trafficCount"
             :from="0"
             :to="stats.trafficNumber"
@@ -180,13 +192,15 @@ interface Stats {
   totalUsers: number
   trafficNumber: number
   trafficUnit: string
+  proxies: number
 }
 
 const stats = ref<Stats>({
   totalNodes: 0,
   totalUsers: 0,
   trafficNumber: 0,
-  trafficUnit: 'B'
+  trafficUnit: 'B',
+  proxies: 0
 })
 
 onMounted(async () => {
@@ -200,7 +214,8 @@ onMounted(async () => {
           totalNodes: data.nodes,
           totalUsers: data.users,
           trafficNumber: traffic.number,
-          trafficUnit: traffic.unit
+          trafficUnit: traffic.unit,
+          proxies: data.proxies
         }
       })
     }
