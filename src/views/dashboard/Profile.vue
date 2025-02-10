@@ -468,6 +468,8 @@ const handleRealnameSubmit = () => {
         message.success('实名认证提交成功')
         closeRealnameModal()
         await loadRealnameStatus()
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        window.location.reload()
       } else {
         message.error(response.data.message || '实名认证失败')
       }
