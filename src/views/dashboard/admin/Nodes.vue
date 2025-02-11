@@ -3,7 +3,7 @@
     <NCard title="节点管理">
       <NSpace vertical :size="12">
         <NSpace>
-          <NInput v-model:value="searchKeyword" placeholder="搜索节点名称或主机名" style="width: 200px" clearable
+          <NInput v-model:value="searchKeyword" placeholder="搜索ID、节点名称或主机名" style="width: 200px" clearable
             @update:value="handleSearch" />
           <NSelect v-model:value="selectedOnline" placeholder="在线状态" :options="onlineOptions" style="width: 120px"
             clearable @update:value="handleFilterChange" />

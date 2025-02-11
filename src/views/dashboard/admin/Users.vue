@@ -5,7 +5,7 @@
         <div style="display: flex;">
           <NInput
             v-model:value="filters.search"
-            placeholder="搜索用户名或邮箱"
+            placeholder="搜索 ID、用户名或邮箱"
             clearable
             style="flex: 1;"
             @update:value="handleSearch"

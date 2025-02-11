@@ -2,7 +2,7 @@
   <div>
     <NCard title="隧道管理">
       <NSpace vertical :size="12">
-        <NInput v-model:value="filters.search" placeholder="搜索隧道名、用户名或绑定域名" clearable style="width: 100%"
+        <NInput v-model:value="filters.search" placeholder="搜索ID、隧道名、用户名或绑定域名" clearable style="width: 100%"
           @update:value="handleSearch" />
         <NSelect v-model:value="filters.nodeId" :options="nodeOptions" placeholder="节点" clearable style="width: 100%"
           @update:value="handleFilterChange" />
