@@ -72,7 +72,7 @@
 // 统计区域
 .stats-section {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: clamp(16px, 3vw, 32px);
   max-width: 1200px;
   margin: -60px auto 0;

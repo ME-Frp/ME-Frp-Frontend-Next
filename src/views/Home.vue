@@ -29,7 +29,7 @@
             :active="true"
           />
         </div>
-        <div class="stat-label">全球节点</div>
+        <div class="stat-label">节点数</div>
       </div>
       <div class="stat-item">
         <div class="stat-number">
@@ -41,7 +41,7 @@
             :active="true"
           />
         </div>
-        <div class="stat-label">注册用户</div>
+        <div class="stat-label">用户数</div>
       </div>
       <div class="stat-item">
         <div class="stat-number">
@@ -53,7 +53,7 @@
             :active="true"
           />
         </div>
-        <div class="stat-label">总隧道</div>
+        <div class="stat-label">隧道数</div>
       </div>
       <div class="stat-item">
         <div class="stat-number">
@@ -67,7 +67,7 @@
           />
           {{ stats.trafficUnit }}
         </div>
-        <div class="stat-label">总流量</div>
+        <div class="stat-label">承载流量</div>
       </div>
     </div>
 
