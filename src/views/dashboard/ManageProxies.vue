@@ -100,7 +100,9 @@
           <template #extra>
             <NButton secondary @click="() => router.push('/dashboard/create-proxy')">
               <template #icon>
-                <NIcon><AddOutline /></NIcon>
+                <NIcon>
+                  <AddOutline />
+                </NIcon>
               </template>
               创建
             </NButton>
@@ -145,7 +147,8 @@
                 </div>
               </td>
               <td>
-                <NDropdown :options="dropdownOptions(proxy)" @select="key => handleSelect(key, proxy)" trigger="click" placement="bottom">
+                <NDropdown :options="dropdownOptions(proxy)" @select="key => handleSelect(key, proxy)" trigger="click"
+                  placement="bottom">
                   <div style="display: flex; align-items: center;">
                     <NButton text>
                       <template #icon>
@@ -164,7 +167,9 @@
           <template #extra>
             <NButton secondary @click="() => router.push('/dashboard/create-proxy')">
               <template #icon>
-                <NIcon><AddOutline /></NIcon>
+                <NIcon>
+                  <AddOutline />
+                </NIcon>
               </template>
               创建
             </NButton>
@@ -201,7 +206,8 @@
         </div>
         <div class="modal-info-item">
           <span class="label">节点主机名：</span>
-          <span class="value">{{ nodeOptions.find(node => node.value === selectedProxy?.nodeId)?.hostname || '-' }}</span>
+          <span class="value">{{ nodeOptions.find(node => node.value === selectedProxy?.nodeId)?.hostname || '-'
+            }}</span>
         </div>
         <div class="modal-info-item">
           <span class="label">远程端口：</span>
@@ -209,11 +215,13 @@
         </div>
         <div class="modal-info-item">
           <span class="label">上次启动时间：</span>
-          <span class="value">{{ selectedProxy.lastStartTime || '从未启动' }}</span>
+          <span class="value">{{ selectedProxy.lastStartTime ? formatTime(selectedProxy.lastStartTime) : '从未启动'
+            }}</span>
         </div>
         <div class="modal-info-item">
           <span class="label">上次关闭时间：</span>
-          <span class="value">{{ selectedProxy.lastCloseTime || '从未关闭' }}</span>
+          <span class="value">{{ selectedProxy.lastCloseTime ? formatTime(selectedProxy.lastCloseTime) : '从未关闭'
+            }}</span>
         </div>
         <div class="modal-info-item">
           <span class="label">状态：</span>
@@ -232,7 +240,7 @@
       <template #header>
         <div>删除确认</div>
       </template>
-        <p>确定要删除此隧道吗？此操作不可恢复。</p>
+      <p>确定要删除此隧道吗？此操作不可恢复。</p>
       <template #action>
         <NButton size="small" @click="showDeleteModal = false">取消</NButton>
         <NButton size="small" type="error" :loading="loading" @click="handleDeleteConfirm">删除</NButton>
@@ -253,10 +261,10 @@
           <NInputNumber v-model:value="editForm.localPort" :min="1" :max="65535" placeholder="请输入本地端口" />
         </NFormItem>
         <NFormItem label="远程端口" path="remotePort">
-            <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
-            <NButton size="medium" :loading="gettingFreePort" @click="handleGetFreePortForEdit">
-              获取空闲端口
-            </NButton>
+          <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
+          <NButton size="medium" :loading="gettingFreePort" @click="handleGetFreePortForEdit">
+            获取空闲端口
+          </NButton>
         </NFormItem>
         <NFormItem v-if="editForm.proxyType === 'http' || editForm.proxyType === 'https'" label="绑定域名" path="domain">
           <NInput v-model:value="editForm.domain" placeholder="请输入绑定域名" />
@@ -332,10 +340,7 @@
         <div>生成启动配置</div>
       </template>
       <div style="margin: 16px 0">
-        <NCollapse 
-          v-model:expanded-names="expandedNames" 
-          :on-update:expanded-names="handleUpdateExpanded"
-        >
+        <NCollapse v-model:expanded-names="expandedNames" :on-update:expanded-names="handleUpdateExpanded">
           <NCollapseItem title="启动参数" name="args">
             <NCode :code="runArgs" language="bash" :hljs="hljs" />
             Windows 用户如果启动失败，请尝试把 <NCode>mefrpc</NCode> 换成 <NCode>.\mefrpc.exe</NCode>。
@@ -344,7 +349,7 @@
             <NAlert type="warning" style="margin-bottom: 16px" title="友情提示">
               此处是为专业用户准备的配置文件, 请不要在没有判断能力的情况下随意修改, 否则隧道可能无法正常启动。<br>
               Legacy 核心仅支持 INI 格式的配置文件。<br>
-              请使用 " 
+              请使用 "
               <NCode>mefrpc -c </NCode>配置文件 " 进行启动。<br>
               Windows 用户如果启动失败，请尝试把 <NCode>mefrpc</NCode> 换成 <NCode>.\mefrpc.exe</NCode>。
             </NAlert>
@@ -367,7 +372,9 @@
         <NButton size="small" @click="showConfigModal = false">关闭</NButton>
         <NButton size="small" type="primary" @click="handleCopyConfig" :disabled="expandedNames.length === 0">
           <template #icon>
-            <NIcon><CopyOutline /></NIcon>
+            <NIcon>
+              <CopyOutline />
+            </NIcon>
           </template>
           复制
         </NButton>
@@ -427,6 +434,18 @@ const configFormat = ref<'toml' | 'ini'>('toml')
 const tomlContent = ref('')
 const iniContent = ref('')
 const runArgs = ref('')
+
+const formatTime = (timestamp: number) => {
+  return new Date(timestamp * 1000).toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  })
+}
 
 const rules = {
   proxyName: {
@@ -557,7 +576,7 @@ const toggleModalContent = computed(() => {
 const generateTomlConfig = async (proxy: Proxy) => {
   const node = nodeOptions.value.find(n => n.value === proxy.nodeId)
   const token = localStorage.getItem('token')
-  
+
   try {
     const res = await AuthApi.getNodeServerSecret({ nodeId: proxy.nodeId })
     if (res.data.code === 200) {
@@ -594,7 +613,7 @@ useCompression = ${proxy.useCompression ? "true" : "false"}`
 const generateIniConfig = async (proxy: Proxy) => {
   const node = nodeOptions.value.find(n => n.value === proxy.nodeId)
   const token = localStorage.getItem('token')
-  
+
   try {
     const res = await AuthApi.getNodeServerSecret({ nodeId: proxy.nodeId })
     if (res.data.code === 200) {
@@ -626,12 +645,12 @@ const handleGenConfig = async (proxy: Proxy) => {
   selectedProxy.value = proxy
   showConfigModal.value = true
   runArgs.value = `mefrpc -t ${localStorage.getItem('token')} -p ${proxy.proxyId}`
-  
+
   const [toml, ini] = await Promise.all([
     generateTomlConfig(proxy),
     generateIniConfig(proxy)
   ])
-  
+
   tomlContent.value = toml
   iniContent.value = ini
 }
@@ -804,7 +823,7 @@ const handleGetFreePortForEdit = async () => {
   try {
     gettingFreePort.value = true
     const protocol = editForm.value.proxyType === 'udp' ? 'udp' : 'tcp'
-    const res = await AuthApi.getFreeNodePort({ 
+    const res = await AuthApi.getFreeNodePort({
       nodeId: editForm.value.nodeId,
       protocol
     })

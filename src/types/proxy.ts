@@ -39,8 +39,8 @@ export interface Proxy {
     isDisabled?: boolean;
     location: string;
     accessKey: string;
-    lastStartTime: string;
-    lastCloseTime: string;
+    lastStartTime: number;
+    lastCloseTime: number;
     hostHeaderRewrite: string;
     headerXFromWhere: string;
     useEncryption: boolean;
