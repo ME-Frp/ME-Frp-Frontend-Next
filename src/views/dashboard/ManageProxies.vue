@@ -338,13 +338,15 @@
         >
           <NCollapseItem title="启动参数" name="args">
             <NCode :code="runArgs" language="bash" :hljs="hljs" />
+            Windows 用户如果启动失败，请尝试把 <NCode>mefrpc</NCode> 换成 <NCode>.\mefrpc.exe</NCode>。
           </NCollapseItem>
           <NCollapseItem title="配置文件" name="config">
             <NAlert type="warning" style="margin-bottom: 16px" title="友情提示">
               此处是为专业用户准备的配置文件, 请不要在没有判断能力的情况下随意修改, 否则隧道可能无法正常启动。<br>
               Legacy 核心仅支持 INI 格式的配置文件。<br>
               请使用 " 
-              <NCode>mefrpc -c </NCode>配置文件 " 进行启动。
+              <NCode>mefrpc -c </NCode>配置文件 " 进行启动。<br>
+              Windows 用户如果启动失败，请尝试把 <NCode>mefrpc</NCode> 换成 <NCode>.\mefrpc.exe</NCode>。
             </NAlert>
             <NTabs v-model:value="configFormat" type="segment" style="margin: 16px 0">
               <NTabPane name="toml" tab="TOML" display-directive="show">
