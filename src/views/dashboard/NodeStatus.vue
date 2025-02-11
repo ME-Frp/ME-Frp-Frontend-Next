@@ -15,13 +15,19 @@
           </div>
         </div>
         <div class="overview-item">
-          <div class="overview-label">总在线隧道</div>
+          <div class="overview-label">在线用户</div>
           <div class="overview-value">
-            <NNumberAnimation :from="0" :to="totalOnlineCount" :precision="0" />
+            <NNumberAnimation :from="0" :to="totalOnlineClient" :precision="0" />
           </div>
         </div>
         <div class="overview-item">
-          <div class="overview-label">总入站流量</div>
+          <div class="overview-label">在线隧道</div>
+          <div class="overview-value">
+            <NNumberAnimation :from="0" :to="totalOnlineProxy" :precision="0" />
+          </div>
+        </div>
+        <div class="overview-item">
+          <div class="overview-label">今日入站流量</div>
           <div class="overview-value">
             <NNumberAnimation 
               :from="0" 
@@ -34,7 +40,7 @@
           </div>
         </div>
         <div class="overview-item">
-          <div class="overview-label">总出站流量</div>
+          <div class="overview-label">今日出站流量</div>
           <div class="overview-value">
             <NNumberAnimation 
               :from="0" 
@@ -66,7 +72,7 @@
             <div class="stat-item">
               <div class="stat-label">在线隧道</div>
               <div class="stat-value">
-                <NNumberAnimation :from="0" :to="node.onlineCount" />
+                <NNumberAnimation :from="0" :to="node.onlineProxy" />
               </div>
             </div>
             <div class="stat-item">
@@ -93,7 +99,8 @@ import type { NodeUsage } from '../../types'
 const nodes = ref<NodeUsage[]>([])
 
 // 计算总览数据
-const totalOnlineCount = computed(() => nodes.value.reduce((sum, node) => sum + node.onlineCount, 0))
+const totalOnlineClient = computed(() => nodes.value.reduce((sum, node) => sum + node.onlineClient, 0))
+const totalOnlineProxy = computed(() => nodes.value.reduce((sum, node) => sum + node.onlineProxy, 0))
 const totalTrafficIn = computed(() => nodes.value.reduce((sum, node) => sum + node.totalTrafficIn, 0))
 const totalTrafficOut = computed(() => nodes.value.reduce((sum, node) => sum + node.totalTrafficOut, 0))
 

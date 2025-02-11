@@ -51,7 +51,8 @@ export interface NodeUsage {
   name: string;
   totalTrafficIn: number;
   totalTrafficOut: number;
-  onlineCount: number;
+  onlineClient: number;
+  onlineProxy: number;
   isOnline: boolean;
 }
 
