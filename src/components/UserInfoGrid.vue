@@ -8,9 +8,23 @@
       </template>
       <template v-else>
         <div class="user-info-item">
+          <div class="user-info-label">用户名</div>
+          <div class="user-info-value">{{ userInfo.username }}</div>
+        </div>
+
+        <div class="user-info-item">
+          <div class="user-info-label">用户 ID</div>
+          <div class="user-info-value">
+            <NTag type="warning" size="small">
+              # {{ userInfo.userId }}
+            </NTag>
+          </div>
+        </div>
+
+        <div class="user-info-item">
           <div class="user-info-label">实名认证</div>
           <div class="user-info-value">
-            <NTag :type="userInfo.isRealname ? 'success' : 'default'">
+            <NTag :type="userInfo.isRealname ? 'success' : 'default'" size="small">
               {{ userInfo.isRealname ? '已实名' : '未实名' }}
             </NTag>
           </div>
@@ -19,7 +33,7 @@
         <div class="user-info-item">
           <div class="user-info-label">用户组</div>
           <div class="user-info-value">
-            <NTag type="info">
+            <NTag type="info" size="small">
               {{ userInfo.friendlyGroup }}
             </NTag>
           </div>

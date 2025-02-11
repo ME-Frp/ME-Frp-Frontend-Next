@@ -325,17 +325,71 @@
         <NButton size="small" type="warning" :loading="loading" @click="handleKickConfirm">确定</NButton>
       </template>
     </NModal>
+
+    <!-- 启动参数和配置文件 Modal -->
+    <NModal v-model:show="showConfigModal" preset="dialog" style="width: 600px">
+      <template #header>
+        <div>生成启动配置</div>
+      </template>
+      <div style="margin: 16px 0">
+        <NCollapse 
+          v-model:expanded-names="expandedNames" 
+          :on-update:expanded-names="handleUpdateExpanded"
+        >
+          <NCollapseItem title="启动参数" name="args">
+            <NCode :code="runArgs" language="bash" :hljs="hljs" />
+          </NCollapseItem>
+          <NCollapseItem title="配置文件" name="config">
+            <NAlert type="warning" style="margin-bottom: 16px" title="友情提示">
+              此处是为专业用户准备的配置文件, 请不要在没有判断能力的情况下随意修改, 否则隧道可能无法正常启动。<br>
+              Legacy 核心仅支持 INI 格式的配置文件。<br>
+              请使用 " 
+              <NCode>mefrpc -c </NCode>配置文件 " 进行启动。
+            </NAlert>
+            <NTabs v-model:value="configFormat" type="segment" style="margin: 16px 0">
+              <NTabPane name="toml" tab="TOML" display-directive="show">
+                <div style="margin-top: 16px">
+                  <NCode :code="tomlContent" language="toml" :hljs="hljs" />
+                </div>
+              </NTabPane>
+              <NTabPane name="ini" tab="INI" display-directive="show">
+                <div style="margin-top: 16px">
+                  <NCode :code="iniContent" language="ini" :hljs="hljs" />
+                </div>
+              </NTabPane>
+            </NTabs>
+          </NCollapseItem>
+        </NCollapse>
+      </div>
+      <template #action>
+        <NButton size="small" @click="showConfigModal = false">关闭</NButton>
+        <NButton size="small" type="primary" @click="handleCopyConfig" :disabled="expandedNames.length === 0">
+          <template #icon>
+            <NIcon><CopyOutline /></NIcon>
+          </template>
+          复制
+        </NButton>
+      </template>
+    </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, h } from 'vue'
-import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, NDivider, NSwitch, NText, NEmpty } from 'naive-ui'
-import { GridOutline, ListOutline, BuildOutline, RefreshOutline, SearchOutline, InformationCircleOutline, CreateOutline, TrashOutline, PowerOutline, AddOutline } from '@vicons/ionicons5'
+import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, NDivider, NSwitch, NText, NEmpty, NCode, NTabs, NTabPane, NCollapse, NCollapseItem, NAlert } from 'naive-ui'
+import { GridOutline, ListOutline, BuildOutline, RefreshOutline, SearchOutline, InformationCircleOutline, CreateOutline, TrashOutline, PowerOutline, AddOutline, CopyOutline, DocumentOutline } from '@vicons/ionicons5'
+import hljs from 'highlight.js/lib/core'
+import javascript from 'highlight.js/lib/languages/javascript'
+import ini from 'highlight.js/lib/languages/ini'
+import toml from 'highlight.js/lib/languages/ini' // 使用 ini 的高亮规则来处理 toml
 import { AuthApi } from '../../shared/api/auth'
 import type { Proxy, UserNodeName } from '../../types'
 import { switchButtonRailStyle } from '../../constants/theme'
 import { useRouter } from 'vue-router'
+
+hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('ini', ini)
+hljs.registerLanguage('toml', toml)
 
 const message = useMessage()
 const loading = ref(false)
@@ -366,6 +420,11 @@ const editForm = ref({
 })
 const router = useRouter()
 const gettingFreePort = ref(false)
+const showConfigModal = ref(false)
+const configFormat = ref<'toml' | 'ini'>('toml')
+const tomlContent = ref('')
+const iniContent = ref('')
+const runArgs = ref('')
 
 const rules = {
   proxyName: {
@@ -435,6 +494,8 @@ const filteredProxies = computed(() => {
 const handleRefresh = async () => {
   loading.value = true
   try {
+    // clear proxies
+    proxies.value = []
     const res = await AuthApi.getUserProxies()
     if (res.data.code === 200) {
       proxies.value = res.data.data
@@ -491,11 +552,98 @@ const toggleModalContent = computed(() => {
   return proxyToOperate.value.isDisabled ? '确认要启用此隧道吗？' : '确认要禁用此隧道吗？'
 })
 
+const generateTomlConfig = async (proxy: Proxy) => {
+  const node = nodeOptions.value.find(n => n.value === proxy.nodeId)
+  const token = localStorage.getItem('token')
+  
+  try {
+    const res = await AuthApi.getNodeServerSecret({ nodeId: proxy.nodeId })
+    if (res.data.code === 200) {
+      const serverSecret = res.data.data
+      return `serverAddr = "${node?.hostname || ''}"
+serverPort = ${serverSecret.serverPort}
+user = "${token}"
+
+[auth]
+method = "token"
+token = "${serverSecret.token}"
+
+[[proxies]]
+name = "${proxy.proxyName}"
+type = "${proxy.proxyType}"
+localIP = "${proxy.localIp}"
+localPort = ${proxy.localPort}
+remotePort = ${proxy.remotePort}${proxy.domain ? `\ndomain = "${proxy.domain}"` : ''}${proxy.accessKey ? `\nsk = "${proxy.accessKey}"` : ''}${proxy.hostHeaderRewrite ? `\nhostHeaderRewrite  = "${proxy.hostHeaderRewrite}"` : ''}${proxy.headerXFromWhere ? `\nrequestHeaders.set.x-from-where = "${proxy.headerXFromWhere}"` : ''}
+
+[proxies.transport]
+${proxy.proxyProtocolVersion ? `proxyProtocolVersion = "${proxy.proxyProtocolVersion}"` : ''}
+useEncryption = ${proxy.useEncryption ? "true" : "false"}
+useCompression = ${proxy.useCompression ? "true" : "false"}`
+    } else {
+      message.error(res.data.message || '获取节点配置失败')
+      return ''
+    }
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '获取节点配置失败')
+    return ''
+  }
+}
+
+const generateIniConfig = async (proxy: Proxy) => {
+  const node = nodeOptions.value.find(n => n.value === proxy.nodeId)
+  const token = localStorage.getItem('token')
+  
+  try {
+    const res = await AuthApi.getNodeServerSecret({ nodeId: proxy.nodeId })
+    if (res.data.code === 200) {
+      const serverSecret = res.data.data
+      return `[common]
+server_addr = "${node?.hostname || ''}"
+server_port = ${serverSecret.serverPort}
+user = "${token}"
+token = "${serverSecret.token}"
+
+[${proxy.proxyName}]
+type = "${proxy.proxyType}"
+local_ip = "${proxy.localIp}"
+local_port = ${proxy.localPort}
+remote_port = ${proxy.remotePort}${proxy.domain ? `\ndomain = "${proxy.domain}"` : ''}${proxy.accessKey ? `\nsk = "${proxy.accessKey}"` : ''}${proxy.hostHeaderRewrite ? `\nhost_header_rewrite = "${proxy.hostHeaderRewrite}"` : ''}${proxy.headerXFromWhere ? `\nheader_X-From-Where = "${proxy.headerXFromWhere}"` : ''}${proxy.proxyProtocolVersion ? `\nproxy_protocol_version = "${proxy.proxyProtocolVersion}"` : ''}
+use_encryption = ${proxy.useEncryption ? "1" : "0"}
+use_compression = ${proxy.useCompression ? "1" : "0"}`
+    } else {
+      message.error(res.data.message || '获取节点配置失败')
+      return ''
+    }
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '获取节点配置失败')
+    return ''
+  }
+}
+
+const handleGenConfig = async (proxy: Proxy) => {
+  selectedProxy.value = proxy
+  showConfigModal.value = true
+  runArgs.value = `mefrpc -t ${localStorage.getItem('token')} -p ${proxy.proxyId}`
+  
+  const [toml, ini] = await Promise.all([
+    generateTomlConfig(proxy),
+    generateIniConfig(proxy)
+  ])
+  
+  tomlContent.value = toml
+  iniContent.value = ini
+}
+
 const dropdownOptions = (proxy: Proxy) => [
   {
     label: '查看详情',
     key: 'view',
     icon: renderIcon(InformationCircleOutline)
+  },
+  {
+    label: '生成启动配置',
+    key: 'genConfig',
+    icon: renderIcon(DocumentOutline)
   },
   {
     type: 'divider',
@@ -505,11 +653,6 @@ const dropdownOptions = (proxy: Proxy) => [
     label: '编辑',
     key: 'edit',
     icon: renderIcon(CreateOutline)
-  },
-  {
-    label: '刷新状态',
-    key: 'refresh',
-    icon: renderIcon(RefreshOutline)
   },
   {
     label: '强制下线',
@@ -531,16 +674,6 @@ const dropdownOptions = (proxy: Proxy) => [
     icon: renderIcon(TrashOutline)
   }
 ]
-
-const handleRefreshStatus = async (proxy: Proxy) => {
-  try {
-    await AuthApi.refreshProxyStatus(proxy.proxyId)
-    message.success('刷新状态成功')
-    handleRefresh()
-  } catch (error: any) {
-    message.error(error?.response?.data?.message || '刷新状态失败')
-  }
-}
 
 const handleToggleClick = (proxy: Proxy) => {
   proxyToOperate.value = proxy
@@ -596,7 +729,7 @@ const handleEdit = (proxy: Proxy) => {
     headerXFromWhere: proxy.headerXFromWhere || '',
     useEncryption: proxy.useEncryption || false,
     useCompression: proxy.useCompression || false,
-    proxyProtocolVersion: proxy.proxyProtocolVersion || '',
+    proxyProtocolVersion: proxy.proxyProtocolVersion || null,
     proxyType: proxy.proxyType,
     nodeId: proxy.nodeId
   }
@@ -647,11 +780,11 @@ const handleSelect = (key: string, proxy: Proxy) => {
       selectedProxy.value = proxy
       showModal.value = true
       break
+    case 'genConfig':
+      handleGenConfig(proxy)
+      break
     case 'edit':
       handleEdit(proxy)
-      break
-    case 'refresh':
-      handleRefreshStatus(proxy)
       break
     case 'kickProxy':
       handleKickClick(proxy)
@@ -682,6 +815,36 @@ const handleGetFreePortForEdit = async () => {
     message.error(error?.response?.data?.message || '获取空闲端口失败')
   } finally {
     gettingFreePort.value = false
+  }
+}
+
+const handleCopyConfig = async () => {
+  try {
+    let content = ''
+    // 使用响应式变量判断当前展开的面板
+    if (expandedNames.value.includes('args')) {
+      content = runArgs.value
+    } else if (expandedNames.value.includes('config')) {
+      content = configFormat.value === 'toml' ? tomlContent.value : iniContent.value
+    }
+
+    await navigator.clipboard.writeText(content)
+    message.success('已复制到剪贴板')
+  } catch (err) {
+    message.error('复制失败')
+  }
+}
+
+// 添加一个响应式变量来跟踪展开的面板
+const expandedNames = ref(['args'])
+
+// 添加一个监听器来处理折叠面板的互斥
+const handleUpdateExpanded = (names: string[]) => {
+  // 如果尝试展开多个面板，只保留最后一个
+  if (names.length > 1) {
+    expandedNames.value = [names[names.length - 1]]
+  } else {
+    expandedNames.value = names
   }
 }
 </script>

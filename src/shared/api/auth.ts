@@ -86,11 +86,6 @@ export const AuthApi = {
         return baseApi.post<ApiResponse<void>>('/auth/proxy/toggle', { proxyId, isDisabled });
     },
 
-    // 刷新隧道状态
-    refreshProxyStatus: (proxyId: number) => {
-        return baseApi.post<ApiResponse<void>>('/auth/proxy/refresh', { proxyId });
-    },
-
     // 强制下线隧道
     kickProxy: (proxyId: number) => {
         return baseApi.post<ApiResponse<void>>('/auth/proxy/kick', { proxyId });
@@ -134,6 +129,11 @@ export const AuthApi = {
     // 获取下载源列表
     getDownloadSources: () => {
         return baseApi.get<ApiResponse<DownloadSource[]>>('/auth/downloadSources')
+    },
+
+    // 获取节点服务端口和令牌信息
+    getNodeServerSecret: (data: { nodeId: number }) => {
+        return baseApi.post<ApiResponse<{ serverPort: number; token: string }>>('/auth/node/secret', data);
     },
 };
 

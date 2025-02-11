@@ -37,14 +37,14 @@ export interface Proxy {
     username?: string;
     /** 隧道是否被禁用 */
     isDisabled?: boolean;
-    location?: string;
-    accessKey?: string;
-    lastStartTime?: string;
-    lastCloseTime?: string;
-    hostHeaderRewrite?: string;
-    headerXFromWhere?: string;
-    useEncryption?: boolean;
-    useCompression?: boolean;
-    proxyProtocolVersion?: string;
+    location: string;
+    accessKey: string;
+    lastStartTime: string;
+    lastCloseTime: string;
+    hostHeaderRewrite: string;
+    headerXFromWhere: string;
+    useEncryption: boolean;
+    useCompression: boolean;
+    proxyProtocolVersion: string;
 }
 
