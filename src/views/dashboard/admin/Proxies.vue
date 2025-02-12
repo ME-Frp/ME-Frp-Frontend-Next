@@ -22,65 +22,65 @@
 
     <!-- 编辑隧道弹窗 -->
     <NModal v-model:show="showEditModal" preset="dialog" title="编辑隧道" style="width: 600px">
-        <NForm ref="editFormRef" :model="editForm" :rules="rules" label-placement="left" label-width="120"
-          require-mark-placement="right-hanging" size="medium" style="padding-top: 12px;">
-          <NFormItem label="隧道名称" path="proxyName">
-            <NInput v-model:value="editForm.proxyName" placeholder="请输入隧道名称" />
-          </NFormItem>
-          <NFormItem label="节点" path="nodeId">
-            <NSelect v-model:value="editForm.nodeId" :options="nodeOptions" placeholder="请选择节点" />
-          </NFormItem>
-          <NFormItem label="本地地址" path="localIp">
-            <NInput v-model:value="editForm.localIp" placeholder="请输入本地地址" />
-          </NFormItem>
-          <NFormItem label="本地端口" path="localPort">
-            <NInputNumber v-model:value="editForm.localPort" :min="1" :max="65535" placeholder="请输入本地端口" />
-          </NFormItem>
-          <NFormItem label="协议类型" path="proxyType">
-            <NSelect v-model:value="editForm.proxyType" :options="proxyTypeOptions" placeholder="请选择协议类型" />
-          </NFormItem>
-          <NFormItem v-if="editForm.proxyType === 'http' || editForm.proxyType === 'https'" label="绑定域名"
-            path="domain">
-            <NDynamicTags v-model:value="domainTags" :render-tag="renderDomainTag" />
-          </NFormItem>
-          <NFormItem v-else label="远程端口" path="remotePort">
-              <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
-              <NButton size="medium" :loading="gettingFreePort" @click="handleGetFreePortForEdit">
-                获取空闲端口
-              </NButton>
-          </NFormItem>
+      <NForm ref="editFormRef" :model="editForm" :rules="rules" label-placement="left" label-width="120"
+        require-mark-placement="right-hanging" size="medium" style="padding-top: 12px;">
+        <NFormItem label="隧道名称" path="proxyName">
+          <NInput v-model:value="editForm.proxyName" placeholder="请输入隧道名称" />
+        </NFormItem>
+        <NFormItem label="节点" path="nodeId">
+          <NSelect v-model:value="editForm.nodeId" :options="nodeOptions" placeholder="请选择节点" />
+        </NFormItem>
+        <NFormItem label="本地地址" path="localIp">
+          <NInput v-model:value="editForm.localIp" placeholder="请输入本地地址" />
+        </NFormItem>
+        <NFormItem label="本地端口" path="localPort">
+          <NInputNumber v-model:value="editForm.localPort" :min="1" :max="65535" placeholder="请输入本地端口" />
+        </NFormItem>
+        <NFormItem label="协议类型" path="proxyType">
+          <NSelect v-model:value="editForm.proxyType" :options="proxyTypeOptions" placeholder="请选择协议类型" />
+        </NFormItem>
+        <NFormItem v-if="editForm.proxyType === 'http' || editForm.proxyType === 'https'" label="绑定域名"
+          path="domain">
+          <NDynamicTags v-model:value="domainTags" :render-tag="renderDomainTag" @update:value="handleDomainsUpdate" />
+        </NFormItem>
+        <NFormItem v-else label="远程端口" path="remotePort">
+          <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
+          <NButton size="medium" :loading="gettingFreePort" @click="handleGetFreePortForEdit">
+            获取空闲端口
+          </NButton>
+        </NFormItem>
 
-          <NDivider>高级配置</NDivider>
+        <NDivider>高级配置</NDivider>
 
-          <NFormItem label="访问密钥" path="accessKey">
-            <NInput v-model:value="editForm.accessKey" placeholder="请输入访问密钥" />
-          </NFormItem>
-          <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">
-            <NInput v-model:value="editForm.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值" />
-          </NFormItem>
-          <NFormItem label="X-From-Where" path="headerXFromWhere">
-            <NInput v-model:value="editForm.headerXFromWhere" placeholder="请输入 X-From-Where 请求头值" />
-          </NFormItem>
-          <NFormItem label="Proxy Protocol" path="proxyProtocolVersion">
-            <NSelect v-model:value="editForm.proxyProtocolVersion" :options="[
-              { label: '不启用', value: '' },
-              { label: 'v1', value: 'v1' },
-              { label: 'v2', value: 'v2' }
-            ]" placeholder="Proxy Protocol Version" />
-          </NFormItem>
-          <NFormItem label="其他选项">
-            <div style="display: flex; gap: 16px;">
-              <NSwitch v-model:value="editForm.useEncryption" :rail-style="switchButtonRailStyle">
-                <template #checked>启用加密</template>
-                <template #unchecked>禁用加密</template>
-              </NSwitch>
-              <NSwitch v-model:value="editForm.useCompression" :rail-style="switchButtonRailStyle">
-                <template #checked>启用压缩</template>
-                <template #unchecked>禁用压缩</template>
-              </NSwitch>
-            </div>
-          </NFormItem>
-        </NForm>
+        <NFormItem label="访问密钥" path="accessKey">
+          <NInput v-model:value="editForm.accessKey" placeholder="请输入访问密钥" />
+        </NFormItem>
+        <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">
+          <NInput v-model:value="editForm.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值" />
+        </NFormItem>
+        <NFormItem label="X-From-Where" path="headerXFromWhere">
+          <NInput v-model:value="editForm.headerXFromWhere" placeholder="请输入 X-From-Where 请求头值" />
+        </NFormItem>
+        <NFormItem label="Proxy Protocol" path="proxyProtocolVersion">
+          <NSelect v-model:value="editForm.proxyProtocolVersion" :options="[
+            { label: '不启用', value: '' },
+            { label: 'v1', value: 'v1' },
+            { label: 'v2', value: 'v2' }
+          ]" placeholder="Proxy Protocol Version" />
+        </NFormItem>
+        <NFormItem label="其他选项">
+          <div style="display: flex; gap: 16px;">
+            <NSwitch v-model:value="editForm.useEncryption" :rail-style="switchButtonRailStyle">
+              <template #checked>启用加密</template>
+              <template #unchecked>禁用加密</template>
+            </NSwitch>
+            <NSwitch v-model:value="editForm.useCompression" :rail-style="switchButtonRailStyle">
+              <template #checked>启用压缩</template>
+              <template #unchecked>禁用压缩</template>
+            </NSwitch>
+          </div>
+        </NFormItem>
+      </NForm>
       <template #action>
         <NButton size="small" @click="showEditModal = false">取消</NButton>
         <NButton size="small" type="primary" :loading="submitting" @click="handleEditSubmit">确定</NButton>
@@ -90,7 +90,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h, RendererElement, RendererNode, VNode } from 'vue'
+import { ref, h, RendererElement, RendererNode, VNode, watch } from 'vue'
 import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NInput, NSelect, useMessage, NTag, NModal, NForm, NFormItem, NInputNumber, NDynamicTags, NDivider, NSwitch } from 'naive-ui'
 import type { DataTableColumns, SelectOption, FormRules, FormInst } from 'naive-ui'
 import { AdminApi } from '../../../shared/api/admin'
@@ -228,6 +228,12 @@ const handleEdit = (proxy: Proxy) => {
     proxyProtocolVersion: proxy.proxyProtocolVersion || '',
     username: proxy.username || ''
   }
+  // 处理域名数组
+  try {
+    domainTags.value = proxy.domain ? JSON.parse(proxy.domain) : []
+  } catch {
+    domainTags.value = proxy.domain ? [proxy.domain] : []
+  }
   showEditModal.value = true
 }
 
@@ -269,18 +275,15 @@ const rules: FormRules = {
     }
   },
   domain: {
-    required: true,
-    message: '请输入绑定域名',
-    trigger: ['blur', 'input'],
     validator: (_rule, _value) => {
-      if (!['http', 'https'].includes(editForm.value.proxyType)) {
-        return true
-      }
-      if (!domainTags.value.length) {
-        return new Error('请至少添加一个域名')
+      if (['http', 'https'].includes(editForm.value.proxyType)) {
+        if (!domainTags.value.length) {
+          return new Error('请至少添加一个域名')
+        }
       }
       return true
-    }
+    },
+    trigger: ['blur', 'change', 'input']
   },
   proxyType: {
     required: true,
@@ -392,11 +395,12 @@ const columns: DataTableColumns<Proxy> = [
     key: 'remotePort',
     render(row) {
       if (['http', 'https'].includes(row.proxyType)) {
-        const domains = (row.domain || '-')
-          .replace(/[\[\]"]/g, '')
-          .split(';')
-          .map(domain => domain.trim())
-          .filter(Boolean)
+        let domains: string[] = []
+        try {
+          domains = JSON.parse(row.domain || '[]')
+        } catch {
+          domains = row.domain ? [row.domain] : []
+        }
         return h(NSpace, { vertical: true, size: 4 }, {
           default: () => domains.map(domain =>
             h(NTag, {
@@ -610,7 +614,13 @@ const handleEditSubmit = () => {
     if (!errors) {
       submitting.value = true
       try {
-        await AdminApi.updateProxy(editForm.value)
+        const submitData = {
+          ...editForm.value,
+          domain: editForm.value.proxyType === 'http' || editForm.value.proxyType === 'https' 
+            ? JSON.stringify(domainTags.value) 
+            : ''
+        }
+        await AdminApi.updateProxy(submitData)
         message.success('更新隧道成功')
         showEditModal.value = false
         loadData()
@@ -622,6 +632,14 @@ const handleEditSubmit = () => {
     }
   })
 }
+
+// 监听协议类型变化
+watch(() => editForm.value.proxyType, (newType) => {
+  if (newType !== 'http' && newType !== 'https') {
+    domainTags.value = []
+    editForm.value.domain = ''
+  }
+})
 
 // 获取节点列表
 const fetchNodes = async () => {
@@ -692,6 +710,14 @@ const renderDomainTag = (tag: string) => {
       round: false,
       closable: true,
       style: 'cursor: pointer',
+      onClose: () => {
+        const index = domainTags.value.indexOf(tag)
+        if (index !== -1) {
+          const newTags = [...domainTags.value]
+          newTags.splice(index, 1)
+          handleDomainsUpdate(newTags)
+        }
+      },
       onDblclick: (e: { target: HTMLElement }) => {
         const tagEl = e.target as HTMLElement
         const input = document.createElement('input')
@@ -705,7 +731,6 @@ const renderDomainTag = (tag: string) => {
               if (index !== -1) {
                 const newTags = [...domainTags.value]
                 newTags[index] = newValue
-                domainTags.value = newTags
                 handleDomainsUpdate(newTags)
               }
             }
@@ -722,7 +747,6 @@ const renderDomainTag = (tag: string) => {
             if (index !== -1) {
               const newTags = [...domainTags.value]
               newTags[index] = newValue
-              domainTags.value = newTags
               handleDomainsUpdate(newTags)
             }
           }

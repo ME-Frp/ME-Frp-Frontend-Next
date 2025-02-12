@@ -268,14 +268,15 @@ const rules: FormRules = {
     trigger: 'blur'
   },
   domain: {
-    required: true,
-    validator: (_rule, value) => {
+    validator: (_rule, _value) => {
       if (formValue.value.type === 'http' || formValue.value.type === 'https') {
-        return !!value || new Error('请输入绑定域名')
+        if (!domainTags.value.length) {
+          return new Error('请至少添加一个域名')
+        }
       }
       return true
     },
-    trigger: 'blur'
+    trigger: ['blur', 'change']
   }
 }
 
@@ -380,6 +381,11 @@ const allowedProxyTypeOptions = computed(() => {
 
 const domainTags = ref<string[]>([])
 
+const handleDomainTagsUpdate = (tags: string[]) => {
+  domainTags.value = tags
+  formValue.value.domain = JSON.stringify(tags)
+}
+
 const renderDomainTag = (tag: string) => {
   return h(
     NTag,
@@ -392,7 +398,7 @@ const renderDomainTag = (tag: string) => {
           const newTags = [...domainTags.value]
           newTags.splice(index, 1)
           domainTags.value = newTags
-          formValue.value.domain = JSON.stringify(newTags)
+          handleDomainTagsUpdate(newTags)
         }
       }
     },
@@ -411,7 +417,7 @@ const handleCreate = () => {
           localIp: formValue.value.localAddr,
           localPort: formValue.value.localPort!,
           remotePort: formValue.value.remotePort!,
-          domain: formValue.value.domain,
+          domain: formValue.value.type === 'http' || formValue.value.type === 'https' ? JSON.stringify(domainTags.value) : '',
           proxyType: formValue.value.type!,
           accessKey: formValue.value.accessKey,
           hostHeaderRewrite: formValue.value.hostHeaderRewrite,
@@ -438,6 +444,7 @@ const handleCreate = () => {
           useEncryption: false,
           useCompression: false
         }
+        domainTags.value = []
       } catch (error: any) {
         message.error(error?.response?.data?.message || '创建隧道失败')
       } finally {

@@ -74,8 +74,19 @@
                 <span class="value">{{ proxy.proxyType.toUpperCase() }}</span>
               </div>
               <div class="info-item">
-                <span class="label">远程端口：</span>
-                <span class="value">{{ proxy.remotePort }}</span>
+                <span class="label">
+                  {{ proxy.proxyType === 'http' || proxy.proxyType === 'https' ? '绑定域名：' : '远程端口：' }}
+                </span>
+                <span class="value">
+                  <div v-if="proxy.proxyType === 'http' || proxy.proxyType === 'https'" class="remote-port">
+                    <div v-for="domain in JSON.parse(proxy.domain || '[]')" :key="domain" class="domain">
+                      <NTag type="info" size="small" style="cursor: pointer" @click="() => openUrl(proxy.proxyType, domain)">
+                        {{ domain }}
+                      </NTag>
+                    </div>
+                  </div>
+                  <template v-else>{{ proxy.remotePort }}</template>
+                </span>
               </div>
               <div class="info-item" style="display: flex; align-items: flex-start">
                 <span class="label">节点：</span>
@@ -118,7 +129,7 @@
               <th>ID</th>
               <th>名称</th>
               <th>类型</th>
-              <th>远程端口</th>
+              <th>远程端口/域名</th>
               <th>节点</th>
               <th>状态</th>
               <th>操作</th>
@@ -131,7 +142,18 @@
               </td>
               <td>{{ proxy.proxyName }}</td>
               <td>{{ proxy.proxyType.toUpperCase() }}</td>
-              <td>{{ proxy.remotePort }}</td>
+              <td>
+                <div v-if="proxy.proxyType === 'http' || proxy.proxyType === 'https'" class="remote-port">
+                  <div v-for="domain in JSON.parse(proxy.domain || '[]')" :key="domain" class="domain">
+                    <NTag type="info" size="small" @click="() => openUrl(proxy.proxyType, domain)">
+                      {{ domain }}
+                    </NTag>
+                  </div>
+                </div>
+                <div v-else>
+                  <NTag type="info" size="small">{{ proxy.remotePort }}</NTag>
+                </div>
+              </td>
               <td>{{ getNodeLabel(proxy.nodeId) }}</td>
               <td>
                 <div style="display: flex; gap: 4px;">
@@ -260,14 +282,14 @@
         <NFormItem label="本地端口" path="localPort">
           <NInputNumber v-model:value="editForm.localPort" :min="1" :max="65535" placeholder="请输入本地端口" />
         </NFormItem>
-        <NFormItem label="远程端口" path="remotePort">
+        <NFormItem v-if="editForm.proxyType !== 'http' && editForm.proxyType !== 'https'" label="远程端口" path="remotePort">
           <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
           <NButton size="medium" :loading="gettingFreePort" @click="handleGetFreePortForEdit">
             获取空闲端口
           </NButton>
         </NFormItem>
         <NFormItem v-if="editForm.proxyType === 'http' || editForm.proxyType === 'https'" label="绑定域名" path="domain">
-          <NInput v-model:value="editForm.domain" placeholder="请输入绑定域名" />
+          <NDynamicTags v-model:value="domainTags" :render-tag="renderDomainTag" @update:value="handleDomainsUpdate" />
         </NFormItem>
 
         <NDivider>高级配置</NDivider>
@@ -384,13 +406,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h } from 'vue'
-import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, NDivider, NSwitch, NText, NEmpty, NCode, NTabs, NTabPane, NCollapse, NCollapseItem, NAlert } from 'naive-ui'
+import { ref, computed, h, watch } from 'vue'
+import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, type FormRules, NDivider, NSwitch, NText, NEmpty, NCode, NTabs, NTabPane, NCollapse, NCollapseItem, NAlert, NDynamicTags } from 'naive-ui'
 import { GridOutline, ListOutline, BuildOutline, RefreshOutline, SearchOutline, InformationCircleOutline, CreateOutline, TrashOutline, PowerOutline, AddOutline, CopyOutline, DocumentOutline } from '@vicons/ionicons5'
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
 import ini from 'highlight.js/lib/languages/ini'
-import toml from 'highlight.js/lib/languages/ini' // 使用 ini 的高亮规则来处理 toml
+import toml from 'highlight.js/lib/languages/ini'
 import { AuthApi } from '../../shared/api/auth'
 import type { Proxy, UserNodeName } from '../../types'
 import { switchButtonRailStyle } from '../../constants/theme'
@@ -434,6 +456,7 @@ const configFormat = ref<'toml' | 'ini'>('toml')
 const tomlContent = ref('')
 const iniContent = ref('')
 const runArgs = ref('')
+const domainTags = ref<string[]>([])
 
 const formatTime = (timestamp: number) => {
   return new Date(timestamp * 1000).toLocaleString('zh-CN', {
@@ -447,24 +470,22 @@ const formatTime = (timestamp: number) => {
   })
 }
 
-const rules = {
+const rules: FormRules = {
   proxyName: {
     required: true,
     message: '请输入隧道名称',
-    trigger: 'blur',
-    type: 'string'
+    trigger: ['blur', 'input']
   },
   localIp: {
     required: true,
     message: '请输入本地地址',
-    trigger: 'blur',
-    type: 'string'
+    trigger: ['blur', 'input']
   },
   localPort: {
     required: true,
-    message: '请输入本地端口',
-    trigger: 'blur',
     type: 'number',
+    message: '请输入本地端口',
+    trigger: ['blur', 'input'],
     validator: (_rule: any, value: number) => {
       if (value < 1 || value > 65535) {
         return new Error('端口范围必须在 1-65535 之间')
@@ -475,8 +496,7 @@ const rules = {
   remotePort: {
     required: true,
     message: '请输入远程端口',
-    trigger: 'blur',
-    type: 'number',
+    trigger: ['blur', 'input'],
     validator: (_rule: any, value: number) => {
       if (editForm.value.proxyType === 'http' || editForm.value.proxyType === 'https') {
         return true
@@ -488,18 +508,17 @@ const rules = {
     }
   },
   domain: {
-    type: 'string',
-    trigger: 'blur',
-    validator: (_rule: any, value: string) => {
+    validator: (_rule: any, _value: string) => {
       if (editForm.value.proxyType === 'http' || editForm.value.proxyType === 'https') {
-        if (!value) {
-          return new Error('请输入绑定域名')
+        if (!domainTags.value.length) {
+          return new Error('请至少添加一个域名')
         }
       }
       return true
-    }
+    },
+    trigger: ['blur', 'change', 'input']
   }
-} as const
+}
 
 // 过滤隧道列表
 const filteredProxies = computed(() => {
@@ -750,9 +769,15 @@ const handleEdit = (proxy: Proxy) => {
     headerXFromWhere: proxy.headerXFromWhere || '',
     useEncryption: proxy.useEncryption || false,
     useCompression: proxy.useCompression || false,
-    proxyProtocolVersion: proxy.proxyProtocolVersion || null,
+    proxyProtocolVersion: proxy.proxyProtocolVersion || '',
     proxyType: proxy.proxyType,
     nodeId: proxy.nodeId
+  }
+  // 处理域名数组
+  try {
+    domainTags.value = proxy.domain ? JSON.parse(proxy.domain) : []
+  } catch {
+    domainTags.value = proxy.domain ? [proxy.domain] : []
   }
   showEditModal.value = true
 }
@@ -762,7 +787,13 @@ const handleEditSubmit = () => {
     if (!errors) {
       loading.value = true
       try {
-        await AuthApi.updateProxy(editForm.value)
+        const submitData = {
+          ...editForm.value,
+          domain: editForm.value.proxyType === 'http' || editForm.value.proxyType === 'https' 
+            ? JSON.stringify(domainTags.value) 
+            : ''
+        }
+        await AuthApi.updateProxy(submitData)
         message.success('更新隧道成功')
         showEditModal.value = false
         handleRefresh()
@@ -774,6 +805,14 @@ const handleEditSubmit = () => {
     }
   })
 }
+
+// 监听协议类型变化
+watch(() => editForm.value.proxyType, (newType) => {
+  if (newType !== 'http' && newType !== 'https') {
+    domainTags.value = []
+    editForm.value.domain = ''
+  }
+})
 
 const showDeleteModal = ref(false)
 const proxyToDelete = ref<Proxy | null>(null)
@@ -867,6 +906,72 @@ const handleUpdateExpanded = (names: string[]) => {
   } else {
     expandedNames.value = names
   }
+}
+
+const openUrl = (protocol: string, domain: string) => {
+  window.open(`${protocol}://${domain}`, '_blank')
+}
+
+const handleDomainsUpdate = (tags: string[]) => {
+  domainTags.value = tags
+  editForm.value.domain = JSON.stringify(tags)
+}
+
+const renderDomainTag = (tag: string) => {
+  return h(
+    NTag,
+    {
+      round: false,
+      closable: true,
+      style: 'cursor: pointer',
+      onClose: () => {
+        const index = domainTags.value.indexOf(tag)
+        if (index !== -1) {
+          const newTags = [...domainTags.value]
+          newTags.splice(index, 1)
+          handleDomainsUpdate(newTags)
+        }
+      },
+      onDblclick: (e: { target: HTMLElement }) => {
+        const tagEl = e.target as HTMLElement
+        const input = document.createElement('input')
+        input.style.width = '100px'
+        input.value = tag
+        input.onkeydown = (e) => {
+          if (e.key === 'Enter') {
+            const newValue = input.value.trim()
+            if (newValue && newValue !== tag) {
+              const index = domainTags.value.indexOf(tag)
+              if (index !== -1) {
+                const newTags = [...domainTags.value]
+                newTags[index] = newValue
+                handleDomainsUpdate(newTags)
+              }
+            }
+            input.remove()
+          }
+          if (e.key === 'Escape') {
+            input.remove()
+          }
+        }
+        input.onblur = () => {
+          const newValue = input.value.trim()
+          if (newValue && newValue !== tag) {
+            const index = domainTags.value.indexOf(tag)
+            if (index !== -1) {
+              const newTags = [...domainTags.value]
+              newTags[index] = newValue
+              handleDomainsUpdate(newTags)
+            }
+          }
+          input.remove()
+        }
+        tagEl.appendChild(input)
+        input.focus()
+      }
+    },
+    { default: () => tag }
+  )
 }
 </script>
 
