@@ -143,7 +143,7 @@ let timer: number | null = null
 
 onMounted(() => {
   fetchNodeStatus()
-  timer = window.setInterval(fetchNodeStatus, 1000 * 60 * 30)
+  timer = window.setInterval(fetchNodeStatus, 1000 * 60 * 5)
 })
 
 onUnmounted(() => {
