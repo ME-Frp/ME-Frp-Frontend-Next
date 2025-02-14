@@ -600,6 +600,26 @@ const generateTomlConfig = async (proxy: Proxy) => {
     const res = await AuthApi.getNodeServerSecret({ nodeId: proxy.nodeId })
     if (res.data.code === 200) {
       const serverSecret = res.data.data
+      // 处理域名格式
+      let domainStr = ''
+      if (proxy.domain) {
+        try {
+          const domains = JSON.parse(proxy.domain)
+          if (Array.isArray(domains)) {
+            // TOML数组格式
+            domainStr = `customDomains = [${domains.map(d => `"${d}"`).join(', ')}]`
+          } else {
+            domainStr = `customDomains = "${proxy.domain}"`
+          }
+        } catch {
+          domainStr = `customDomains = "${proxy.domain}"`
+        }
+      }
+
+      // 对于http/https类型，不输出remotePort
+      const remotePortConfig = (proxy.proxyType === 'http' || proxy.proxyType === 'https') ? 
+        '' : `\nremotePort = ${proxy.remotePort}`
+
       return `serverAddr = "${node?.hostname || ''}"
 serverPort = ${serverSecret.serverPort}
 user = "${token}"
@@ -612,8 +632,7 @@ token = "${serverSecret.token}"
 name = "${proxy.proxyName}"
 type = "${proxy.proxyType}"
 localIP = "${proxy.localIp}"
-localPort = ${proxy.localPort}
-remotePort = ${proxy.remotePort}${proxy.domain ? `\ndomain = "${proxy.domain}"` : ''}${proxy.accessKey ? `\nsk = "${proxy.accessKey}"` : ''}${proxy.hostHeaderRewrite ? `\nhostHeaderRewrite  = "${proxy.hostHeaderRewrite}"` : ''}${proxy.headerXFromWhere ? `\nrequestHeaders.set.x-from-where = "${proxy.headerXFromWhere}"` : ''}
+localPort = ${proxy.localPort}${remotePortConfig}${domainStr ? `\n${domainStr}` : ''}${proxy.accessKey ? `\nsk = "${proxy.accessKey}"` : ''}${proxy.hostHeaderRewrite ? `\nhostHeaderRewrite = "${proxy.hostHeaderRewrite}"` : ''}${proxy.headerXFromWhere ? `\nrequestHeaders.set.x-from-where = "${proxy.headerXFromWhere}"` : ''}
 
 [proxies.transport]
 ${proxy.proxyProtocolVersion ? `proxyProtocolVersion = "${proxy.proxyProtocolVersion}"` : ''}
@@ -637,17 +656,35 @@ const generateIniConfig = async (proxy: Proxy) => {
     const res = await AuthApi.getNodeServerSecret({ nodeId: proxy.nodeId })
     if (res.data.code === 200) {
       const serverSecret = res.data.data
+      // 处理域名格式
+      let domainStr = ''
+      if (proxy.domain) {
+        try {
+          const domains = JSON.parse(proxy.domain)
+          if (Array.isArray(domains)) {
+            domainStr = domains.join(',')
+          } else {
+            domainStr = proxy.domain
+          }
+        } catch {
+          domainStr = proxy.domain
+        }
+      }
+      
+      // 对于http/https类型，不输出remote_port
+      const remotePortConfig = (proxy.proxyType === 'http' || proxy.proxyType === 'https') ? 
+        '' : `\nremote_port = ${proxy.remotePort}`
+      
       return `[common]
-server_addr = "${node?.hostname || ''}"
+server_addr = ${node?.hostname || ''}
 server_port = ${serverSecret.serverPort}
 user = "${token}"
 token = "${serverSecret.token}"
 
 [${proxy.proxyName}]
 type = "${proxy.proxyType}"
-local_ip = "${proxy.localIp}"
-local_port = ${proxy.localPort}
-remote_port = ${proxy.remotePort}${proxy.domain ? `\ndomain = "${proxy.domain}"` : ''}${proxy.accessKey ? `\nsk = "${proxy.accessKey}"` : ''}${proxy.hostHeaderRewrite ? `\nhost_header_rewrite = "${proxy.hostHeaderRewrite}"` : ''}${proxy.headerXFromWhere ? `\nheader_X-From-Where = "${proxy.headerXFromWhere}"` : ''}${proxy.proxyProtocolVersion ? `\nproxy_protocol_version = "${proxy.proxyProtocolVersion}"` : ''}
+local_ip = ${proxy.localIp}
+local_port = ${proxy.localPort}${remotePortConfig}${domainStr ? `\ncustom_domains = ${domainStr}` : ''}${proxy.accessKey ? `\nsk = "${proxy.accessKey}"` : ''}${proxy.hostHeaderRewrite ? `\nhost_header_rewrite = "${proxy.hostHeaderRewrite}"` : ''}${proxy.headerXFromWhere ? `\nheader_X-From-Where = "${proxy.headerXFromWhere}"` : ''}${proxy.proxyProtocolVersion ? `\nproxy_protocol_version = "${proxy.proxyProtocolVersion}"` : ''}
 use_encryption = ${proxy.useEncryption ? "1" : "0"}
 use_compression = ${proxy.useCompression ? "1" : "0"}`
     } else {
