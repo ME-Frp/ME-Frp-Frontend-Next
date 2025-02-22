@@ -402,30 +402,45 @@ function formatTraffic(traffic: number): string {
 const groupColumns: DataTableColumns<Group> = [
   {
     title: '组名',
-    key: 'name'
+    key: 'name',    
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.name)
+    }
   },
   {
     title: '显示名称',
-    key: 'friendlyName'
+    key: 'friendlyName',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.friendlyName)
+    }
   },
   {
     title: '最大隧道数',
-    key: 'maxProxies'
+    key: 'maxProxies',    
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.maxProxies)
+    }
   },
   {
     title: '基础流量',
     key: 'baseTraffic',
-    render: (row) => formatTraffic(row.baseTraffic)
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, formatTraffic(row.baseTraffic))
+    }
   },
   {
     title: '出站带宽',
     key: 'outBound',
-    render: (row) => `${row.outBound} Mbps`
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.outBound ? `${row.outBound} Mbps` : '无')
+    }
   },
   {
     title: '入站带宽',
     key: 'inBound',
-    render: (row) => `${row.inBound} Mbps`
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.outBound ? `${row.inBound} Mbps` : '无')
+    }
   },
   {
     title: '操作',

@@ -3,12 +3,16 @@
     <NCard title="产品管理">
       <NSpace vertical>
         <NButton type="primary" @click="showAddModal = true">添加产品</NButton>
-        <NDataTable :columns="productColumns" :data="productsData" :bordered="false" />
+        <NDataTable
+          remote
+          :columns="productColumns"
+          :data="productsData"
+        />
       </NSpace>
     </NCard>
 
     <NModal v-model:show="showAddModal" preset="dialog" title="添加产品">
-      <NForm ref="productFormRef" :model="productForm" :rules="productRules">
+      <NForm ref="addProductFormRef" :model="productForm" :rules="productRules" style="padding-top: 12px;">
         <NFormItem label="产品 ID" path="productId">
           <NInput v-model:value="productForm.productId" placeholder="请输入产品 ID" />
         </NFormItem>
@@ -213,31 +217,40 @@ const productColumns: DataTableColumns<Product> = [
     title: '操作',
     key: 'actions',
     render: (row) => {
-      return h(NSpace, {}, {
-        default: () => [
-          h(
-            NButton,
-            {
-              size: 'small',
-              type: 'primary',
-              onClick: () => {
-                editProductForm.value = { ...row }
-                showEditModal.value = true
-              }
-            },
-            { default: () => '修改' }
-          ),
-          h(
-            NButton,
-            {
-              size: 'small',
-              type: 'error',
-              onClick: () => handleDeleteProduct(row.productId)
-            },
-            { default: () => '删除' }
-          )
-        ]
-      })
+      return h(
+        'div',
+        {
+          style: {
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word'
+          }
+        },
+        h(NSpace, {}, {
+          default: () => [
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'primary',
+                onClick: () => {
+                  editProductForm.value = { ...row }
+                  showEditModal.value = true
+                }
+              },
+              { default: () => '修改' }
+            ),
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'error',
+                onClick: () => handleDeleteProduct(row.productId)
+              },
+              { default: () => '删除' }
+            )
+          ]
+        })
+      )
     }
   }
 ]

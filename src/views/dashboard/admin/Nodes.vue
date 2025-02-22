@@ -127,14 +127,37 @@
           </NSpace>
         </template>
       </NModal>
+
+      <NModal v-model:show="showToggleModal" preset="dialog" 
+        :title="currentNode?.isDisabled ? '启用节点' : '禁用节点'" 
+        style="width: 400px;"
+        :show-icon="false">
+        <div>确定要{{ currentNode?.isDisabled ? '启用' : '禁用' }}节点 "{{ currentNode?.name }}" 吗？</div>
+        <template #action>
+          <NButton secondary size="small" @click="showToggleModal = false">取消</NButton>
+          <NButton secondary size="small" type="warning" :loading="submitting" @click="() => currentNode && handleToggleNode(currentNode)">确定</NButton>
+        </template>
+      </NModal>
+
+      <NModal v-model:show="showDeleteModal" preset="dialog" 
+        title="删除节点" 
+        style="width: 400px;"
+        :show-icon="false">
+        <div>确定要删除节点 "{{ currentNode?.name }}" 吗？此操作不可恢复！</div>
+        <template #action>
+          <NButton secondary size="small" @click="showDeleteModal = false">取消</NButton>
+          <NButton secondary size="small" type="error" :loading="submitting" @click="() => currentNode && handleDeleteNode(currentNode)">删除</NButton>
+        </template>
+      </NModal>
     </NCard>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, h } from 'vue'
-import { NCard, NSpace, NDataTable, NButton, NPopconfirm, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag } from 'naive-ui'
-import type { DataTableColumns, FormRules, FormInst, SelectOption } from 'naive-ui'
+import { NCard, NSpace, NDataTable, NButton, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag, NDropdown, NIcon } from 'naive-ui'
+import { EllipsisHorizontalCircleOutline, CreateOutline, PowerOutline, TrashOutline } from '@vicons/ionicons5'
+import type { DataTableColumns, FormRules, FormInst, SelectOption, DropdownOption } from 'naive-ui'
 import { AdminApi } from '../../../shared/api/admin'
 import { AuthApi } from '../../../shared/api/auth'
 import type { Node, UpdateNodeArgs, GetNodesArgs } from '../../../types/adminApi'
@@ -318,33 +341,45 @@ const pagination = ref({
 const columns: DataTableColumns = [
   {
     title: 'ID',
-    key: 'nodeId'
+    key: 'nodeId',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.nodeId)
+    }
   },
   {
     title: '名称',
     key: 'name',
     render(row) {
-      return h('div', { style: 'white-space: pre-wrap; word-break: break-all;' }, row.name)
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.name)
     }
   },
   {
     title: '主机名',
-    key: 'hostname'
+    key: 'hostname',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.hostname)
+    }
   },
   {
     title: '描述',
     key: 'description',
     render(row) {
-      return h('div', { style: 'white-space: pre-wrap; word-break: break-all;' }, row.description)
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.description)
     }
   },
   {
     title: '服务端口',
-    key: 'servicePort'
+    key: 'servicePort',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.servicePort)
+    }
   },
   {
     title: '管理端口',
-    key: 'adminPort'
+    key: 'adminPort',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.adminPort)
+    }
   },
   {
     title: '用户组',
@@ -373,7 +408,10 @@ const columns: DataTableColumns = [
   },
   {
     title: '端口',
-    key: 'allowPort'
+    key: 'allowPort',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.allowPort)
+    }
   },
   {
     title: '协议',
@@ -418,62 +456,21 @@ const columns: DataTableColumns = [
     title: '操作',
     key: 'actions',
     render(row) {
-      return h(
-        NSpace,
-        {},
-        {
-          default: () => [
-            h(
-              NButton,
-              {
-                size: 'small',
-                onClick: () => handleEdit(row)
-              },
-              { default: () => '编辑' }
-            ),
-            h(
-              NPopconfirm,
-              {
-                onPositiveClick: () => handleToggleNode(row),
-                positiveText: '确定',
-                negativeText: '取消'
-              },
-              {
-                default: () => `确认${row.isDisabled ? '启用' : '禁用'}此节点？`,
-                trigger: () =>
-                  h(
-                    NButton,
-                    {
-                      size: 'small',
-                      type: row.isDisabled ? 'primary' : 'warning'
-                    },
-                    { default: () => row.isDisabled ? '启用' : '禁用' }
-                  )
-              }
-            ),
-            h(
-              NPopconfirm,
-              {
-                onPositiveClick: () => handleDelete(row),
-                positiveText: '确定',
-                negativeText: '取消'
-              },
-              {
-                default: () => '确认删除此节点？',
-                trigger: () =>
-                  h(
-                    NButton,
-                    {
-                      size: 'small',
-                      type: 'error'
-                    },
-                    { default: () => '删除' }
-                  )
-              }
-            )
-          ]
-        }
-      )
+      return h(NDropdown, {
+        trigger: 'click',
+        options: dropdownOptions(row),
+        onSelect: (key: string) => handleSelect(key, row),
+        placement: 'bottom'
+      }, {
+        default: () => h(NButton, {
+          text: true,
+          style: 'display: flex; align-items: center;'
+        }, {
+          icon: () => h(NIcon, null, {
+            default: () => h(EllipsisHorizontalCircleOutline)
+          })
+        })
+      })
     }
   }
 ]
@@ -488,7 +485,7 @@ const editingNode = ref<Node | null>(null)
 
 const handleEdit = (row: Node) => {
   editingNode.value = row
-  Object.assign(formModel.value, {
+  formModel.value = {
     name: row.name,
     hostname: row.hostname,
     description: row.description,
@@ -499,7 +496,7 @@ const handleEdit = (row: Node) => {
     allowGroup: row.allowGroup.split(';'),
     allowPort: row.allowPort,
     allowType: row.allowType.split(';')
-  })
+  }
   showEditModal.value = true
 }
 
@@ -552,16 +549,6 @@ const handleEditSubmit = () => {
       }
     }
   })
-}
-
-const handleDelete = async (row: Node) => {
-  try {
-    await AdminApi.deleteNode(row.nodeId)
-    message.success('删除节点成功')
-    fetchNodes()
-  } catch (error: any) {
-    message.error(error?.response?.data?.message || '删除节点失败')
-  }
 }
 
 const handleAddNode = () => {
@@ -624,6 +611,78 @@ const statusOptions: SelectOption[] = [
   { label: '已禁用', value: 'disabled' }
 ]
 
+const showToggleModal = ref(false)
+const showDeleteModal = ref(false)
+const currentNode = ref<Node | null>(null)
+
+const handleToggleNode = async (node: Node) => {
+  try {
+    submitting.value = true
+    await AdminApi.toggleNode(node.nodeId, !node.isDisabled)
+    message.success(node.isDisabled ? '启用节点成功' : '禁用节点成功')
+    showToggleModal.value = false
+    loadData()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '操作失败')
+  } finally {
+    submitting.value = false
+  }
+}
+
+const handleDeleteNode = async (node: Node) => {
+  try {
+    submitting.value = true
+    await AdminApi.deleteNode(node.nodeId)
+    message.success('删除节点成功')
+    showDeleteModal.value = false
+    loadData()
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '操作失败')
+  } finally {
+    submitting.value = false
+  }
+}
+
+const dropdownOptions = (row: Node): DropdownOption[] => [
+  {
+    label: '编辑',
+    key: 'edit',
+    disabled: false,
+    type: 'primary',
+    icon: () => h(NIcon, null, { default: () => h(CreateOutline) })
+  },
+  {
+    label: row.isDisabled ? '启用' : '禁用',
+    key: 'toggle',
+    disabled: false,
+    type: row.isDisabled ? 'success' : 'warning',
+    icon: () => h(NIcon, null, { default: () => h(PowerOutline) })
+  },
+  {
+    label: '删除',
+    key: 'delete',
+    disabled: false,
+    type: 'error',
+    icon: () => h(NIcon, null, { default: () => h(TrashOutline) })
+  }
+]
+
+const handleSelect = (key: string, row: Node) => {
+  switch (key) {
+    case 'edit':
+      handleEdit(row)
+      break
+    case 'toggle':
+      currentNode.value = row
+      showToggleModal.value = true
+      break
+    case 'delete':
+      currentNode.value = row
+      showDeleteModal.value = true
+      break
+  }
+}
+
 const fetchNodes = async () => {
   loading.value = true
   try {
@@ -673,14 +732,9 @@ const fetchUserGroups = async () => {
   }
 }
 
-const handleToggleNode = async (row: Node) => {
-  try {
-    await AdminApi.toggleNode(row.nodeId, !row.isDisabled)
-    message.success(`${row.isDisabled ? '启用' : '禁用'}节点成功`)
-    fetchNodes()
-  } catch (error: any) {
-    message.error(error?.response?.data?.message || `${row.isDisabled ? '启用' : '禁用'}节点失败`)
-  }
+const loadData = () => {
+  fetchNodes()
+  fetchUserGroups()
 }
 
 // 在组件挂载时获取用户组列表

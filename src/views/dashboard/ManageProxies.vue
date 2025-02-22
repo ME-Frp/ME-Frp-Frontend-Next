@@ -123,75 +123,20 @@
 
       <!-- 列表视图 -->
       <template v-else>
-        <NTable v-if="filteredProxies.length">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>名称</th>
-              <th>类型</th>
-              <th>远程端口/域名</th>
-              <th>节点</th>
-              <th>状态</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="proxy in filteredProxies" :key="proxy.proxyId">
-              <td>
-                <NTag type="info" size="medium"># {{ proxy.proxyId }}</NTag>
-              </td>
-              <td>{{ proxy.proxyName }}</td>
-              <td>{{ proxy.proxyType.toUpperCase() }}</td>
-              <td>
-                <div v-if="proxy.proxyType === 'http' || proxy.proxyType === 'https'" class="remote-port">
-                  <div v-for="domain in JSON.parse(proxy.domain || '[]')" :key="domain" class="domain">
-                    <NTag type="info" size="small" @click="() => openUrl(proxy.proxyType, domain)">
-                      {{ domain }}
-                    </NTag>
-                  </div>
-                </div>
-                <div v-else>
-                  <NTag type="info" size="small">{{ proxy.remotePort }}</NTag>
-                </div>
-              </td>
-              <td>{{ getNodeLabel(proxy.nodeId) }}</td>
-              <td>
-                <div style="display: flex; gap: 4px;">
-                  <NTag :type="proxy.isOnline ? 'success' : 'error'" size="small">
-                    {{ proxy.isOnline ? '在线' : '离线' }}
-                  </NTag>
-                  <NTag v-if="proxy.isBanned" type="error" size="small">
-                    已封禁
-                  </NTag>
-                  <NTag v-if="proxy.isDisabled" type="warning" size="small">
-                    已禁用
-                  </NTag>
-                </div>
-              </td>
-              <td>
-                <NDropdown :options="dropdownOptions(proxy)" @select="key => handleSelect(key, proxy)" trigger="click"
-                  placement="bottom">
-                  <div style="display: flex; align-items: center;">
-                    <NButton text>
-                      <template #icon>
-                        <NIcon>
-                          <BuildOutline />
-                        </NIcon>
-                      </template>
-                    </NButton>
-                  </div>
-                </NDropdown>
-              </td>
-            </tr>
-          </tbody>
-        </NTable>
+        <NDataTable v-if="filteredProxies.length" :columns="columns" :data="filteredProxies"
+          :style="{
+            '.n-data-table-td': {
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: '200px'
+            }
+          }" />
         <NEmpty v-else description="暂无隧道" class="no-data">
           <template #extra>
-            <NButton secondary @click="() => router.push('/dashboard/create-proxy')">
+            <NButton secondary @click="() => router.push('/create-proxy')">
               <template #icon>
-                <NIcon>
-                  <AddOutline />
-                </NIcon>
+                <NIcon><AddOutline /></NIcon>
               </template>
               创建
             </NButton>
@@ -407,8 +352,8 @@
 
 <script setup lang="ts">
 import { ref, computed, h, watch } from 'vue'
-import { NCard, NButton, NButtonGroup, NTag, NTable, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, type FormRules, NDivider, NSwitch, NText, NEmpty, NCode, NTabs, NTabPane, NCollapse, NCollapseItem, NAlert, NDynamicTags } from 'naive-ui'
-import { GridOutline, ListOutline, BuildOutline, RefreshOutline, SearchOutline, InformationCircleOutline, CreateOutline, TrashOutline, PowerOutline, AddOutline, CopyOutline, DocumentOutline } from '@vicons/ionicons5'
+import { NCard, NButton, NButtonGroup, NTag, NDataTable, NSpace, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, type FormRules, NDivider, NSwitch, NText, NEmpty, NCode, NTabs, NTabPane, NCollapse, NCollapseItem, NAlert, NDynamicTags } from 'naive-ui'
+import { GridOutline, ListOutline, BuildOutline, RefreshOutline, SearchOutline, InformationCircleOutline, CreateOutline, TrashOutline, PowerOutline, AddOutline, CopyOutline, DocumentOutline, EllipsisHorizontalCircleOutline } from '@vicons/ionicons5'
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
 import ini from 'highlight.js/lib/languages/ini'
@@ -1010,6 +955,87 @@ const renderDomainTag = (tag: string) => {
     { default: () => tag }
   )
 }
+
+const columns = [
+  {
+    title: 'ID',
+    key: 'proxyId',
+    render(row) {
+      return h(NTag, { type: 'info', size: 'medium' }, { default: () => `# ${row.proxyId}` })
+    }
+  },
+  {
+    title: '名称',
+    key: 'proxyName',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.proxyName)
+    }
+  },
+  {
+    title: '类型',
+    key: 'proxyType',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.proxyType.toUpperCase())
+    }
+  },
+  {
+    title: '远程端口',
+    key: 'remotePort',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.remotePort)
+    }
+  },
+  {
+    title: '节点',
+    key: 'nodeId',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, getNodeLabel(row.nodeId))
+    }
+  },
+  {
+    title: '状态',
+    key: 'status',
+    render(row) {
+      return h(NSpace, { size: 4 }, {
+        default: () => [
+          h(NTag, {
+            type: row.isOnline ? 'success' : 'error',
+            size: 'small'
+          }, { default: () => row.isOnline ? '在线' : '离线' }),
+          row.isBanned && h(NTag, {
+            type: 'error',
+            size: 'small'
+          }, { default: () => '已封禁' }),
+          row.isDisabled && h(NTag, {
+            type: 'warning',
+            size: 'small'
+          }, { default: () => '已禁用' })
+        ].filter(Boolean)
+      })
+    }
+  },
+  {
+    title: '操作',
+    key: 'actions',
+    render(row) {
+      return h(NDropdown, {
+        trigger: 'click',
+        options: dropdownOptions(row),
+        onSelect: (key: string) => handleSelect(key, row),
+        placement: 'bottom'
+      }, {
+        default: () => h(NButton, {
+          text: true,
+          style: 'display: flex; align-items: center;'
+        }, {
+          icon: () => h(NIcon, null, {
+            default: () => h(EllipsisHorizontalCircleOutline)
+          })
+        })
+      })
+    }
+  }
+]
 </script>
 
 <style lang="scss" scoped>

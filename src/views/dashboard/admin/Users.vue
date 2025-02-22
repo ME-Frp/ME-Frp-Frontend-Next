@@ -262,28 +262,37 @@ const rules: FormRules = {
 const columns: DataTableColumns<UserInfo> = [
   {
     title: 'ID',
-    key: 'userId'
+    key: 'userId',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.userId)
+    }
   },
   {
     title: '用户名',
-    key: 'username'
+    key: 'username',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.username)
+    }
   },
   {
     title: '邮箱',
-    key: 'email'
+    key: 'email',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.email)
+    }
   },
   {
     title: '用户组',
     key: 'group',
     render(row) {
-      return row.friendlyGroup || row.group
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.friendlyGroup || row.group)
     }
   },
   {
     title: '注册时间',
     key: 'regTime',
     render(row) {
-      return new Date(row.regTime * 1000).toLocaleString()
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, new Date(row.regTime * 1000).toLocaleString())
     }
   },
   {
