@@ -3,64 +3,29 @@
     <NCard title="用户管理">
       <NSpace vertical :size="12">
         <div style="display: flex;">
-          <NInput
-            v-model:value="filters.search"
-            placeholder="搜索 ID、用户名或邮箱"
-            clearable
-            style="flex: 1;"
-            @update:value="handleSearch"
-          >
+          <NInput v-model:value="filters.search" placeholder="搜索 ID、用户名或邮箱" clearable style="flex: 1;"
+            @update:value="handleSearch">
             <template #prefix>
               <NIcon :component="Search" />
             </template>
           </NInput>
         </div>
         <NSpace>
-          <NSelect
-            v-model:value="filters.group"
-            :options="groupOptions"
-            placeholder="用户组"
-            clearable
-            style="width: 200px"
-            @update:value="handleGroupFilter"
-          />
-          <NSelect
-            v-model:value="filters.isRealname"
-            :options="realnameOptions"
-            placeholder="实名状态"
-            clearable
-            style="width: 200px"
-            @update:value="handleRealnameFilter"
-          />
-          <NSelect
-            v-model:value="filters.status"
-            :options="statusOptions"
-            placeholder="账户状态"
-            clearable
-            style="width: 200px"
-            @update:value="handleStatusFilter"
-          />
+          <NSelect v-model:value="filters.group" :options="groupOptions" placeholder="用户组" clearable
+            style="width: 200px" @update:value="handleGroupFilter" />
+          <NSelect v-model:value="filters.isRealname" :options="realnameOptions" placeholder="实名状态" clearable
+            style="width: 200px" @update:value="handleRealnameFilter" />
+          <NSelect v-model:value="filters.status" :options="statusOptions" placeholder="账户状态" clearable
+            style="width: 200px" @update:value="handleStatusFilter" />
         </NSpace>
-        <NDataTable
-          remote
-          :columns="columns"
-          :data="users"
-          :loading="loading"
-          :pagination="pagination"
-        />
+        <NDataTable remote :columns="columns" :data="users" :loading="loading" :pagination="pagination" />
       </NSpace>
     </NCard>
 
     <!-- 添加编辑用户的模态框 -->
     <NModal v-model:show="showEditModal" preset="card" title="编辑用户" style="width: 600px;">
-      <NForm
-        ref="formRef"
-        :model="editForm"
-        :rules="rules"
-        label-placement="left"
-        label-width="auto"
-        require-mark-placement="right-hanging"
-      >
+      <NForm ref="formRef" :model="editForm" :rules="rules" label-placement="left" label-width="auto"
+        require-mark-placement="right-hanging">
         <NFormItem label="用户名" path="username">
           <NInput v-model:value="editForm.username" placeholder="请输入用户名" />
         </NFormItem>
@@ -68,68 +33,43 @@
           <NInput v-model:value="editForm.email" placeholder="请输入邮箱" />
         </NFormItem>
         <NFormItem label="用户组" path="group">
-          <NSelect
-            v-model:value="editForm.group"
-            :options="groupOptions"
-            placeholder="请选择用户组"
-          />
+          <NSelect v-model:value="editForm.group" :options="groupOptions" placeholder="请选择用户组" />
         </NFormItem>
         <NFormItem label="账户状态" path="status">
-          <NSelect
-            v-model:value="editForm.status"
-            :options="statusOptions"
-            placeholder="请选择账户状态"
-          />
+          <NSelect v-model:value="editForm.status" :options="statusOptions" placeholder="请选择账户状态" />
         </NFormItem>
         <NFormItem label="实名状态" path="isRealname">
           <NSwitch v-model:value="editForm.isRealname" :rail-style="switchButtonRailStyle" />
         </NFormItem>
         <NFormItem label="流量限制" path="traffic">
           <NSpace align="center">
-            <NInputNumber
-              v-model:value="editForm.traffic"
-              placeholder="请输入流量限制"
-              :min="0"
-            />
+            <NInputNumber v-model:value="editForm.traffic" placeholder="请输入流量限制" :min="0" />
             <span>GB</span>
           </NSpace>
         </NFormItem>
         <NFormItem label="出站带宽" path="outBound">
           <NSpace align="center">
-            <NInputNumber
-              v-model:value="editForm.outBound"
-              placeholder="请输入出站带宽"
-              :min="0"
-            />
+            <NInputNumber v-model:value="editForm.outBound" placeholder="请输入出站带宽" :min="0" />
             <span>Mbps</span>
           </NSpace>
         </NFormItem>
         <NFormItem label="入站带宽" path="inBound">
           <NSpace align="center">
-            <NInputNumber
-              v-model:value="editForm.inBound"
-              placeholder="请输入入站带宽"
-              :min="0"
-            />
+            <NInputNumber v-model:value="editForm.inBound" placeholder="请输入入站带宽" :min="0" />
             <span>Mbps</span>
           </NSpace>
         </NFormItem>
         <NFormItem label="隧道数量" path="maxProxies">
-          <NInputNumber
-            v-model:value="editForm.maxProxies"
-            placeholder="请输入隧道数量"
-            :min="0"
-          />
+          <NSpace align="center">
+            <NInputNumber v-model:value="editForm.maxProxies" placeholder="请输入隧道数量" :min="0" />
+            <span>个</span>
+          </NSpace>
         </NFormItem>
       </NForm>
       <template #footer>
         <NSpace justify="end">
-          <NButton @click="showEditModal = false">取消</NButton>
-          <NButton
-            type="primary"
-            :loading="submitting"
-            @click="handleEditSubmit"
-          >
+          <NButton size="small" @click="showEditModal = false">取消</NButton>
+          <NButton type="primary" size="small" :loading="submitting" @click="handleEditSubmit">
             确定
           </NButton>
         </NSpace>
@@ -185,23 +125,23 @@ const pagination = ref({
   itemCount: 0,
   showSizePicker: true,
   pageSizes: [
-      {
-        label: '10 条 / 页',
-        value: 10
-      },
-      {
-        label: '20 条 / 页',
-        value: 20
-      },
-      {
-        label: '30 条 / 页',
-        value: 30
-      },
-      {
-        label: '40 条 / 页',
-        value: 40
-      }
-    ],
+    {
+      label: '10 条 / 页',
+      value: 10
+    },
+    {
+      label: '20 条 / 页',
+      value: 20
+    },
+    {
+      label: '30 条 / 页',
+      value: 30
+    },
+    {
+      label: '40 条 / 页',
+      value: 40
+    }
+  ],
   prefix({ itemCount }: { itemCount?: number }) {
     return `共 ${itemCount} 条`
   },
@@ -404,6 +344,7 @@ const handleEditSubmit = () => {
     if (!errors) {
       submitting.value = true
       try {
+        editForm.value.traffic *= 1024
         editForm.value.outBound *= 128
         editForm.value.inBound *= 128
         await AdminApi.updateUser(editForm.value)
@@ -431,7 +372,7 @@ const handleEdit = async (user: UserInfo) => {
         group: userDetail.group,
         status: userDetail.status,
         isRealname: userDetail.isRealname,
-        traffic: userDetail.traffic,
+        traffic: userDetail.traffic / 1024,
         outBound: userDetail.outBound / 128,
         inBound: userDetail.inBound / 128,
         maxProxies: userDetail.maxProxies

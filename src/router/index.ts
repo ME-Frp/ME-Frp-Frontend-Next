@@ -10,9 +10,18 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/auth/login',
     name: 'login',
-    component: () => import('../views/auth/Login.vue'),
+    component: () => import('../views/auth/LoginMethod.vue'),
     meta: {
       title: '登录',
+      requiresGuest: true
+    }
+  },
+  {
+    path: '/auth/pwd-login',
+    name: 'pwd-login',
+    component: () => import('../views/auth/PwdLogin.vue'),
+    meta: {
+      title: '密码登录',
       requiresGuest: true
     }
   },
@@ -31,6 +40,24 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/auth/iForgot.vue'),
     meta: {
       title: '找回密码',
+      requiresGuest: true
+    }
+  },
+  {
+    path: '/auth/mlogin',
+    name: 'mlogin',
+    component: () => import('../views/auth/MagicLink.vue'),
+    meta: {
+      title: 'Magic Link 登录',
+      requiresGuest: true
+    }
+  },
+  {
+    path: '/auth/mverify',
+    name: 'mverify',
+    component: () => import('../views/auth/VerifyMagicLink.vue'),
+    meta: {
+      title: '验证 Magic Link',
       requiresGuest: true
     }
   },

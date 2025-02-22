@@ -358,7 +358,7 @@ const handleNodeChange = (value: number | null) => {
         portRange: node.portRange
       }
       formValue.value.nodeId = value
-      formValue.value.type = null
+      formValue.value.type = selectedNode.value?.allowedProtocols[0] || null
       formValue.value.remotePort = null
 
       // 在移动端选择节点后自动进入下一步

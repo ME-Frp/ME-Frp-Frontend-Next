@@ -1,16 +1,11 @@
 <template>
   <div class="home">
     <div class="welcome-banner">
-        欢迎回来, {{ username }}
+      欢迎回来, {{ username }}
     </div>
     <div class="content-grid">
       <NCard title="用户信息" class="info-card">
-        <NAlert
-          v-if="userGroup === 'noRealname'"
-          type="warning"
-          title="未实名认证"
-          style="margin-bottom: 16px"
-        >
+        <NAlert v-if="userGroup === 'noRealname'" type="warning" title="未实名认证" style="margin-bottom: 16px">
           您的账户尚未完成实名认证, 请尽快完成实名认证。<br>
           实名认证后, 您将获得更多节点权限, 且双向带宽将提升至 30Mbps。<br>
           <NButton text type="primary" @click="goToRealname">立即前往</NButton>
@@ -19,7 +14,7 @@
       </NCard>
 
       <NCard title="系统公告" class="notice-card">
-          <div class="markdown-content" v-html="renderedNotice" />
+        <div class="markdown-content" v-html="renderedNotice" />
       </NCard>
     </div>
   </div>
@@ -39,7 +34,7 @@ const router = useRouter()
 const notices = ref<string>('')
 const username = localStorage.getItem('username')
 const userInfoGridRef = ref<null | { userInfo: { group: string } }>(null)
-const userGroup = computed(() => userInfoGridRef.value?.userInfo?.group || '')
+const userGroup = localStorage.getItem('group')
 
 // 配置 marked
 marked.setOptions({

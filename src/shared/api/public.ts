@@ -30,7 +30,16 @@ export const PublicApi = {
     // 获取系统统计信息
     getStatistics: () => {
         return baseApi.get<ApiResponse<Statistics>>('/public/statistics');
+    },
+    // 发送Magic Link登录链接
+    sendMagicLink: (data: { user: string, callback: string }) => {
+        return baseApi.post<ApiResponse<void>>('/public/mlogin/link', data);
+    },
+
+    // 验证Magic Link
+    verifyMagicLink: (data: { mid: string }) => {
+        return baseApi.get<ApiResponse<LoginResponseData>>('/public/mlogin/verify', { params: data });
     }
 };
 
-export default PublicApi; 
+export default PublicApi;

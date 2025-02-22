@@ -15,6 +15,14 @@
         </NSpace>
 
         <NDataTable remote :columns="columns" :data="nodes" :loading="loading" :pagination="pagination"
+          :style="{
+            '.n-data-table-td': {
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: '200px'
+            }
+          }"
           @update:page="handlePageChange" />
       </NSpace>
 
@@ -350,7 +358,17 @@ const columns: DataTableColumns = [
     title: '名称',
     key: 'name',
     render(row) {
-      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.name)
+      return h(NSpace, { align: 'center' }, {
+        default: () => [
+          h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, [
+            h(NTag, {
+              type: row.isOnline ? 'success' : 'error',
+              size: 'small'
+            }, { default: () => row.isOnline ? '在线' : '离线' }),
+            h('span', { style: 'margin-right: 4px' }, row.name)
+          ])
+        ]
+      })
     }
   },
   {

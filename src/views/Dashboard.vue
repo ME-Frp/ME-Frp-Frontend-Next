@@ -13,7 +13,7 @@
           <NLayoutContent :style="contentStyle">
             <RouterView v-slot="{ Component }">
               <transition name="fade" mode="out-in" appear>
-                  <component :is="Component" />
+                <component :is="Component" />
               </transition>
             </RouterView>
           </NLayoutContent>

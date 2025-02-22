@@ -171,15 +171,30 @@
           <span class="label">节点名称：</span>
           <span class="value">{{ getNodeLabel(selectedProxy.nodeId).split(' - ')[1] }}</span>
         </div>
-        <div class="modal-info-item">
-          <span class="label">节点主机名：</span>
-          <span class="value">{{ nodeOptions.find(node => node.value === selectedProxy?.nodeId)?.hostname || '-'
-            }}</span>
-        </div>
-        <div class="modal-info-item">
-          <span class="label">远程端口：</span>
-          <span class="value">{{ selectedProxy.remotePort }}</span>
-        </div>
+        <template v-if="selectedProxy.proxyType === 'http' || selectedProxy.proxyType === 'https'">
+          <div class="modal-info-item">
+            <span class="label">绑定域名：</span>
+            <span class="value">
+              <NSpace>
+                <NTag v-for="domain in JSON.parse(selectedProxy.domain || '[]')" :key="domain"
+                  type="info" 
+                  style="cursor: pointer"
+                  @click="() => openUrl(selectedProxy.proxyType, domain)"
+                >
+                  {{ domain }}
+                </NTag>
+              </NSpace>
+            </span>
+          </div>
+        </template>
+        <template v-else>
+          <div class="modal-info-item">
+            <span class="label">链接地址：</span>
+            <span class="value">
+              {{ nodeOptions.find(node => node.value === selectedProxy?.nodeId)?.hostname }}:{{ selectedProxy.remotePort }}
+            </span>
+          </div>
+        </template>
         <div class="modal-info-item">
           <span class="label">上次启动时间：</span>
           <span class="value">{{ selectedProxy.lastStartTime ? formatTime(selectedProxy.lastStartTime) : '从未启动'
