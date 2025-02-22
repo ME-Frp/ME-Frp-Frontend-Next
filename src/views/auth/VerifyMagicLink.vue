@@ -12,7 +12,7 @@
       <div class="verify-content" v-if="!error">
         <NSpin size="large" :show="isVerifying">
           <div class="verify-message">
-            <NIcon size="48" :component="CheckmarkCircleOutline" class="success-icon" />
+            <NIcon size="48" :component="isVerifying ? TimeOutline : CheckmarkCircleOutline" :class="isVerifying ? 'loading-icon' : 'success-icon'" />
             <p>{{ verifyMessage }}</p>
           </div>
         </NSpin>
@@ -30,7 +30,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { NCard, NIcon, NSpin, NButton } from 'naive-ui'
-import { CheckmarkCircleOutline, CloseCircleOutline, PersonOutline } from '@vicons/ionicons5'
+import { CheckmarkCircleOutline, CloseCircleOutline, PersonOutline, TimeOutline } from '@vicons/ionicons5'
 import { PublicApi } from '../../shared/api/public'
 
 const router = useRouter()
@@ -54,9 +54,7 @@ onMounted(async () => {
   }
 
   try {
-    const response = await PublicApi.verifyMagicLink({
-      mid
-    })
+    const response = await PublicApi.verifyMagicLink({mid})
 
     if (response.data.code === 200) {
       localStorage.setItem('token', response.data.data.token)
@@ -98,6 +96,11 @@ onMounted(async () => {
     margin-bottom: 16px;
   }
 
+  .loading-icon {
+    color: var(--primary-color);
+    margin-bottom: 16px;
+  }
+
   .error-icon {
     color: var(--error-color);
     margin-bottom: 16px;
@@ -115,5 +118,14 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
