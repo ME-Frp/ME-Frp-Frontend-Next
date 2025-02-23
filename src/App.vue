@@ -69,3 +69,16 @@ provide('theme', {
   toggleTheme
 })
 </script>
+
+<style>
+/* 防止 iOS 设备输入时自动放大 */
+input, textarea, select {
+  font-size: 16px !important;
+}
+
+@media screen and (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+</style>
