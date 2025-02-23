@@ -80,7 +80,8 @@
                 <span class="value">
                   <div v-if="proxy.proxyType === 'http' || proxy.proxyType === 'https'" class="remote-port">
                     <div v-for="domain in JSON.parse(proxy.domain || '[]')" :key="domain" class="domain">
-                      <NTag type="info" size="small" style="cursor: pointer" @click="() => openUrl(proxy.proxyType, domain)">
+                      <NTag type="info" size="small" style="cursor: pointer"
+                        @click="() => openUrl(proxy.proxyType, domain)">
                         {{ domain }}
                       </NTag>
                     </div>
@@ -123,8 +124,7 @@
 
       <!-- 列表视图 -->
       <template v-else>
-        <NDataTable v-if="filteredProxies.length" :columns="columns" :data="filteredProxies"
-          :style="{
+        <NDataTable v-if="filteredProxies.length" :columns="columns" :data="filteredProxies" :style="{
             '.n-data-table-td': {
               whiteSpace: 'nowrap',
               overflow: 'hidden',
@@ -136,7 +136,9 @@
           <template #extra>
             <NButton secondary @click="() => router.push('/create-proxy')">
               <template #icon>
-                <NIcon><AddOutline /></NIcon>
+                <NIcon>
+                  <AddOutline />
+                </NIcon>
               </template>
               创建
             </NButton>
@@ -146,11 +148,23 @@
     </NCard>
 
     <!-- 远程地址信息弹窗 -->
-    <NModal v-model:show="showModal" preset="dialog" title="隧道详细信息">
+    <NModal v-model:show="showModal" preset="dialog" title="隧道详细信息" style="width: 800px; max-width: 90vw">
       <template #header>
         <div>隧道详细信息</div>
       </template>
-      <div v-if="selectedProxy" style="padding: 16px 0">
+      <div v-if="selectedProxy" style="padding: 16px 0" :class="{
+        'proxy-detail-container': selectedProxy.proxyType === 'http' || selectedProxy.proxyType === 'https'
+      }">
+      <div class="proxy-detail-left">
+        <div class="modal-info-item">
+          <span class="label">状态：</span>
+          <NTag :type="selectedProxy.isOnline ? 'success' : 'error'" size="small">
+            {{ selectedProxy.isOnline ? '在线' : '离线' }}
+          </NTag>
+          <NTag v-if="selectedProxy.isBanned" type="error" size="small" style="margin-left: 8px">
+            已封禁
+          </NTag>
+        </div>
         <div class="modal-info-item">
           <span class="label">隧道名称：</span>
           <span class="value">{{ selectedProxy.proxyName }}</span>
@@ -175,15 +189,10 @@
           <div class="modal-info-item">
             <span class="label">绑定域名：</span>
             <span class="value">
-              <NSpace>
-                <NTag v-for="domain in JSON.parse(selectedProxy.domain || '[]')" :key="domain"
-                  type="info" 
-                  style="cursor: pointer"
-                  @click="() => openUrl(selectedProxy.proxyType, domain)"
-                >
-                  {{ domain }}
-                </NTag>
-              </NSpace>
+              <NTag size="small" v-for="domain in JSON.parse(selectedProxy.domain || '[]')" :key="domain" type="info"
+                style="cursor: pointer; margin-right: 8px" @click="() => openUrl(selectedProxy.proxyType, domain)">
+                {{ domain }}
+              </NTag>
             </span>
           </div>
         </template>
@@ -191,7 +200,8 @@
           <div class="modal-info-item">
             <span class="label">链接地址：</span>
             <span class="value">
-              {{ nodeOptions.find(node => node.value === selectedProxy?.nodeId)?.hostname }}:{{ selectedProxy.remotePort }}
+              {{ nodeOptions.find(node => node.value === selectedProxy?.nodeId)?.hostname }}:{{ selectedProxy.remotePort
+              }}
             </span>
           </div>
         </template>
@@ -205,15 +215,39 @@
           <span class="value">{{ selectedProxy.lastCloseTime ? formatTime(selectedProxy.lastCloseTime) : '从未关闭'
             }}</span>
         </div>
-        <div class="modal-info-item">
-          <span class="label">状态：</span>
-          <NTag :type="selectedProxy.isOnline ? 'success' : 'error'" size="small">
-            {{ selectedProxy.isOnline ? '在线' : '离线' }}
-          </NTag>
-          <NTag v-if="selectedProxy.isBanned" type="error" size="small" style="margin-left: 8px">
-            已封禁
-          </NTag>
         </div>
+      <template v-if="selectedProxy.proxyType === 'http' || selectedProxy.proxyType === 'https'">
+        <div class="proxy-detail-right">
+          <div class="modal-info-item">
+            <span class="label">域名解析配置</span>
+            <div class="value" style="margin-top: 16px">
+              <NAlert type="info" style="margin-bottom: 16px">添加以下信息至您的域名解析配置后，服务才会生效。</NAlert>
+              <NTable size="small" :single-line="false" style="width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <thead>
+                  <tr>
+                    <th>根域名</th>
+                    <th>主机记录</th>
+                    <th>记录类型</th>
+                    <th>记录值</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="domain in JSON.parse(selectedProxy.domain || '[]')" :key="domain">
+                    <td style="word-break: break-all; overflow-wrap: break-word;">{{ splitDomain(domain).rootDomain }}</td>
+                    <td style="word-break: break-all; overflow-wrap: break-word;">{{ splitDomain(domain).host }}</td>
+                    <td style="word-break: break-all; overflow-wrap: break-word;">
+                      {{ isIPAddress(nodeOptions.find(n => n.value === selectedProxy.nodeId)?.hostname || '') ? 'A' : 'CNAME' }}
+                    </td>
+                    <td style="word-break: break-all; overflow-wrap: break-word;">
+                      <NText type="primary">{{ nodeOptions.find(n => n.value === selectedProxy.nodeId)?.hostname }}</NText>
+                    </td>
+                  </tr>
+                </tbody>
+              </NTable>
+            </div>
+          </div>
+        </div>
+      </template>
       </div>
     </NModal>
 
@@ -230,7 +264,7 @@
     </NModal>
 
     <!-- 编辑隧道弹窗 -->
-    <NModal v-model:show="showEditModal" preset="dialog" title="编辑隧道">
+    <NModal v-model:show="showEditModal" preset="dialog" title="编辑隧道" style="width: 800px; max-width: 90vw">
       <NForm ref="editFormRef" :model="editForm" :rules="rules" label-placement="left" label-width="120"
         require-mark-placement="right-hanging" size="medium" style="padding-top: 12px;">
         <NFormItem label="隧道名称" path="proxyName">
@@ -242,7 +276,8 @@
         <NFormItem label="本地端口" path="localPort">
           <NInputNumber v-model:value="editForm.localPort" :min="1" :max="65535" placeholder="请输入本地端口" />
         </NFormItem>
-        <NFormItem v-if="editForm.proxyType !== 'http' && editForm.proxyType !== 'https'" label="远程端口" path="remotePort">
+        <NFormItem v-if="editForm.proxyType !== 'http' && editForm.proxyType !== 'https'" label="远程端口"
+          path="remotePort">
           <NInputNumber v-model:value="editForm.remotePort" :min="1" :max="65535" placeholder="请输入远程端口" />
           <NButton size="medium" :loading="gettingFreePort" @click="handleGetFreePortForEdit">
             获取空闲端口
@@ -367,7 +402,7 @@
 
 <script setup lang="ts">
 import { ref, computed, h, watch } from 'vue'
-import { NCard, NButton, NButtonGroup, NTag, NDataTable, NSpace, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, type FormRules, NDivider, NSwitch, NText, NEmpty, NCode, NTabs, NTabPane, NCollapse, NCollapseItem, NAlert, NDynamicTags } from 'naive-ui'
+import { NCard, NButton, NButtonGroup, NTag, NDataTable, NTable, NSpace, NIcon, NModal, NInput, NDropdown, NForm, NFormItem, NSelect, NInputNumber, useMessage, type FormInst, type FormRules, NDivider, NSwitch, NText, NEmpty, NCode, NTabs, NTabPane, NCollapse, NCollapseItem, NAlert, NDynamicTags } from 'naive-ui'
 import { GridOutline, ListOutline, BuildOutline, RefreshOutline, SearchOutline, InformationCircleOutline, CreateOutline, TrashOutline, PowerOutline, AddOutline, CopyOutline, DocumentOutline, EllipsisHorizontalCircleOutline } from '@vicons/ionicons5'
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
@@ -377,6 +412,25 @@ import { AuthApi } from '../../shared/api/auth'
 import type { Proxy, UserNodeName } from '../../types'
 import { switchButtonRailStyle } from '../../constants/theme'
 import { useRouter } from 'vue-router'
+
+const isIPAddress = (hostname: string) => {
+  const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/
+  return ipRegex.test(hostname)
+}
+
+const splitDomain = (domain: string) => {
+  const parts = domain.split('.')
+  if (parts.length <= 2) {
+    return {
+      host: '@',
+      rootDomain: domain
+    }
+  }
+  return {
+    host: parts[0],
+    rootDomain: parts.slice(1).join('.')
+  }
+}
 
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('ini', ini)
@@ -577,7 +631,7 @@ const generateTomlConfig = async (proxy: Proxy) => {
       }
 
       // 对于http/https类型，不输出remotePort
-      const remotePortConfig = (proxy.proxyType === 'http' || proxy.proxyType === 'https') ? 
+      const remotePortConfig = (proxy.proxyType === 'http' || proxy.proxyType === 'https') ?
         '' : `\nremotePort = ${proxy.remotePort}`
 
       return `serverAddr = "${node?.hostname || ''}"
@@ -630,11 +684,11 @@ const generateIniConfig = async (proxy: Proxy) => {
           domainStr = proxy.domain
         }
       }
-      
+
       // 对于http/https类型，不输出remote_port
-      const remotePortConfig = (proxy.proxyType === 'http' || proxy.proxyType === 'https') ? 
+      const remotePortConfig = (proxy.proxyType === 'http' || proxy.proxyType === 'https') ?
         '' : `\nremote_port = ${proxy.remotePort}`
-      
+
       return `[common]
 server_addr = ${node?.hostname || ''}
 server_port = ${serverSecret.serverPort}
@@ -786,8 +840,8 @@ const handleEditSubmit = () => {
       try {
         const submitData = {
           ...editForm.value,
-          domain: editForm.value.proxyType === 'http' || editForm.value.proxyType === 'https' 
-            ? JSON.stringify(domainTags.value) 
+          domain: editForm.value.proxyType === 'http' || editForm.value.proxyType === 'https'
+            ? JSON.stringify(domainTags.value)
             : ''
         }
         await AuthApi.updateProxy(submitData)

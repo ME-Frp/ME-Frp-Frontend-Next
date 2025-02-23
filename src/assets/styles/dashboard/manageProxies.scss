@@ -112,6 +112,28 @@
   }
 }
 
+.proxy-detail-container {
+  display: flex;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+
+  .proxy-detail-left {
+    flex: 1.2;
+  }
+
+  .proxy-detail-right {
+    flex: 1.5;
+    min-width: 300px;
+
+    @media (max-width: 768px) {
+      min-width: unset;
+    }
+  }
+}
+
 .modal-info-item {
   margin-bottom: 12px;
 

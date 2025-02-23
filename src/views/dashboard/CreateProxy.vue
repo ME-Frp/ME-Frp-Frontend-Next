@@ -1,5 +1,19 @@
 <template>
   <div class="content-grid">
+    <!-- 实名认证提示弹窗 -->
+    <NModal v-model:show="showRealnameModal" preset="dialog" title="未实名认证提示" :show-icon="false" style="width: 400px;">
+      <div>
+        您的账户尚未完成实名认证, 请尽快完成实名认证。<br>
+        实名认证后, 您将获得更多节点权限, 且双向带宽将提升至 30Mbps。
+      </div>
+      <div style="margin-top: 12px; text-align: right;">
+        <NText depth="3">{{ countDown }}秒后自动关闭</NText>
+      </div>
+      <template #action>
+        <NButton size="small" @click="showRealnameModal = false">关闭</NButton>
+        <NButton size="small" type="primary" @click="goToRealname">立即前往</NButton>
+      </template>
+    </NModal>
     <!-- 修改步骤指示器区域 -->
     <div class="steps-container" v-if="isMobile" style="user-select: none">
       <NButton secondary round v-if="currentStep === 2" @click="currentStep = 1" size="medium">
@@ -15,9 +29,9 @@
         <NStep title="隧道配置" />
       </NSteps>
     </div>
-
     <!-- 修改节点卡片的显示逻辑 -->
     <NCard v-if="!isMobile || currentStep === 1" title="选择节点" class="node-card">
+      
       <NSpace vertical>
         <NGrid x-gap="12" y-gap="12" cols="1" style="padding-top: 14px;">
           <NGridItem v-for="node in nodeOptions" :key="node.value">
@@ -170,15 +184,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, h, computed, onMounted, onUnmounted } from 'vue'
-import { NCard, NForm, NFormItem, NInput, NInputNumber, NSelect, NButton, NIcon, useMessage, type FormRules, type FormInst, NDivider, NSwitch, NTag, NSpace, NText, NGrid, NGridItem, NDynamicTags, NSteps, NStep } from 'naive-ui'
+import { ref, h, computed, onMounted, onUnmounted, watch } from 'vue'
+import { NCard, NForm, NFormItem, NInput, NInputNumber, NSelect, NButton, NIcon, useMessage, type FormRules, type FormInst, NDivider, NSwitch, NTag, NSpace, NText, NGrid, NGridItem, NDynamicTags, NSteps, NStep, NAlert, NModal } from 'naive-ui'
 import { CloudUploadOutline, ArrowBackOutline } from '@vicons/ionicons5'
 import { AuthApi } from '../../shared/api/auth'
 import type { CreateProxyArgs } from '../../types'
 import { switchButtonRailStyle } from '../../constants/theme'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const loading = ref(false)
+const userGroup = localStorage.getItem('group')
 
 const formValue = ref({
   nodeId: null as number | null,
@@ -195,6 +213,10 @@ const formValue = ref({
   useEncryption: false,
   useCompression: false
 })
+
+const goToRealname = () => {
+  router.push('/dashboard/profile')
+}
 
 const proxyTypeOptions = [
   { label: 'TCP', value: 'tcp' },
@@ -459,10 +481,40 @@ const canEditConfig = computed(() => {
   return formValue.value.nodeId && selectedNode.value
 })
 
+const showRealnameModal = ref(false)
+const countDown = ref(10)
+let timer: number | null = null
+
+const startCountDown = () => {
+  countDown.value = 10
+  timer = window.setInterval(() => {
+    if (countDown.value > 0) {
+      countDown.value--
+    } else {
+      showRealnameModal.value = false
+      if (timer) {
+        clearInterval(timer)
+        timer = null
+      }
+    }
+  }, 1000)
+}
+
+watch(showRealnameModal, (newVal) => {
+  if (!newVal && timer) {
+    clearInterval(timer)
+    timer = null
+  }
+})
+
 // 修改初始化顺序
 const init = async () => {
   await fetchUserGroups()
   await fetchNodes()
+  if (userGroup === 'noRealname') {
+    showRealnameModal.value = true
+    startCountDown()
+  }
 }
 
 // 修改初始化调用
@@ -479,6 +531,10 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
 })
 const currentStep = ref<number>(1)
 
