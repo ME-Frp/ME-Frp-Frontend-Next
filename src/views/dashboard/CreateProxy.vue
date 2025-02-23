@@ -185,7 +185,7 @@
 
 <script setup lang="ts">
 import { ref, h, computed, onMounted, onUnmounted, watch } from 'vue'
-import { NCard, NForm, NFormItem, NInput, NInputNumber, NSelect, NButton, NIcon, useMessage, type FormRules, type FormInst, NDivider, NSwitch, NTag, NSpace, NText, NGrid, NGridItem, NDynamicTags, NSteps, NStep, NAlert, NModal } from 'naive-ui'
+import { NCard, NForm, NFormItem, NInput, NInputNumber, NSelect, NButton, NIcon, useMessage, type FormRules, type FormInst, NDivider, NSwitch, NTag, NSpace, NText, NGrid, NGridItem, NDynamicTags, NSteps, NStep, NModal } from 'naive-ui'
 import { CloudUploadOutline, ArrowBackOutline } from '@vicons/ionicons5'
 import { AuthApi } from '../../shared/api/auth'
 import type { CreateProxyArgs } from '../../types'
