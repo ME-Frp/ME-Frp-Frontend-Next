@@ -65,8 +65,8 @@ export const AdminApi = {
   },
 
   // 删除隧道
-  deleteProxy: (proxyId: number) => {
-    return baseApi.post<ApiResponse<void>>(`/admin/proxy/delete`, { proxyId })
+  deleteProxy: (username: string, proxyId: number) => {
+    return baseApi.post<ApiResponse<void>>(`/admin/proxy/delete`, { username, proxyId })
   },
 
   // 更新隧道信息

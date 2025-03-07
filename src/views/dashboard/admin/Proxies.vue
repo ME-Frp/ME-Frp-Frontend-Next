@@ -651,7 +651,7 @@ const handleKickProxy = async (proxy: Proxy | null) => {
 const handleDelete = async (proxy: Proxy | null) => {
   if (!proxy) return
   try {
-    await AdminApi.deleteProxy(proxy.proxyId)
+    await AdminApi.deleteProxy(proxy.username, proxy.proxyId)
     message.success('删除隧道成功')
     showDeleteModal.value = false
     loadData()
