@@ -1,4 +1,8 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { useLoadingBar } from 'naive-ui'
+import { Window } from '../types'
+
+declare const window: Window
 
 const routes: RouteRecordRaw[] = [
   {
@@ -204,23 +208,20 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach((to, _from) => {
   const token = localStorage.getItem('token')
   const isAdmin = localStorage.getItem('group') === 'admin'
 
   if (to.meta.requiresAuth && !token) {
-    next('/auth/login')
-    return
+    return '/auth/login'
   }
 
   if (to.meta.requiresAdmin && !isAdmin) {
-    next('/dashboard')
-    return
+    return '/dashboard'
   }
 
   if (to.meta.requiresGuest && token) {
-    next('/dashboard')
-    return
+    return '/dashboard'
   }
 
   if (to.path === '/') {
@@ -235,9 +236,18 @@ router.beforeEach((to, _from, next) => {
     document.title = `${to.meta.title} | ME Frp 5.0 管理面板`
   }
 
-  next()
+  if (!window.$loadingBar) return true
+  window.$loadingBar.start()
+  return true
+})
+
+router.afterEach((to, from) => {
+  if (!window.$loadingBar) return
+  window.$loadingBar.finish()
+})
+
+router.onError(() => {
+  if (window.$loadingBar) window.$loadingBar.error()
 })
 
 export default router
-
-export { default as routes } from './index'

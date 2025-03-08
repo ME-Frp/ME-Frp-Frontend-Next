@@ -1,4 +1,5 @@
 @use 'variables' as *;
+@use 'transitions' as *;
 
 html,
 body,
@@ -6,16 +7,6 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: $transition-all;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
 }
 
 .header-content {

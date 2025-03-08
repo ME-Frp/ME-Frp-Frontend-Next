@@ -4,14 +4,7 @@
       <NMessageProvider>
         <NNotificationProvider>
           <NLoadingBarProvider>
-            <HomeMenu v-if="!isDashboard" />
-            <RouterView v-slot="{ Component }">
-              <transition name="fade" mode="out-in" appear>
-                <component :is="Component" />
-              </transition>
-            </RouterView>
-            <HomeFooter v-if="!isDashboard" />
-            <NGlobalStyle />
+            <AppContent />
           </NLoadingBarProvider>
         </NNotificationProvider>
       </NMessageProvider>
@@ -21,19 +14,16 @@
 
 <script setup lang="ts">
 import { ref, computed, provide } from 'vue'
-import { useRoute, RouterView } from 'vue-router'
 import {
   NConfigProvider,
-  NGlobalStyle,
   NMessageProvider,
   NDialogProvider,
   NNotificationProvider,
   NLoadingBarProvider,
   darkTheme
 } from 'naive-ui'
-import HomeMenu from './components/HomeMenu.vue'
-import HomeFooter from './components/HomeFooter.vue'
 import { themeOverrides } from './constants/theme'
+import AppContent from './components/AppContent.vue'
 
 console.log(`    __  _________   ______         
    /  |/  / ____/  / ____/________ 
@@ -41,11 +31,8 @@ console.log(`    __  _________   ______
  / /  / / /___   / __/ / /  / /_/ /
 /_/  /_/_____/  /_/   /_/  / .___/ 
                           /_/      `);
-console.log("Copyright 2025, The ME Frp Project Team.");
+console.log("Copyright 2025, The ME Frp Project.");
 console.log("No redistribution allowed.");
-
-const route = useRoute()
-const isDashboard = computed(() => route.path.startsWith('/dashboard'))
 
 // 主题状态
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -70,8 +57,8 @@ provide('theme', {
 })
 </script>
 
-<style>
-/* 防止 iOS 设备输入时自动放大 */
+<style lang="scss">
+@use "./assets/styles/transitions.scss";
 input, textarea, select {
   font-size: 16px !important;
 }

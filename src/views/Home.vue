@@ -10,7 +10,7 @@
           <NButton type="primary" size="large" class="start-button" @click="router.push('/auth/login')">
             开始使用
           </NButton>
-          <NButton size="large" class="docs-button" @click="router.push('/docs')">
+          <NButton size="large" class="docs-button" @click="router.push('/docs')" :disabled="true">
             使用文档
           </NButton>
         </div>
