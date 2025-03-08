@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import { useLoadingBar } from 'naive-ui'
 import { Window } from '../types'
 
 declare const window: Window
@@ -241,7 +240,7 @@ router.beforeEach((to, _from) => {
   return true
 })
 
-router.afterEach((to, from) => {
+router.afterEach((_to, _from) => {
   if (!window.$loadingBar) return
   window.$loadingBar.finish()
 })

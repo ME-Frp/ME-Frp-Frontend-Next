@@ -10,12 +10,6 @@ export interface ApiResponse<T> {
     data: T;
 }
 
-// 错误响应类型
-interface ErrorResponse {
-    message?: string;
-    [key: string]: any;
-}
-
 let baseURL: string;
 switch (process.env.NODE_ENV) {
     case 'development':
