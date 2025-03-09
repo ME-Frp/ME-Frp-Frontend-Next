@@ -1,5 +1,5 @@
 import { h, Component, ref } from 'vue'
-import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline, IdCardOutline, CreateOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline, WalletOutline, HelpCircleOutline, BuildOutline, PricetagsOutline, CafeOutline, SettingsOutline, BulbOutline, GlobeOutline } from '@vicons/ionicons5'
+import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline, IdCardOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline, WalletOutline, HelpCircleOutline, BuildOutline, PricetagsOutline, CafeOutline, SettingsOutline, BulbOutline, GlobeOutline } from '@vicons/ionicons5'
 import { NIcon, type MenuOption } from 'naive-ui'
 
 const baseMenuOptions: MenuOption[] = [
@@ -63,6 +63,7 @@ const moreMenuOptions: MenuOption = {
   label: '更多服务',
   icon: renderIcon(BulbOutline),
   key: 'more',
+  disabled: true,
   children: [
     {
       label: '节点捐赠',

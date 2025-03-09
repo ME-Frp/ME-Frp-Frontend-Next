@@ -1,62 +1,37 @@
 <template>
   <div class="ad-space">
-    <NCarousel
-      v-if="ads.length > 0"
-      :autoplay="ads.length > 1"
-      :interval="3200"
-      :show-dots="ads.length > 1"
-      :show-arrow="ads.length > 1"
-      dot-type="line"
-      effect="fade"
-      arrow-placement="wrapper"
-      dot-placement="bottom"
-      class="ad-carousel"
-      style="width: 100%; height: 100%; min-height: 200px; box-sizing: border-box; position: relative; z-index: 1;"
-      @update:current-index="handleAdChange"
-    >
-      <NCarouselItem v-for="ad in ads" :key="ad.adsId" style="width: 100%; height: 100%; box-sizing: border-box; ">
-        <!-- 带图片的广告 -->
-        <div v-if="ad.adsImageUrl" class="ad-with-image">
-          <NImage
-            :src="ad.adsImageUrl"
-            :alt="ad.adsContent || '广告'"
-            object-fit="cover"
-            preview-disabled
-            class="ad-image"
-            :intersection-observer-options="{
-              root: null,
-              rootMargin: '0px',
-              threshold: 0.1
-            }"
-          />
-          <div class="ad-overlay">
-            <div v-if="ad.adsContent" class="ad-image-content">{{ ad.adsContent }}</div>
-            <NButton class="ad-button" type="warning" size="small" @click.stop="openAdLink(ad.adsUrl, ad.adsId)">
-              <template #icon>
-                <NIcon>
-                  <LinkOutline />
-                </NIcon>
-              </template>
-              访问链接
-            </NButton>
-          </div>
-        </div>
-        
-        <!-- 纯文本广告 -->
-        <div v-else class="ad-text-only">
-          <div class="ad-content">
-            <div v-if="ad.adsContent" class="ad-description">{{ ad.adsContent }}</div>
-            <div style="position: relative; z-index: 20; pointer-events: all;">
-              <NButton 
-                class="ad-button" 
-                type="warning" 
-                size="small" 
-                style="z-index: 30; position: relative;"
-                @click="(e) => {
-                  e.stopPropagation();
-                  openAdLink(ad.adsUrl, ad.adsId);
-                }"
-              >
+    <template v-if="ads.length > 0">
+      <NCarousel
+        :autoplay="ads.length > 1"
+        :interval="3200"
+        :show-dots="ads.length > 1"
+        :show-arrow="ads.length > 1"
+        dot-type="line"
+        effect="fade"
+        arrow-placement="wrapper"
+        dot-placement="bottom"
+        class="ad-carousel"
+        style="width: 100%; height: 100%; min-height: 200px; box-sizing: border-box; position: relative; z-index: 1;"
+        @update:current-index="handleAdChange"
+      >
+        <NCarouselItem v-for="ad in ads" :key="ad.adsId" style="width: 100%; height: 100%; box-sizing: border-box; ">
+          <!-- 带图片的广告 -->
+          <div v-if="ad.adsImageUrl" class="ad-with-image">
+            <NImage
+              :src="ad.adsImageUrl"
+              :alt="ad.adsContent || '广告'"
+              object-fit="cover"
+              preview-disabled
+              class="ad-image"
+              :intersection-observer-options="{
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+              }"
+            />
+            <div class="ad-overlay">
+              <div v-if="ad.adsContent" class="ad-image-content">{{ ad.adsContent }}</div>
+              <NButton class="ad-button" type="warning" size="small" @click.stop="openAdLink(ad.adsUrl, ad.adsId)">
                 <template #icon>
                   <NIcon>
                     <LinkOutline />
@@ -66,9 +41,35 @@
               </NButton>
             </div>
           </div>
-        </div>
-      </NCarouselItem>
-    </NCarousel>
+          
+          <!-- 纯文本广告 -->
+          <div v-else class="ad-text-only">
+            <div class="ad-content">
+              <div v-if="ad.adsContent" class="ad-description">{{ ad.adsContent }}</div>
+              <div style="position: relative; z-index: 20; pointer-events: all;">
+                <NButton 
+                  class="ad-button" 
+                  type="warning" 
+                  size="small" 
+                  style="z-index: 30; position: relative;"
+                  @click="(e) => {
+                    e.stopPropagation();
+                    openAdLink(ad.adsUrl, ad.adsId);
+                  }"
+                >
+                  <template #icon>
+                    <NIcon>
+                      <LinkOutline />
+                    </NIcon>
+                  </template>
+                  访问链接
+                </NButton>
+              </div>
+            </div>
+          </div>
+        </NCarouselItem>
+      </NCarousel>
+    </template>
     
     <!-- 加载状态 -->
     <div v-else-if="loading" class="empty-state">
