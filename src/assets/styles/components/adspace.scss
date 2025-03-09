@@ -1,0 +1,316 @@
+@use '../variables' as *;
+
+.ad-space {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    position: relative;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+// 带图片的广告容器
+.ad-space .ad-with-image {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+// 图片上的覆盖层
+.ad-space .ad-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 16px;
+    padding-bottom: 30px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    pointer-events: auto;
+}
+
+.ad-space .ad-overlay:hover {
+    padding-bottom: 35px;
+}
+
+// 图片上的文字内容
+.ad-space .ad-image-content {
+    color: white;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+    text-align: left;
+    font-weight: 500;
+}
+
+// 纯文本广告容器
+.ad-space .ad-text-only {
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    color: $text-color;
+    padding: 0;
+    border-radius: 0;
+    position: relative;
+    background: linear-gradient(25deg, #3f87c2 10%, #2788d8 40%, #1c83d8 60%, #1c89f7 80%);
+}
+
+// 文本内容容器
+.ad-space .ad-content {
+    width: 100%;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 5;
+}
+
+// 广告描述文本
+.ad-space .ad-description {
+    font-size: 16px;
+    line-height: 1.6;
+    color: white;
+    margin-bottom: 20px;
+    text-align: left;
+    font-weight: 500;
+    max-width: 100%;
+}
+
+// 广告图片
+.ad-space .ad-image {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    position: relative;
+    display: block;
+    margin: 0;
+    border-radius: 0;
+    pointer-events: none;
+}
+
+.ad-space .ad-with-image:hover .ad-image {
+    transform: scale(1.03);
+}
+
+// 广告按钮
+.ad-space .ad-button {
+    align-self: flex-start;
+    margin-bottom: 0;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.ad-space .ad-button:hover {
+    transform: translateY(-2px);
+    box-shadow: $box-shadow-hover;
+}
+
+// 空状态
+.ad-space .empty-state {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    width: 100%;
+    color: $text-color-2;
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+// 轮播组件样式
+.ad-carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    z-index: 5;
+}
+
+.ad-carousel :deep(.n-carousel__slides) {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ad-carousel :deep(.n-carousel-dots) {
+    bottom: 8px;
+    position: absolute;
+    width: 100%;
+    pointer-events: none;
+    z-index: 300;
+}
+
+.ad-carousel :deep(.n-carousel-dots .n-carousel-dots__dot) {
+    pointer-events: auto;
+}
+
+.ad-carousel :deep(.n-carousel-arrow) {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    pointer-events: auto;
+    box-shadow: $box-shadow-light;
+    z-index: 300;
+}
+
+.ad-carousel :deep(.n-carousel-arrow:hover) {
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: $box-shadow-hover;
+}
+
+.ad-carousel :deep(.n-carousel-arrow--right) {
+    right: 12px;
+}
+
+.ad-carousel :deep(.n-carousel-arrow--left) {
+    left: 12px;
+}
+
+// 响应式样式 - 平板
+@media (max-width: 768px) {
+
+    .ad-space .ad-description {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .ad-space .ad-image-content {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+}
+
+// 响应式样式 - 大屏幕
+@media (min-width: 1200px) {}
+
+// 响应式样式 - 手机
+@media (max-width: 576px) {
+
+    .ad-space .ad-overlay {
+        padding: 12px;
+    }
+}
+
+// 富文本内容样式
+.ad-space :deep(a) {
+    color: $primary-color;
+    text-decoration: none;
+    transition: $transition-all;
+}
+
+.ad-space :deep(a:hover) {
+    color: $primary-hover;
+}
+
+.ad-space :deep(h1) {
+    font-size: 1.6em;
+    margin: 0;
+}
+
+.ad-space :deep(h2) {
+    font-size: 1.4em;
+    margin: 0;
+}
+
+.ad-space :deep(h3) {
+    font-size: 1.2em;
+    margin: 0;
+}
+
+.ad-space :deep(p) {
+    margin: 0;
+    line-height: 1.6;
+    font-size: 1.1em;
+}
+
+.ad-space :deep(ul),
+.ad-space :deep(ol) {
+    padding-left: 1.5em;
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.ad-space :deep(li) {
+    margin: 0;
+}
+
+.ad-space :deep(code) {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 1.1em;
+}
+
+.ad-space :deep(pre) {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 0;
+}
+
+.ad-space :deep(pre code) {
+    background-color: transparent;
+    padding: 0;
+}
+
+.ad-space :deep(blockquote) {
+    border-left: 4px solid $border-color;
+    padding-left: 1em;
+    margin: 0;
+    color: $text-color-2;
+    font-size: 1.1em;
+}
+
+.ad-space :deep(table) {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.ad-space :deep(table th),
+.ad-space :deep(table td) {
+    border: 1px solid $border-color;
+    padding: 0.5em;
+}
+
+.ad-space :deep(table th) {
+    background-color: rgba(0, 0, 0, 0.05);
+}

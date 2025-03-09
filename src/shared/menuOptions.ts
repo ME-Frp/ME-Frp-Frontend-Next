@@ -1,5 +1,5 @@
-import { h, Component } from 'vue'
-import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline, IdCardOutline, CreateOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline, WalletOutline, HelpCircleOutline, BuildOutline  } from '@vicons/ionicons5'
+import { h, Component, ref } from 'vue'
+import { HomeOutline, AddCircleOutline, AppsOutline, DownloadOutline, IdCardOutline, CreateOutline, InformationCircleOutline, StatsChartOutline, PeopleOutline, CloudyOutline, ConstructOutline, WalletOutline, HelpCircleOutline, BuildOutline, PricetagsOutline, CafeOutline, SettingsOutline, BulbOutline, GlobeOutline } from '@vicons/ionicons5'
 import { NIcon, type MenuOption } from 'naive-ui'
 
 const baseMenuOptions: MenuOption[] = [
@@ -59,8 +59,34 @@ const baseMenuOptions: MenuOption[] = [
   }
 ]
 
+const moreMenuOptions: MenuOption = {
+  label: '更多服务',
+  icon: renderIcon(BulbOutline),
+  key: 'more',
+  children: [
+    {
+      label: '节点捐赠',
+      key: 'more-node-donate', 
+      link: '/dashboard/more/node-donate',
+      icon: renderIcon(CafeOutline)
+    },
+    {
+      label: '广告投放',
+      key: 'user-ads-appl',
+      link: '/dashboard/more/ads-apply',
+      icon: renderIcon(PricetagsOutline)
+    },
+    {
+      label: 'DNS 解析',
+      key: 'user-dns-resolve',
+      link: '/dashboard/more/dns-resolve',
+      icon: renderIcon(GlobeOutline)
+    }
+  ]
+}
+
 const adminMenuOptions: MenuOption = {
-  label: '管理选项',
+  label: '超管选项',
   icon: renderIcon(ConstructOutline),
   key: 'admin',
   children: [
@@ -89,10 +115,16 @@ const adminMenuOptions: MenuOption = {
       icon: renderIcon(BuildOutline)
     },
     {
+      label: '广告管理',
+      key: 'admin-ads',
+      link: '/dashboard/admin/ads',
+      icon: renderIcon(PricetagsOutline)
+    },
+    {
       label: '系统管理',
       key: 'admin-system',
       link: '/dashboard/admin/system',
-      icon: renderIcon(CreateOutline)
+      icon: renderIcon(SettingsOutline)
     }
   ]
 }
@@ -101,8 +133,10 @@ export function getMenuOptions(): MenuOption[] {
   const userGroup = localStorage.getItem('group')
   const options = [...baseMenuOptions]
 
+  options.push(moreMenuOptions)
   if (userGroup === 'admin') {
     options.push(adminMenuOptions)
+    // defaultExpandedKeys.value.push('admin')
   }
   return options
 }
@@ -113,3 +147,5 @@ export function renderIcon(icon: Component) {
     size: 22
   })
 }
+
+export const defaultExpandedKeys = ref<string[]>(['more'])

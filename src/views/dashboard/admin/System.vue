@@ -368,6 +368,7 @@ const downloadSourceColumns: DataTableColumns<DownloadSource> = [
               type: 'primary',
               onClick: () => {
                 editSourceForm.value.id = row.id
+                editSourceForm.value.path = row.path
                 editSourceForm.value.name = row.name
                 showEditModal.value = true
               }

@@ -4,15 +4,26 @@
       欢迎回来, {{ username }}
     </div>
     <div class="content-grid">
-      <NCard title="用户信息" class="info-card">
-        <NAlert v-if="userGroup === 'noRealname'" type="warning" title="未实名认证" style="margin-bottom: 16px">
-          您的账户尚未完成实名认证, 请尽快完成实名认证。<br>
-          实名认证后, 您将获得更多节点权限, 且双向带宽将提升至 30Mbps。<br>
-          <NButton text type="primary" @click="goToRealname">立即前往</NButton>
-        </NAlert>
-        <UserInfoGrid ref="userInfoGridRef" />
-      </NCard>
+      <!-- 左侧列：用户信息和广告 -->
+      <div class="left-column">
+        <NCard title="用户信息" class="info-card">
+          <NAlert v-if="userGroup === 'noRealname'" type="warning" title="未实名认证" style="margin-bottom: 16px">
+            您的账户尚未完成实名认证, 请尽快完成实名认证。<br>
+            实名认证后, 您将获得更多节点权限, 且双向带宽将提升至 30Mbps。<br>
+            <NButton text type="primary" @click="goToRealname">立即前往</NButton>
+          </NAlert>
+          <UserInfoGrid ref="userInfoGridRef" />
+        </NCard>
 
+        <!-- 广告区域 -->
+        <NCard :title="adTitle" class="ads-card">
+          <div class="ad-container">
+            <AdSpace ref="adSpaceRef" placement="home" v-model:title="adTitle" />
+          </div>
+        </NCard>
+      </div>
+
+      <!-- 右侧列：系统公告 -->
       <NCard title="系统公告" class="notice-card">
         <div class="markdown-content" v-html="renderedNotice" />
       </NCard>
@@ -22,14 +33,26 @@
 
 <script setup lang="ts">
 import { NCard, NAlert, NButton } from 'naive-ui'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { AuthApi } from '../../shared/api/auth'
 import UserInfoGrid from '../../components/UserInfoGrid.vue'
+import AdSpace from '../../components/AdSpace.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const adSpaceRef = ref(null)
+const adTitle = ref('推荐服务')
+
+// 监听广告组件引用变化
+watch(adSpaceRef, (newRef) => {
+  if (newRef) {
+    if (newRef.ads?.value?.length > 0) {
+      adTitle.value = newRef.getCurrentAdTitle();
+    }
+  }
+}, { immediate: true });
 
 const notices = ref<string>('')
 const username = localStorage.getItem('username')

@@ -3,7 +3,7 @@
     <NCard title="用户管理">
       <NSpace vertical :size="12">
         <div style="display: flex;">
-          <NInput v-model:value="filters.search" placeholder="搜索 ID、用户名或邮箱" clearable style="flex: 1;"
+          <NInput v-model:value="filters.search" placeholder="搜索 ID、用户名、邮箱或访问密钥" clearable style="flex: 1;"
             @update:value="handleSearch">
             <template #prefix>
               <NIcon :component="Search" />

@@ -1,107 +1,184 @@
 <template>
   <div class="downloads">
-    <NCard title="文件下载">
-      <div class="downloads-container">
-        <div class="select-row">
-          <div class="select-label">下载源</div>
-          <NPopselect
-            v-model:value="selectedSource"
-            :options="sourceOptions"
-            trigger="click"
-          >
-            <NButton :focusable="false" text size="small" type="info">
-              <span style="font-size: 16px;vertical-align: top;">{{ currentSource?.name || '请选择下载源' }}</span>
-              <NIcon :size="16" style="margin-top: 2px;margin-left:4px;" :component="ChevronDownOutline" />
-            </NButton>
-          </NPopselect>
-        </div>
-
-        <div class="main-content" v-if="selectedSource">
+    <div class="downloads-layout">
+      <!-- 左侧：资源下载 -->
+      <NCard title="文件下载" class="download-card">
+        <div class="downloads-container">
           <div class="select-row">
-            <div class="select-label">产品</div>
+            <div class="select-label">下载源</div>
             <NPopselect
-              v-model:value="selectedProduct"
-              :options="productOptions"
+              v-model:value="selectedSource"
+              :options="sourceOptions"
               trigger="click"
-              @update:value="handleProductChange"
             >
               <NButton :focusable="false" text size="small" type="info">
-                <span style="font-size: 16px;vertical-align: top;">{{ currentProduct?.name || '请选择产品' }}</span>
+                <span style="font-size: 16px;vertical-align: top;">{{ currentSource?.name || '请选择下载源' }}</span>
                 <NIcon :size="16" style="margin-top: 2px;margin-left:4px;" :component="ChevronDownOutline" />
               </NButton>
             </NPopselect>
-            <NTag v-if="currentProduct" size="small" type="info" round>v{{ currentProduct.version }}</NTag>
           </div>
-          
-          <div v-if="currentProduct" class="product-content">
-            <div class="markdown-content">
-              <NText depth="3">
-                <div v-html="renderedDesc"></div>
-              </NText>
-            </div>
-            <NDivider />
+
+          <div class="main-content" v-if="selectedSource">
             <div class="select-row">
-              <div class="select-label">系统</div>
-              <NSelect
-                :key="currentProduct.productId"
-                v-model:value="currentProduct.selectedSystem"
-                :options="getSystemOptions(currentProduct.system)"
-                @update:value="handleSystemChange"
-                placeholder="请选择系统"
-              />
-            </div>
-            <div class="select-row" style="margin-top: 8px;">
-              <div class="select-label">架构</div>
-              <NSelect
-                :key="currentProduct.productId"
-                v-model:value="currentProduct.selectedArch"
-                :options="getArchOptions(currentProduct.arch, currentProduct.selectedSystem)"
-                :disabled="!currentProduct.selectedSystem"
-                placeholder="请选择架构"
-              />
-            </div>
-            <div class="download-row">
-              <NButton
-                secondary
-                size="medium"
-                :disabled="!currentProduct.selectedSystem || !currentProduct.selectedArch"
-                @click="handleCopyDownloadUrl"
+              <div class="select-label">产品</div>
+              <NPopselect
+                v-model:value="selectedProduct"
+                :options="productOptions"
+                trigger="click"
+                @update:value="handleProductChange"
               >
-                <template #icon>
-                  <NIcon :component="CopyOutline" />
-                </template>
-                复制下载链接
-              </NButton>
-              <NButton
-                type="primary"
-                size="medium"
-                :disabled="!currentProduct.selectedSystem || !currentProduct.selectedArch"
-                @click="handleDownload"
-              >
-                <template #icon>
-                  <NIcon :component="DownloadOutline" />
-                </template>
-                下载
-              </NButton>
+                <NButton :focusable="false" text size="small" type="info">
+                  <span style="font-size: 16px;vertical-align: top;">{{ currentProduct?.name || '请选择产品' }}</span>
+                  <NIcon :size="16" style="margin-top: 2px;margin-left:4px;" :component="ChevronDownOutline" />
+                </NButton>
+              </NPopselect>
+              <NTag v-if="currentProduct" size="small" type="info" round>v{{ currentProduct.version }}</NTag>
+            </div>
+            
+            <div v-if="currentProduct" class="product-content">
+              <div class="markdown-content">
+                <NText depth="3">
+                  <div v-html="renderedDesc"></div>
+                </NText>
+              </div>
+              <NDivider />
+              
+              <!-- Docker产品不显示系统和架构选择 -->
+              <template v-if="!isDockerProduct">
+                <div class="select-row">
+                  <div class="select-label">系统</div>
+                  <NSelect
+                    :key="currentProduct.productId"
+                    v-model:value="currentProduct.selectedSystem"
+                    :options="getSystemOptions(currentProduct.system)"
+                    @update:value="handleSystemChange"
+                    placeholder="请选择系统"
+                  />
+                </div>
+                <div class="select-row" style="margin-top: 8px;">
+                  <div class="select-label">架构</div>
+                  <NSelect
+                    :key="currentProduct.productId"
+                    v-model:value="currentProduct.selectedArch"
+                    :options="getArchOptions(currentProduct.arch, currentProduct.selectedSystem)"
+                    :disabled="!currentProduct.selectedSystem"
+                    placeholder="请选择架构"
+                  />
+                </div>
+                <div class="download-row">
+                  <NButton
+                    secondary
+                    size="medium"
+                    :disabled="!currentProduct.selectedSystem || !currentProduct.selectedArch"
+                    @click="handleCopyDownloadUrl"
+                  >
+                    <template #icon>
+                      <NIcon :component="CopyOutline" />
+                    </template>
+                    复制下载链接
+                  </NButton>
+                  <NButton
+                    type="primary"
+                    size="medium"
+                    :disabled="!currentProduct.selectedSystem || !currentProduct.selectedArch"
+                    @click="handleDownload"
+                  >
+                    <template #icon>
+                      <NIcon :component="DownloadOutline" />
+                    </template>
+                    下载
+                  </NButton>
+                </div>
+              </template>
+              
+              <!-- Docker产品显示Docker提示 -->
+              <template v-else>
+                <div class="docker-info">
+                  <NAlert type="info" title="Docker 镜像">
+                    <template #icon>
+                      <NIcon :component="InformationCircleOutline" />
+                    </template>
+                    <p>此产品为 Docker 镜像，请使用以下命令拉取：</p>
+                    <div class="docker-command">
+                      <NCode>docker pull {{ currentProduct.path }}:{{ currentProduct.version }}</NCode>
+                      <NButton size="small" @click="copyDockerCommand">
+                        <template #icon>
+                          <NIcon :component="CopyOutline" />
+                        </template>
+                        复制
+                      </NButton>
+                    </div>
+                  </NAlert>
+                </div>
+              </template>
             </div>
           </div>
         </div>
+      </NCard>
+
+      <!-- 右侧：广告位 -->
+      <div class="ads-column">
+        <!-- 顶部广告位 -->
+        <NCard :title="topAdTitle" class="ads-card top-ads-card">
+          <div class="ad-container">
+            <AdSpace ref="topAdSpaceRef" placement="downloads-1" v-model:title="topAdTitle" />
+          </div>
+        </NCard>
+
+        <!-- 底部广告位 -->
+        <NCard :title="bottomAdTitle" class="ads-card bottom-ads-card">
+          <div class="ad-container">
+            <AdSpace ref="bottomAdSpaceRef" placement="downloads-2" v-model:title="bottomAdTitle" />
+          </div>
+        </NCard>
       </div>
-    </NCard>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { NCard, NButton, NDivider, NText, NPopselect, NSelect, NIcon, NTag, useMessage } from 'naive-ui'
-import { ChevronDownOutline, DownloadOutline, CopyOutline } from '@vicons/ionicons5'
+import { ref, computed, onMounted, watch } from 'vue'
+import { NCode, NCard, NButton, NDivider, NText, NPopselect, NSelect, NIcon, NTag, NAlert, useMessage } from 'naive-ui'
+import { ChevronDownOutline, DownloadOutline, CopyOutline, InformationCircleOutline } from '@vicons/ionicons5'
 import { AuthApi } from '../../shared/api/auth'
 import type { Product } from '../../types/adminApi'
 import type { DownloadSource } from '../../types'
 import type { SelectOption } from 'naive-ui'
 import { marked } from 'marked'
+import AdSpace from '../../components/AdSpace.vue'
 
 const message = useMessage()
+
+// 顶部广告位
+const topAdSpaceRef = ref(null)
+const topAdTitle = ref('推荐服务')
+
+// 底部广告位
+const bottomAdSpaceRef = ref(null)
+const bottomAdTitle = ref('推荐服务')
+
+// 监听顶部广告组件引用变化
+watch(topAdSpaceRef, (newRef) => {
+  if (newRef) {
+    console.log('顶部广告组件引用已更新，当前标题:', newRef.getCurrentAdTitle?.());
+    // 如果广告已加载，立即更新标题
+    if (newRef.ads?.value?.length > 0) {
+      topAdTitle.value = newRef.getCurrentAdTitle();
+      console.log('从引用更新顶部标题为:', topAdTitle.value);
+    }
+  }
+}, { immediate: true });
+
+// 监听底部广告组件引用变化
+watch(bottomAdSpaceRef, (newRef) => {
+  if (newRef) {
+    // 如果广告已加载，立即更新标题
+    if (newRef.ads?.value?.length > 0) {
+      bottomAdTitle.value = newRef.getCurrentAdTitle();
+    }
+  }
+}, { immediate: true });
+
 const products = ref<(Product & {
   selectedSystem?: string
   selectedArch?: string
@@ -109,6 +186,12 @@ const products = ref<(Product & {
 const downloadSources = ref<DownloadSource[]>([])
 const selectedSource = ref<string>('')
 const selectedProduct = ref<string>('')
+
+// 判断当前产品是否为 Docker 产品
+const isDockerProduct = computed(() => {
+  if (!currentProduct.value) return false
+  return currentProduct.value.productId.toLowerCase().includes('docker')
+})
 
 const productOptions = computed<SelectOption[]>(() => 
   products.value.map(product => ({
@@ -159,6 +242,14 @@ const handleSystemChange = () => {
   if (currentProduct.value) {
     currentProduct.value.selectedArch = undefined
   }
+}
+
+// 复制Docker命令
+const copyDockerCommand = () => {
+  if (!currentProduct.value) return
+  const command = `docker pull ${currentProduct.value.path}:${currentProduct.value.version}`
+  navigator.clipboard.writeText(command)
+  message.success('复制 Docker 拉取命令成功')
 }
 
 const getDownloadUrl = async (product: Product & {
@@ -271,167 +362,27 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/styles/variables' as *;
+@use '../../assets/styles/dashboard/downloads.scss' as *;
 
-.downloads :deep(.n-divider) {
-  margin: 16px 0;
+.docker-info {
+  margin-top: 16px;
 }
 
-.downloads-container {
+.docker-command {
   display: flex;
-  gap: 16px;
-  flex-direction: column;
-}
-
-.source-group {
-  /* display: flex; */
-  flex-wrap: wrap;
-  /* gap: 8px; */
-}
-
-.main-content {
-  flex-grow: 1;
-  min-width: 0;
+  align-items: center;
+  gap: 12px;
   margin-top: 8px;
-}
-
-.product-content {
-  margin-top: 16px;
-}
-
-.product-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.download-row {
-  margin-top: 24px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-}
-
-.select-row {
-  display: flex;
-  gap: 16px;
-  width: 100%;
-  align-items: center;
-}
-
-.select-row + .select-row {
-  margin-top: 16px;
-}
-
-.select-label {
-  min-width: 40px;
-  color: var(--n-text-color-2);
-}
-
-.select-row :deep(.n-select) {
-  flex: 1;
-}
-
-@media (max-width: 768px) {
-  .select-row {
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-    gap: 8px;
-  }
-
-  .select-row :deep(.n-select) {
-    width: 100%;
-  }
-}
-
-.markdown-content {
-  :deep(a) {
-    color: $primary-color;
-    text-decoration: none;
-    transition: $transition-all;
-
-    &:hover {
-      color: $primary-hover;
-    }
-  }
-
-  :deep(h1) {
-    font-size: 1.6em;
-    margin: 0;
-  }
-
-  :deep(h2) {
-    font-size: 1.4em;
-    margin: 0;
-  }
-
-  :deep(h3) {
-    font-size: 1.2em;
-    margin: 0;
-  }
-
-  :deep(p) {
-    margin: 0;
-    line-height: 1.6;
-    font-size: 1.1em;
-  }
-
-  :deep(ul),
-  :deep(ol) {
-    padding-left: 1.5em;
-    margin: 0;
-    font-size: 1.1em;
-  }
-
-  :deep(li) {
-    margin: 0;
-  }
-
-  :deep(code) {
-    background-color: rgba(0, 0, 0, 0.05);
-    padding: 0.2em 0.4em;
-    border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.03);
+  padding: 8px 12px;
+  border-radius: 4px;
+  
+  code {
+    flex: 1;
     font-family: monospace;
-    font-size: 1.1em;
-  }
-
-  :deep(pre) {
-    background-color: rgba(0, 0, 0, 0.05);
-    padding: 1em;
-    border-radius: 5px;
+    font-size: 14px;
     overflow-x: auto;
-    margin: 0;
-
-    code {
-      background-color: transparent;
-      padding: 0;
-    }
-  }
-
-  :deep(blockquote) {
-    border-left: 4px solid $border-color;
-    padding-left: 1em;
-    margin: 0;
-    color: $text-color-2;
-    font-size: 1.1em;
-  }
-
-  :deep(table) {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 0;
-    font-size: 1.1em;
-  }
-
-  :deep(th),
-  :deep(td) {
-    border: 1px solid $border-color;
-    padding: 0.5em;
-  }
-
-  :deep(th) {
-    background-color: rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
   }
 }
 </style>

@@ -23,6 +23,76 @@
     }
   }
 
+  .left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .info-card,
+  .ads-card {
+    width: 100%;
+  }
+  
+  .ad-container {
+    width: 100%;
+    min-height: 200px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 0;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+  }
+  
+  .notice-card {
+    height: 100%;
+    grid-row: span 2;
+  }
+  
+  :deep(.n-card-header) {
+    padding: 16px 16px 8px 16px;
+    position: relative;
+    z-index: 5;
+    box-sizing: border-box;
+  }
+
+  :deep(.n-card__content) {
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+  }
+
+  :deep(.ads-card) {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    box-shadow: $box-shadow;
+    transition: $transition-all;
+    
+    &:hover {
+      box-shadow: $box-shadow-hover;
+    }
+    
+    .n-card__content {
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .n-card__action {
+      padding: 0;
+    }
+  }
+  
   .markdown-content {
     :deep(a) {
       color: $primary-color;

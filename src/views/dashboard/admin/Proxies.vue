@@ -294,6 +294,24 @@ const handleEdit = (proxy: Proxy) => {
     proxyProtocolVersion: proxy.proxyProtocolVersion || '',
     username: proxy.username || ''
   }
+  
+  // 解析域名字符串为数组
+  if (proxy.domain && ['http', 'https'].includes(proxy.proxyType)) {
+    try {
+      // 尝试解析JSON字符串
+      domainTags.value = JSON.parse(proxy.domain)
+    } catch (e) {
+      // 如果解析失败，尝试其他格式处理
+      domainTags.value = proxy.domain
+        .replace(/[\[\]"]/g, '')
+        .split(',')
+        .map(domain => domain.trim())
+        .filter(Boolean)
+    }
+  } else {
+    domainTags.value = []
+  }
+  
   showEditModal.value = true
 }
 
@@ -661,6 +679,11 @@ const handleDelete = async (proxy: Proxy | null) => {
 }
 
 const handleEditSubmit = () => {
+  // 确保在提交前更新domain字段
+  if (['http', 'https'].includes(editForm.value.proxyType)) {
+    editForm.value.domain = JSON.stringify(domainTags.value)
+  }
+  
   editFormRef.value?.validate(async (errors) => {
     if (!errors) {
       submitting.value = true

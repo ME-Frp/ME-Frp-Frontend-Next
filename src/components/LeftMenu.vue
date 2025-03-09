@@ -1,13 +1,13 @@
 <template>
   <NMenu :collapsed-width="64" :collapsed-icon-size="24" :options="menuOptions" :value="currentKey" :icon-size="22"
-    @update:value="handleMenuSelect" style="user-select: none" />
+    @update:value="handleMenuSelect" style="user-select: none" :default-expanded-keys="defaultExpandedKeys" />
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { NMenu, type MenuOption } from 'naive-ui'
 import { useRouter, useRoute } from 'vue-router'
-import { getMenuOptions } from '../shared/menuOptions'
+import { getMenuOptions, defaultExpandedKeys } from '../shared/menuOptions'
 
 const emit = defineEmits(['select'])
 const route = useRoute()

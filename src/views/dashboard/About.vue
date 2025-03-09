@@ -8,7 +8,7 @@
           </NDescriptionsItem>
           <NDescriptionsItem label="开发者">
             <div class="user-info">
-              <NAvatar round size="small" src="/src/assets/img/lxhtt.webp" />
+              <NAvatar round size="small" src="https://resources.mefrp.com/d/ME-Frp/Local/Others/lxhtt.webp" />
               <span>落雪无痕LxHTT</span>
             </div>
           </NDescriptionsItem>
@@ -52,19 +52,19 @@
           <NDescriptionsItem label="管理团队">
             <NSpace horizontal :size="10">
               <div class="user-info">
-                <NAvatar round size="small" src="/src/assets/img/aehxy.webp" />
+                <NAvatar round size="small" src="https://resources.mefrp.com/d/ME-Frp/Local/Others/aehxy.webp" />
                 <span>Aehxy</span>
               </div>
               <div class="user-info">
-                <NAvatar round size="small" src="/src/assets/img/lxhtt.webp" />
+                <NAvatar round size="small" src="https://resources.mefrp.com/d/ME-Frp/Local/Others/lxhtt.webp" />
                 <span>落雪无痕LxHTT</span>
               </div>
               <div class="user-info">
-                <NAvatar round size="small" src="/src/assets/img/ph.webp" />
+                <NAvatar round size="small" src="https://resources.mefrp.com/d/ME-Frp/Local/Others/ph.webp" />
                 <span>PH</span>
               </div>
               <div class="user-info">
-                <NAvatar round size="small" src="/src/assets/img/yus.webp" />
+                <NAvatar round size="small" src="https://resources.mefrp.com/d/ME-Frp/Local/Others/yus.webp" />
                 <span>余生长醉</span>
               </div>
             </NSpace>

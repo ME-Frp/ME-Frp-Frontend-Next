@@ -177,6 +177,15 @@ const routes: RouteRecordRaw[] = [
               title: '产品管理',
               requiresAdmin: true
             }
+          },
+          {
+            path: 'ads',
+            name: 'admin-ads',
+            component: () => import('../views/dashboard/admin/Ads.vue'),
+            meta: {
+              title: '广告管理',
+              requiresAdmin: true
+            }
           }
         ]
       },

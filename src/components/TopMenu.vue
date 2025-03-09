@@ -11,7 +11,7 @@
             </NButton>
           </template>
           <div class="mobile-menu">
-            <NMenu :options="menuOptions" :value="currentKey" @update:value="handleMenuSelect" />
+            <NMenu :options="menuOptions" :value="currentKey" @update:value="handleMenuSelect" :default-expanded-keys="defaultExpandedKeys" />
           </div>
         </NPopover>
         <h2 class="logo">ME Frp</h2>
@@ -45,7 +45,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { NLayoutHeader, NIcon, NButton, NDropdown, useDialog, useMessage, NSwitch, NPopover, NMenu, MenuOption, NDrawer, NDrawerContent } from 'naive-ui'
 import { PersonCircleOutline, LogOutOutline, SunnyOutline, MoonOutline, MenuOutline, HomeOutline } from '@vicons/ionicons5'
 import { switchButtonRailStyle } from '../constants/theme'
-import { getMenuOptions, renderIcon } from '../shared/menuOptions'
+import { getMenuOptions, renderIcon, defaultExpandedKeys } from '../shared/menuOptions'
 import LeftMenu from './LeftMenu.vue'
 
 const router = useRouter()
