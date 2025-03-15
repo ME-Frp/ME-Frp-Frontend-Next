@@ -7,14 +7,15 @@
         </NButton>
       </template>
 
-      <NDataTable 
-        remote 
-        :columns="columns" 
-        :data="ads" 
-        :loading="loading" 
-        :pagination="pagination" 
-        @update:page="handlePageChange" 
-      />
+      <NDataTable remote :columns="columns" :data="ads" :loading="loading" :pagination="pagination"
+        @update:page="handlePageChange" :style="{
+          '.n-data-table-td': {
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            maxWidth: '200px'
+          }
+        }" />
 
       <!-- 添加/编辑广告模态框 -->
       <NModal v-model:show="showAddModal" :mask-closable="false">
@@ -130,23 +131,18 @@ const pagination = ref({
   }
 })
 
-// 禁止换行的样式
-const noWrapStyle = 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
 
 const columns: DataTableColumns = [
   {
     title: 'ID',
     key: 'adsId',
-    width: 80,
-    fixed: 'left',
     render(row) {
-      return h('div', { style: noWrapStyle }, row.adsId)
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.adsId)
     }
   },
   {
     title: '类型',
     key: 'adsType',
-    width: 120,
     render(row) {
       let text = '';
       switch (row.adsType) {
@@ -157,30 +153,22 @@ const columns: DataTableColumns = [
         case 'other': text = '其他广告'; break;
         default: text = row.adsType;
       }
-      return h('div', { style: noWrapStyle }, text)
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, text)
     }
   },
   {
     title: '位置',
     key: 'adsPlacement',
-    width: 100,
     render(row) {
       let text = '';
-      switch (row.adsPlacement) {
-        case 'home': text = '首页'; break;
-        case 'downloads': text = '下载页'; break;
-        default: text = row.adsPlacement;
-      }
-      return h('div', { style: noWrapStyle }, text)
+      text = placementOptions.find(option => option.value === row.adsPlacement)?.label || row.adsPlacement
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, text)
     }
   },
   {
     title: '内容',
     key: 'adsContent',
-    width: 250,
-    ellipsis: {
-      tooltip: true
-    },
+    width: 400,
     render(row) {
       return h('div', { style: 'white-space: pre-wrap;' }, row.adsContent || '无内容')
     }
@@ -188,7 +176,6 @@ const columns: DataTableColumns = [
   {
     title: '图片',
     key: 'adsImageUrl',
-    width: 150,
     render(row) {
       return row.adsImageUrl ?
         h('div', { style: 'display: flex; align-items: center; gap: 12px;' }, [
@@ -205,41 +192,33 @@ const columns: DataTableColumns = [
             })
           ])
         ]) :
-        h('span', { style: noWrapStyle + 'color: var(--n-text-color-3);' }, '无图片')
+        h('span', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--n-text-color-3);' }, '无图片')
     }
   },
   {
     title: '链接',
     key: 'adsUrl',
-    width: 250,
-    ellipsis: {
-      tooltip: true
-    },
     render(row) {
-      return h('div', { style: noWrapStyle }, row.adsUrl)
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.adsUrl)
     }
   },
   {
     title: '点击量',
     key: 'adsClick',
-    width: 100,
     render(row) {
-      return h('div', { style: noWrapStyle }, row.adsClick || 0)
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.adsClick || 0)
     }
   },
   {
     title: '过期时间',
     key: 'adsExpire',
-    width: 180,
     render(row) {
-      return h('div', { style: noWrapStyle }, new Date(row.adsExpire * 1000).toLocaleString())
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, new Date(row.adsExpire * 1000).toLocaleString())
     }
   },
   {
     title: '操作',
     key: 'actions',
-    width: 120,
-    fixed: 'right',
     render(row) {
       return h(NSpace, null, {
         default: () => [

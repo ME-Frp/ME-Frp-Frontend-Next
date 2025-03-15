@@ -129,6 +129,40 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '关于面板' }
       },
       {
+        path: 'more',
+        name: 'more',
+        redirect: '/dashboard/more/node-donate',
+        children: [
+          {
+            path: 'node-donate',
+            name: 'more-node-donate',
+            component: () => import('../views/dashboard/more/NodeDonate.vue'),
+            meta: {
+              title: '节点捐赠',
+              requiresAuth: true
+            }
+          },
+          // {
+          //   path: 'nodes',
+          //   name: 'admin-nodes',
+          //   component: () => import('../views/dashboard/admin/Nodes.vue'),
+          //   meta: {
+          //     title: '节点管理',
+          //     requiresAdmin: true
+          //   }
+          // },
+          // {
+          //   path: 'proxies',
+          //   name: 'admin-proxies',
+          //   component: () => import('../views/dashboard/admin/Proxies.vue'),
+          //   meta: {
+          //     title: '隧道管理',
+          //     requiresAdmin: true
+          //   }
+          // },
+        ]
+      },
+      {
         path: 'admin',
         name: 'admin',
         redirect: '/dashboard/admin/users',
@@ -186,7 +220,16 @@ const routes: RouteRecordRaw[] = [
               title: '广告管理',
               requiresAdmin: true
             }
-          }
+          },
+          {
+            path: '/dashboard/admin/node-donate',
+            name: 'AdminNodeDonate',
+            component: () => import('../views/dashboard/admin/NodeDonateManage.vue'),
+            meta: {
+              title: '节点捐赠管理',
+              requiresAdmin: true
+            }
+          },
         ]
       },
     ]

@@ -115,3 +115,22 @@ export interface Group {
     outBound: number
     inBound: number
 }
+
+// 节点捐赠管理相关接口
+export interface ApproveNodeDonateArgs {
+    donateId: number
+}
+
+export interface RejectNodeDonateArgs {
+    donateId: number
+    reason: string
+}
+
+export interface ApproveNodeDeleteRequestArgs {
+    requestId: number
+}
+
+export interface RejectNodeDeleteRequestArgs {
+    requestId: number
+    reason: string
+}

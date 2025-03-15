@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@highlightjs/vue-plugin": "^2.1.0",
+    "@microsoft/clarity": "^1.0.0",
     "@types/axios": "^0.14.4",
     "@types/dompurify": "^3.2.0",
     "@types/marked": "^6.0.0",

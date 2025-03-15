@@ -4,7 +4,7 @@ import { NIcon, type MenuOption } from 'naive-ui'
 
 const baseMenuOptions: MenuOption[] = [
   {
-    label: '首页',
+    label: '面板首页',
     icon: renderIcon(HomeOutline),
     key: 'dashboard-home',
     link: '/dashboard/home',
@@ -63,7 +63,6 @@ const moreMenuOptions: MenuOption = {
   label: '更多服务',
   icon: renderIcon(BulbOutline),
   key: 'more',
-  disabled: true,
   children: [
     {
       label: '节点捐赠',
@@ -74,12 +73,14 @@ const moreMenuOptions: MenuOption = {
     {
       label: '广告投放',
       key: 'user-ads-appl',
+      disabled: true,
       link: '/dashboard/more/ads-apply',
       icon: renderIcon(PricetagsOutline)
     },
     {
       label: 'DNS 解析',
       key: 'user-dns-resolve',
+      disabled: true,
       link: '/dashboard/more/dns-resolve',
       icon: renderIcon(GlobeOutline)
     }
@@ -122,6 +123,12 @@ const adminMenuOptions: MenuOption = {
       icon: renderIcon(PricetagsOutline)
     },
     {
+      label: '捐赠管理',
+      key: 'admin-node-donate',
+      link: '/dashboard/admin/node-donate',
+      icon: renderIcon(CafeOutline)
+    },
+    {
       label: '系统管理',
       key: 'admin-system',
       link: '/dashboard/admin/system',
@@ -137,7 +144,7 @@ export function getMenuOptions(): MenuOption[] {
   options.push(moreMenuOptions)
   if (userGroup === 'admin') {
     options.push(adminMenuOptions)
-    // defaultExpandedKeys.value.push('admin')
+    defaultExpandedKeys.value.push('admin')
   }
   return options
 }

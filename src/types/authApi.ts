@@ -94,3 +94,51 @@ export interface CreateProxyArgs {
 export interface UpdateProxyArgs extends CreateProxyArgs {
   proxyId: number
 }
+
+// 节点捐赠相关接口
+export interface NodeDonate {
+  donateId: number
+  username: string
+  nodeName: string
+  hostname: string
+  description: string
+  servicePort: number
+  adminPort: number
+  adminPass: string
+  allowGroup: string
+  allowPort: string
+  allowType: string
+  status: number // 0: 待审核, 1: 已通过, 2: 已拒绝
+  rejectReason: string
+  applyTime: number
+  reviewTime: number
+  nodeId?: number // 关联的实际节点ID
+}
+
+export interface ApplyNodeDonateArgs {
+  nodeName: string
+  hostname: string
+  description: string
+  servicePort: number
+  adminPort: number
+  adminPass: string
+  allowGroup: string
+  allowPort: string
+  allowType: string
+}
+
+export interface NodeDeleteRequest {
+  requestId: number
+  nodeId: number
+  username: string
+  reason: string
+  status: number // 0: 待审核, 1: 已通过, 2: 已拒绝
+  rejectReason: string
+  applyTime: number
+  reviewTime: number
+}
+
+export interface ApplyNodeDeleteArgs {
+  nodeId: number
+  reason: string
+}
