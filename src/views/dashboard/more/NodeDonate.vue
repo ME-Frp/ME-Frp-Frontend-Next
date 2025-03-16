@@ -666,7 +666,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, h, watch, computed } from 'vue'
 import {
-  useMessage, NButton, NCard, NAlert, NForm, NFormItem, NInput, NInputNumber, NSelect, NTabs, NTabPane, NSpace, NIcon, NDataTable, NModal, NDivider, FormInst, PaginationProps, SelectOption, NButtonGroup, NTag, NCode, NRadioGroup, NRadio
+  useMessage, NButton, NCard, NAlert, NForm, NFormItem, NInput, NInputNumber, NSelect, NTabs, NTabPane, NSpace, NIcon, NDataTable, NModal, NDivider, FormInst, PaginationProps, SelectOption, NButtonGroup, NTag, NRadioGroup, NRadio
 } from 'naive-ui'
 import {
   applyNodeDonate,
@@ -1926,7 +1926,7 @@ const archOptions = computed(() => {
 })
 
 // 监听系统类型变化, 自动选择第一个架构
-watch(() => scriptFormValue.value.system, (newSystem) => {
+watch(() => scriptFormValue.value.system, (_newSystem) => {
   // 使用计算属性中的逻辑获取架构选项
   const options = archOptions.value
   
@@ -1979,28 +1979,6 @@ onMounted(() => {
     }
   }, 500)
 })
-
-// 脚本表单验证规则
-const scriptRules = {
-  nodeId: {
-    required: true,
-    type: 'number',
-    message: '请选择节点',
-    trigger: ['blur', 'change']
-  },
-  system: {
-    required: true,
-    type: 'string',
-    message: '请选择系统类型',
-    trigger: ['blur', 'change']
-  },
-  arch: {
-    required: true,
-    type: 'string',
-    message: '请选择系统架构',
-    trigger: ['blur', 'change']
-  }
-}
 </script>
 
 <style lang="scss" scoped>

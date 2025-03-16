@@ -9,7 +9,6 @@ import type {
   ApplyNodeEditArgs,
   GetNodeInstallScriptArgs,
   GetNodeInstallScriptResponse,
-  GetSystemArchsResponse
 } from '../../types/authApi'
 import type {
   ApproveNodeDonateArgs,
