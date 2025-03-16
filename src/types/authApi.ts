@@ -142,3 +142,64 @@ export interface ApplyNodeDeleteArgs {
   nodeId: number
   reason: string
 }
+
+// 节点编辑申请相关接口
+export interface NodeEditRequest {
+  requestId: number
+  nodeId: number
+  username: string
+  nodeName: string
+  hostname: string
+  description: string
+  servicePort: number
+  adminPort: number
+  adminPass: string
+  allowGroup: string
+  allowPort: string
+  allowType: string
+  reason: string
+  status: number // 0: 待审核, 1: 已通过, 2: 已拒绝
+  rejectReason: string
+  applyTime: number
+  reviewTime: number
+}
+
+export interface ApplyNodeEditArgs {
+  nodeId: number
+  nodeName: string
+  hostname: string
+  description: string
+  servicePort: number
+  adminPort: number
+  adminPass: string
+  allowGroup: string
+  allowPort: string
+  allowType: string
+  reason: string
+}
+
+// 获取节点安装脚本的请求参数
+export interface GetNodeInstallScriptArgs {
+  nodeId: string
+  system: 'linux' | 'windows'
+  arch: string
+  nodeType?: string
+}
+
+// 获取节点安装脚本的响应数据
+export interface GetNodeInstallScriptResponse {
+  scriptId: string
+  downloadUrl: string
+  expireTime: number
+}
+
+// 系统架构信息
+export interface SystemArchInfo {
+  system: string
+  archs: string[]
+}
+
+// 获取系统架构信息的响应数据
+export interface GetSystemArchsResponse {
+  systems: SystemArchInfo[]
+}

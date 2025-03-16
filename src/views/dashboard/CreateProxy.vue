@@ -31,7 +31,6 @@
     </div>
     <!-- 修改节点卡片的显示逻辑 -->
     <NCard v-if="!isMobile || currentStep === 1" title="选择节点" class="node-card">
-      
       <NSpace vertical>
         <NGrid x-gap="12" y-gap="12" cols="1" style="padding-top: 14px;">
           <NGridItem v-for="node in nodeOptions" :key="node.value">
@@ -519,10 +518,10 @@ const init = async () => {
 
 // 修改初始化调用
 init()
-const isMobile = ref(window.innerWidth <= 700)
+const isMobile = ref(window.innerWidth <= 768)
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth <= 700
+  isMobile.value = window.innerWidth <= 768
 }
 
 onMounted(() => {

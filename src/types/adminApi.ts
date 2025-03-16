@@ -134,3 +134,13 @@ export interface RejectNodeDeleteRequestArgs {
     requestId: number
     reason: string
 }
+
+// 节点编辑申请管理相关接口
+export interface ApproveNodeEditRequestArgs {
+    requestId: number
+}
+
+export interface RejectNodeEditRequestArgs {
+    requestId: number
+    reason: string
+}

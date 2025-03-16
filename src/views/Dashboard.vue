@@ -31,14 +31,14 @@ import TopMenu from '../components/TopMenu.vue'
 import LeftMenu from '../components/LeftMenu.vue'
 
 const collapsed = ref(false)
-const isMobile = ref(window.innerWidth <= 700)
+const isMobile = ref(window.innerWidth <= 768)
 
 const contentStyle = computed(() => ({
   padding: isMobile.value ? '16px' : '24px'
 }))
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth <= 700
+  isMobile.value = window.innerWidth <= 768
 }
 
 onMounted(() => {

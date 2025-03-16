@@ -263,7 +263,7 @@
 }
 
 // 移动端优化
-@media (max-width: 700px) {
+@media (max-width: 768px) {
   .stats-section {
     margin-top: -30px;
     grid-template-columns: 1fr;

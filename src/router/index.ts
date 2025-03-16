@@ -223,8 +223,8 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: '/dashboard/admin/node-donate',
-            name: 'AdminNodeDonate',
-            component: () => import('../views/dashboard/admin/NodeDonateManage.vue'),
+            name: 'admin-node-donate',
+            component: () => import('../views/dashboard/admin/Donate.vue'),
             meta: {
               title: '节点捐赠管理',
               requiresAdmin: true

@@ -11,7 +11,10 @@
             </NButton>
           </template>
           <div class="mobile-menu">
-            <NMenu :options="menuOptions" :value="currentKey" @update:value="handleMenuSelect" :default-expanded-keys="defaultExpandedKeys" />
+            <NScrollbar style="max-height: 500px">
+              <NMenu :options="menuOptions" :value="currentKey" @update:value="handleMenuSelect"
+                :default-expanded-keys="defaultExpandedKeys" />
+            </NScrollbar>
           </div>
         </NPopover>
         <h2 class="logo">ME Frp</h2>
@@ -42,7 +45,7 @@
 <script setup lang="ts">
 import { h, ref, inject, computed, Ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { NLayoutHeader, NIcon, NButton, NDropdown, useDialog, useMessage, NSwitch, NPopover, NMenu, MenuOption, NDrawer, NDrawerContent } from 'naive-ui'
+import { NLayoutHeader, NIcon, NButton, NDropdown, useDialog, useMessage, NSwitch, NPopover, NMenu, MenuOption, NDrawer, NDrawerContent, NScrollbar } from 'naive-ui'
 import { PersonCircleOutline, LogOutOutline, SunnyOutline, MoonOutline, MenuOutline, HomeOutline } from '@vicons/ionicons5'
 import { switchButtonRailStyle } from '../constants/theme'
 import { getMenuOptions, renderIcon, defaultExpandedKeys } from '../shared/menuOptions'
@@ -56,7 +59,7 @@ const dialog = useDialog()
 const message = useMessage()
 const username = localStorage.getItem('username')
 const showMobileMenu = ref(false)
-const isMobile = ref(window.innerWidth <= 700)
+const isMobile = ref(window.innerWidth <= 768)
 
 // 注入主题相关函数
 const { isDarkMode, toggleTheme } = inject('theme') as {
@@ -66,11 +69,11 @@ const { isDarkMode, toggleTheme } = inject('theme') as {
 
 // 渲染下拉菜单中的主题切换选项
 const renderThemeOption = () => {
-  return h('div', { 
-    style: 'display: flex; align-items: center; padding: 8px 12px; height: 20px;' 
+  return h('div', {
+    style: 'display: flex; align-items: center; padding: 8px 12px; height: 20px;'
   }, [
-    h('span', { 
-      style: 'flex: 1; margin-right: 12px; font-size: 14px;' 
+    h('span', {
+      style: 'flex: 1; margin-right: 12px; font-size: 14px;'
     }, '主题切换'),
     h(NSwitch, {
       value: isDarkMode.value,
@@ -160,7 +163,7 @@ const currentKey = computed(() => {
 })
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth <= 700
+  isMobile.value = window.innerWidth <= 768
 }
 
 onMounted(() => {

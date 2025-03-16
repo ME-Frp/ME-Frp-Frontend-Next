@@ -42,6 +42,26 @@
             striped
           />
         </NTabPane>
+        <NTabPane name="pendingEdit" tab="待审核编辑申请">
+          <NDataTable
+            :columns="editColumns"
+            :data="pendingEditRequests"
+            :loading="pendingEditLoading"
+            :pagination="pendingEditPagination"
+            :bordered="false"
+            striped
+          />
+        </NTabPane>
+        <NTabPane name="allEdit" tab="所有编辑申请">
+          <NDataTable
+            :columns="editColumns"
+            :data="allEditRequests"
+            :loading="allEditLoading"
+            :pagination="allEditPagination"
+            :bordered="false"
+            striped
+          />
+        </NTabPane>
       </NTabs>
     </NCard>
 
@@ -96,7 +116,7 @@
             <span class="value">
               <NSpace>
                 <template v-if="currentDonate.allowGroup">
-                  <NTag v-for="group in currentDonate.allowGroup.split(',')" :key="group" type="info" size="small">
+                  <NTag v-for="group in currentDonate.allowGroup.split(';')" :key="group" type="info" size="small">
                     {{ getGroupName(group) }}
                   </NTag>
                 </template>
@@ -113,7 +133,7 @@
             <span class="value">
               <NSpace>
                 <template v-if="currentDonate.allowType">
-                  <NTag v-for="type in currentDonate.allowType.split(',')" :key="type" type="success" size="small">
+                  <NTag v-for="type in currentDonate.allowType.split(';')" :key="type" type="success" size="small">
                     {{ type.toUpperCase() }}
                   </NTag>
                 </template>
@@ -218,6 +238,110 @@
         <NButton size="small" @click="showDeleteDetailModal = false">关闭</NButton>
       </template>
     </NModal>
+
+    <!-- 节点编辑申请详情对话框 -->
+    <NModal v-model:show="showEditDetailModal" preset="dialog" style="width: 650px; max-width: 90vw">
+      <template #header>
+        <div class="modal-header">节点编辑申请详情</div>
+      </template>
+      <div v-if="currentEditRequest" style="padding: 16px 0">
+        <div class="modal-section">
+          <div class="section-title">基本信息</div>
+          <div class="modal-info-item">
+            <span class="label">申请ID：</span>
+            <span class="value">{{ currentEditRequest.requestId }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">节点ID：</span>
+            <span class="value">{{ currentEditRequest.nodeId }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">用户名：</span>
+            <span class="value">{{ currentEditRequest.username }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">申请原因：</span>
+            <span class="value">{{ currentEditRequest.reason }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">申请时间：</span>
+            <span class="value">{{ new Date(currentEditRequest.applyTime * 1000).toLocaleString() }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">审核时间：</span>
+            <span class="value">{{ currentEditRequest.reviewTime ? new Date(currentEditRequest.reviewTime * 1000).toLocaleString() : '-' }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">状态：</span>
+            <span class="value">
+              <NTag :type="currentEditRequest.status === 0 ? 'warning' : (currentEditRequest.status === 1 ? 'success' : 'error')" size="small">
+                {{ currentEditRequest.status === 0 ? '待审核' : (currentEditRequest.status === 1 ? '已通过' : '已拒绝') }}
+              </NTag>
+            </span>
+          </div>
+          <div class="modal-info-item" v-if="currentEditRequest.status === 2">
+            <span class="label">拒绝原因：</span>
+            <span class="value">{{ currentEditRequest.rejectReason || '-' }}</span>
+          </div>
+        </div>
+        
+        <NDivider style="margin: 16px 0" />
+        
+        <div class="modal-section">
+          <div class="section-title">编辑信息</div>
+          <div class="modal-info-item">
+            <span class="label">节点名称：</span>
+            <span class="value">{{ currentEditRequest.nodeName }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">主机名/IP：</span>
+            <span class="value">{{ currentEditRequest.hostname }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">节点描述：</span>
+            <span class="value">{{ currentEditRequest.description }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">服务端口：</span>
+            <span class="value">{{ currentEditRequest.servicePort }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">管理端口：</span>
+            <span class="value">{{ currentEditRequest.adminPort }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">管理密码：</span>
+            <span class="value">{{ currentEditRequest.adminPass }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">允许用户组：</span>
+            <span class="value">{{ currentEditRequest.allowGroup }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">允许端口范围：</span>
+            <span class="value">{{ currentEditRequest.allowPort }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">允许隧道类型：</span>
+            <span class="value">{{ currentEditRequest.allowType }}</span>
+          </div>
+        </div>
+        
+        <div v-if="currentEditRequest.status === 0" class="modal-section" style="margin-top: 16px">
+          <div class="section-title">审核操作</div>
+          <NSpace vertical>
+            <NButton type="primary" @click="handleApproveEdit(currentEditRequest.requestId)">通过申请</NButton>
+            <div>
+              <NInput v-model:value="rejectEditReason" type="textarea" placeholder="请输入拒绝原因" />
+              <NButton type="error" style="margin-top: 8px" @click="handleRejectEdit(currentEditRequest.requestId)">拒绝申请</NButton>
+            </div>
+          </NSpace>
+        </div>
+      </div>
+      <template #action>
+        <NButton size="small" @click="showEditDetailModal = false">关闭</NButton>
+      </template>
+    </NModal>
   </div>
 </template>
 
@@ -246,10 +370,14 @@ import {
   getAllNodeDeleteRequests,
   getPendingNodeDeleteRequests,
   approveNodeDeleteRequest,
-  rejectNodeDeleteRequest
+  rejectNodeDeleteRequest,
+  getAllNodeEditRequests,
+  getPendingNodeEditRequests,
+  approveNodeEditRequest,
+  rejectNodeEditRequest
 } from '../../../shared/api/nodeDonate'
 import { AuthApi } from '../../../shared/api/auth'
-import type { NodeDonate, NodeDeleteRequest, UserGroup } from '../../../types'
+import type { NodeDonate, NodeDeleteRequest, NodeEditRequest } from '../../../types'
 
 const message = useMessage()
 const dialog = useDialog()
@@ -257,15 +385,22 @@ const pendingDonates = ref<NodeDonate[]>([])
 const allDonates = ref<NodeDonate[]>([])
 const pendingDeleteRequests = ref<NodeDeleteRequest[]>([])
 const allDeleteRequests = ref<NodeDeleteRequest[]>([])
+const pendingEditRequests = ref<NodeEditRequest[]>([])
+const allEditRequests = ref<NodeEditRequest[]>([])
 const pendingLoading = ref(false)
 const allLoading = ref(false)
 const pendingDeleteLoading = ref(false)
 const allDeleteLoading = ref(false)
+const pendingEditLoading = ref(false)
+const allEditLoading = ref(false)
 const showDetailModal = ref(false)
 const currentDonate = ref<NodeDonate | null>(null)
 const showDeleteDetailModal = ref(false)
 const currentDeleteRequest = ref<NodeDeleteRequest | null>(null)
+const showEditDetailModal = ref(false)
+const currentEditRequest = ref<NodeEditRequest | null>(null)
 const groupOptions = ref<{ label: string; value: string }[]>([])
+const rejectEditReason = ref('')
 
 // 分页配置
 const pagination = reactive<PaginationProps>({
@@ -308,29 +443,62 @@ const allDeletePagination = reactive<PaginationProps>({
   }
 })
 
+// 节点编辑申请分页配置
+const pendingEditPagination = reactive<PaginationProps>({
+  page: 1,
+  onChange: (page) => {
+    pendingEditPagination.page = page
+  },
+  prefix({ itemCount }: { itemCount?: number }) {
+    return `共 ${itemCount} 条`
+  }
+})
+
+const allEditPagination = reactive<PaginationProps>({
+  page: 1,
+  onChange: (page) => {
+    allEditPagination.page = page
+  },
+  prefix({ itemCount }: { itemCount?: number }) {
+    return `共 ${itemCount} 条`
+  }
+})
+
 // 捐赠申请表格列定义
 const donateColumns = [
   {
     title: 'ID',
-    key: 'donateId'
+    key: 'donateId',
+    render(row: NodeDonate) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.donateId)
+    }
   },
   {
     title: '用户名',
-    key: 'username'
+    key: 'username',
+    render(row: NodeDonate) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.username)
+    }
   },
   {
     title: '节点名称',
-    key: 'nodeName'
+    key: 'nodeName',
+    render(row: NodeDonate) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.nodeName)
+    }
   },
   {
     title: '主机名/IP',
-    key: 'hostname'
+    key: 'hostname',
+    render(row: NodeDonate) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.hostname)
+    }
   },
   {
     title: '申请时间',
     key: 'applyTime',
     render(row: NodeDonate) {
-      return new Date(row.applyTime * 1000).toLocaleString()
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, new Date(row.applyTime * 1000).toLocaleString())
     }
   },
   {
@@ -338,11 +506,11 @@ const donateColumns = [
     key: 'status',
     render(row: NodeDonate) {
       if (row.status === 0) {
-        return h(NTag, { type: 'warning', size: 'small' }, { default: () => '待审核' })
+        return h(NTag, { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;', type: 'warning', size: 'small' }, { default: () => '待审核' })
       } else if (row.status === 1) {
-        return h(NTag, { type: 'success', size: 'small' }, { default: () => '已通过' })
+        return h(NTag, { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;', type: 'success', size: 'small' }, { default: () => '已通过' })
       } else {
-        return h(NTag, { type: 'error', size: 'small' }, { default: () => '已拒绝' })
+        return h(NTag, { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;', type: 'error', size: 'small' }, { default: () => '已拒绝' })
       }
     }
   },
@@ -350,7 +518,7 @@ const donateColumns = [
     title: '拒绝原因',
     key: 'rejectReason',
     render(row: NodeDonate) {
-      return row.status === 2 ? row.rejectReason : '-'
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.status === 2 ? row.rejectReason : '-')
     }
   },
   {
@@ -412,25 +580,37 @@ const donateColumns = [
 const deleteColumns = [
   {
     title: 'ID',
-    key: 'requestId'
+    key: 'requestId',
+    render(row: NodeDeleteRequest) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.requestId)
+    }
   },
   {
     title: '用户名',
-    key: 'username'
+    key: 'username',
+    render(row: NodeDeleteRequest) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.username)
+    }
   },
   {
     title: '节点ID',
-    key: 'nodeId'
+    key: 'nodeId',
+    render(row: NodeDeleteRequest) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.nodeId)
+    }
   },
   {
     title: '删除原因',
-    key: 'reason'
+    key: 'reason',
+    render(row: NodeDeleteRequest) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.reason)
+    }
   },
   {
     title: '申请时间',
     key: 'applyTime',
     render(row: NodeDeleteRequest) {
-      return new Date(row.applyTime * 1000).toLocaleString()
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, new Date(row.applyTime * 1000).toLocaleString())
     }
   },
   {
@@ -438,11 +618,11 @@ const deleteColumns = [
     key: 'status',
     render(row: NodeDeleteRequest) {
       if (row.status === 0) {
-        return h(NTag, { type: 'warning', size: 'small' }, { default: () => '待审核' })
+        return h(NTag, { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;', type: 'warning', size: 'small' }, { default: () => '待审核' })
       } else if (row.status === 1) {
-        return h(NTag, { type: 'success', size: 'small' }, { default: () => '已通过' })
+        return h(NTag, { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;', type: 'success', size: 'small' }, { default: () => '已通过' })
       } else {
-        return h(NTag, { type: 'error', size: 'small' }, { default: () => '已拒绝' })
+        return h(NTag, { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;', type: 'error', size: 'small' }, { default: () => '已拒绝' })
       }
     }
   },
@@ -450,7 +630,7 @@ const deleteColumns = [
     title: '拒绝原因',
     key: 'rejectReason',
     render(row: NodeDeleteRequest) {
-      return row.status === 2 ? row.rejectReason : '-'
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.status === 2 ? row.rejectReason : '-')
     }
   },
   {
@@ -508,6 +688,71 @@ const deleteColumns = [
   }
 ]
 
+// 节点编辑申请表格列定义
+const editColumns = [
+  {
+    title: 'ID',
+    key: 'requestId'
+  },
+  {
+    title: '节点ID',
+    key: 'nodeId'
+  },
+  {
+    title: '用户名',
+    key: 'username'
+  },
+  {
+    title: '节点名称',
+    key: 'nodeName'
+  },
+  {
+    title: '申请时间',
+    key: 'applyTime',
+    render(row: NodeEditRequest) {
+      return h('span', {}, new Date(row.applyTime * 1000).toLocaleString())
+    }
+  },
+  {
+    title: '状态',
+    key: 'status',
+    render(row: NodeEditRequest) {
+      let type: 'default' | 'success' | 'error' | 'warning' | 'info' | 'primary' = 'default'
+      let text = '未知'
+      
+      switch (row.status) {
+        case 0:
+          type = 'warning'
+          text = '待审核'
+          break
+        case 1:
+          type = 'success'
+          text = '已通过'
+          break
+        case 2:
+          type = 'error'
+          text = '已拒绝'
+          break
+      }
+      
+      return h(NTag, { type, size: 'small' }, { default: () => text })
+    }
+  },
+  {
+    title: '操作',
+    key: 'actions',
+    render(row: NodeEditRequest) {
+      return h(NButton, {
+        size: 'small',
+        onClick: () => {
+          currentEditRequest.value = row
+          showEditDetailModal.value = true
+        }
+      }, { default: () => '详情' })
+    }
+  }
+]
+
 // 获取用户组友好名称的函数
 const getGroupName = (groupName: string) => {
   const group = groupOptions.value.find(g => g.value === groupName)
@@ -519,8 +764,9 @@ const fetchGroups = async () => {
   try {
     const res = await AuthApi.getUserGroups()
     if (res.data.code === 200) {
-      groupOptions.value = res.data.data.groups.map((group: UserGroup) => ({
-        label: group.friendlyName,
+      const groups = res.data.data.groups
+      groupOptions.value = groups.map(group => ({
+        label: `${group.friendlyName} (${group.name})`,
         value: group.name
       }))
     } else {
@@ -528,7 +774,7 @@ const fetchGroups = async () => {
     }
   } catch (error) {
     console.error(error)
-    message.error('获取用户组列表失败，请稍后重试')
+    message.error('获取用户组列表失败, 请稍后重试')
   }
 }
 
@@ -551,7 +797,7 @@ const handleApprove = (row: NodeDonate) => {
           message.error(res.data.message || '审核通过失败')
         }
       } catch (error) {
-        message.error('操作失败，请稍后重试')
+        message.error('操作失败, 请稍后重试')
         console.error(error)
       }
     }
@@ -594,7 +840,7 @@ const handleReject = (row: NodeDonate) => {
           message.error(res.data.message || '拒绝申请失败')
         }
       } catch (error) {
-        message.error('操作失败，请稍后重试')
+        message.error('操作失败, 请稍后重试')
         console.error(error)
       }
     }
@@ -626,7 +872,7 @@ const handleApproveDelete = (row: NodeDeleteRequest) => {
           message.error(res.data.message || '审核通过失败')
         }
       } catch (error) {
-        message.error('操作失败，请稍后重试')
+        message.error('操作失败, 请稍后重试')
         console.error(error)
       }
     }
@@ -669,7 +915,7 @@ const handleRejectDelete = (row: NodeDeleteRequest) => {
           message.error(res.data.message || '拒绝申请失败')
         }
       } catch (error) {
-        message.error('操作失败，请稍后重试')
+        message.error('操作失败, 请稍后重试')
         console.error(error)
       }
     }
@@ -693,7 +939,7 @@ const fetchPendingDonates = async () => {
       message.error(res.data.message || '获取待审核申请失败')
     }
   } catch (error) {
-    message.error('获取待审核申请失败，请稍后重试')
+    message.error('获取待审核申请失败, 请稍后重试')
     console.error(error)
   } finally {
     pendingLoading.value = false
@@ -711,7 +957,7 @@ const fetchAllDonates = async () => {
       message.error(res.data.message || '获取申请列表失败')
     }
   } catch (error) {
-    message.error('获取申请列表失败，请稍后重试')
+    message.error('获取申请列表失败, 请稍后重试')
     console.error(error)
   } finally {
     allLoading.value = false
@@ -729,7 +975,7 @@ const fetchPendingDeleteRequests = async () => {
       message.error(res.data.message || '获取待审核删除申请失败')
     }
   } catch (error) {
-    message.error('获取待审核删除申请失败，请稍后重试')
+    message.error('获取待审核删除申请失败, 请稍后重试')
     console.error(error)
   } finally {
     pendingDeleteLoading.value = false
@@ -747,10 +993,101 @@ const fetchAllDeleteRequests = async () => {
       message.error(res.data.message || '获取删除申请列表失败')
     }
   } catch (error) {
-    message.error('获取删除申请列表失败，请稍后重试')
+    message.error('获取删除申请列表失败, 请稍后重试')
     console.error(error)
   } finally {
     allDeleteLoading.value = false
+  }
+}
+
+// 获取待审核的节点编辑申请
+const fetchPendingEditRequests = async () => {
+  pendingEditLoading.value = true
+  try {
+    const res = await getPendingNodeEditRequests()
+    if (res.data.code === 200) {
+      pendingEditRequests.value = res.data.data
+      pendingEditPagination.itemCount = res.data.data.length
+    } else {
+      message.error(res.data.message)
+    }
+  } catch (error) {
+    message.error('获取待审核节点编辑申请失败')
+    console.error(error)
+  } finally {
+    pendingEditLoading.value = false
+  }
+}
+
+// 获取所有节点编辑申请
+const fetchAllEditRequests = async () => {
+  allEditLoading.value = true
+  try {
+    const res = await getAllNodeEditRequests()
+    if (res.data.code === 200) {
+      allEditRequests.value = res.data.data
+      allEditPagination.itemCount = res.data.data.length
+    } else {
+      message.error(res.data.message)
+    }
+  } catch (error) {
+    message.error('获取所有节点编辑申请失败')
+    console.error(error)
+  } finally {
+    allEditLoading.value = false
+  }
+}
+
+// 通过节点编辑申请
+const handleApproveEdit = async (requestId: number) => {
+  dialog.warning({
+    title: '确认通过',
+    content: '确定要通过这个节点编辑申请吗？通过后将更新节点信息。',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      try {
+        const res = await approveNodeEditRequest({ requestId })
+        if (res.data.code === 200) {
+          message.success('已通过节点编辑申请')
+          fetchPendingEditRequests()
+          fetchAllEditRequests()
+          showEditDetailModal.value = false
+        } else {
+          message.error(res.data.message)
+        }
+      } catch (error) {
+        message.error('操作失败')
+        console.error(error)
+      }
+    }
+  })
+}
+
+// 拒绝节点编辑申请
+const handleRejectEdit = async (requestId: number) => {
+  if (!rejectEditReason.value) {
+    message.warning('请输入拒绝原因')
+    return
+  }
+  
+  try {
+    const res = await rejectNodeEditRequest({ 
+      requestId, 
+      reason: rejectEditReason.value 
+    })
+    if (res.data.code === 200) {
+      message.success('已拒绝节点编辑申请')
+      rejectEditReason.value = ''
+      fetchPendingEditRequests()
+      fetchAllEditRequests()
+      showEditDetailModal.value = false
+    } else {
+      message.error(res.data.message)
+    }
+  } catch (error) {
+    message.error('操作失败')
+    console.error(error)
   }
 }
 
@@ -759,6 +1096,8 @@ onMounted(() => {
   fetchAllDonates()
   fetchPendingDeleteRequests()
   fetchAllDeleteRequests()
+  fetchPendingEditRequests()
+  fetchAllEditRequests()
   fetchGroups()
 })
 </script>

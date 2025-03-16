@@ -34,7 +34,7 @@ body,
 .menu-trigger {
   display: none;
 
-  @media (max-width: 700px) {
+  @media (max-width: 768px) {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -53,7 +53,7 @@ body,
   margin-left: auto;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
   .n-layout-content {
     padding: 16px !important;
   }
