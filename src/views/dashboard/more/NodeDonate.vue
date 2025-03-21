@@ -911,13 +911,6 @@ const deleteRules = {
 
 // 编辑表单验证规则
 const editRules = {
-  nodeId: [
-    {
-      required: true,
-      message: '请选择要编辑的节点',
-      trigger: ['blur', 'change']
-    }
-  ],
   nodeName: [
     {
       required: true,
@@ -1534,6 +1527,10 @@ const copyPassword = () => {
 // 提交编辑申请
 const handleEditSubmit = () => {
   // 确保管理员组和赞助者组始终被选中
+  if (!editFormValue.value.nodeId) {
+    message.error('请选择节点')
+    return
+  }
   const adminGroup = groupOptions.value.find(group => group.value === 'admin')
   const sponsorGroup = groupOptions.value.find(group => group.value === 'sponsor')
   if (adminGroup && !editFormValue.value.allowGroup.includes('admin')) {
