@@ -15,7 +15,7 @@ import { NCard } from 'naive-ui'
 const markdownContent = `
 # ME Frp (幻缘映射) 隐私政策
 
-**注：** 本隐私政策最终解释权归 ME Frp 所有。上次更新时间: 2025-01-26
+**注：** 本隐私政策最终解释权归 [幻缘网络](https://www.menetx.com) 与 [阜阳市波比网络科技有限公司](http://www.blbilink.com/) 所有。上次更新时间: 2025-03-21
 
 ## 1. 信息收集
 

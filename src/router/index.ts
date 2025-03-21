@@ -251,6 +251,12 @@ const routes: RouteRecordRaw[] = [
     name: 'Privacy',
     component: () => import('../views/Privacy.vue'),
     meta: { title: '隐私政策' }
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import('../views/Contact.vue'),
+    meta: { title: '联系我们' }
   }
 ]
 

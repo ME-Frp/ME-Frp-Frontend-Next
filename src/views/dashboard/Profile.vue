@@ -7,7 +7,7 @@
       <div class="security-item">
         <div class="security-desc">
           实名认证后可获得更多权限，包括更高的带宽限制和更多的节点使用权限。<br>
-          注意：实名认证信息将会使用 RSA 加密存储, 一旦认证成功, 无法读取。<br>
+          注意：实名认证信息将会使用 RSA 加密存储, 一旦认证成功, 将被安全存储。<br>
           如果此处显示的状态与上方不一致, 请立刻<a href="mailto:support@mefrp.com">联系管理员</a>。
         </div>
         <div class="security-value">

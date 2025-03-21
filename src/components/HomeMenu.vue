@@ -28,6 +28,9 @@
           <RouterLink to="/terms">
             <NButton text>服务条款</NButton>
           </RouterLink>
+          <RouterLink to="/contact">
+            <NButton text>联系我们</NButton>
+          </RouterLink>
           <RouterLink to="/dashboard">
             <NButton secondary type="primary">管理面板</NButton>
           </RouterLink>
@@ -133,6 +136,11 @@ const menuOptions: MenuOption[] = [
     label: '服务条款',
     key: 'terms',
     icon: renderIcon(InformationCircleOutline)
+  },
+  {
+    label: '联系我们',
+    key: 'contact',
+    icon: renderIcon(InformationCircleOutline)
   }
 ]
 
@@ -158,6 +166,9 @@ function handleMenuSelect(key: string) {
       break
     case 'terms':
       router.push('/terms')
+      break
+    case 'contact':
+      router.push('/contact')
       break
   }
 }
