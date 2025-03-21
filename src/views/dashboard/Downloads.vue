@@ -117,18 +117,18 @@
       </NCard>
 
       <!-- 右侧：广告位 -->
-      <div class="ads-column">
+      <div class="dev-column">
         <!-- 顶部广告位 -->
-        <NCard :title="topAdTitle" class="ads-card top-ads-card">
-          <div class="ad-container">
-            <AdSpace ref="topAdSpaceRef" placement="downloads-1" v-model:title="topAdTitle" />
+        <NCard :title="topDevTitle" class="dev-card top-dev-card">
+          <div class="dev-container">
+            <DevSpace ref="topDevSpaceRef" placement="downloads-1" v-model:title="topDevTitle" />
           </div>
         </NCard>
 
         <!-- 底部广告位 -->
-        <NCard :title="bottomAdTitle" class="ads-card bottom-ads-card">
-          <div class="ad-container">
-            <AdSpace ref="bottomAdSpaceRef" placement="downloads-2" v-model:title="bottomAdTitle" />
+        <NCard :title="bottomDevTitle" class="dev-card bottom-dev-card">
+          <div class="dev-container">
+            <DevSpace ref="bottomDevSpaceRef" placement="downloads-2" v-model:title="bottomDevTitle" />
           </div>
         </NCard>
       </div>
@@ -145,36 +145,36 @@ import type { Product } from '../../types/adminApi'
 import type { DownloadSource } from '../../types'
 import type { SelectOption } from 'naive-ui'
 import { marked } from 'marked'
-import AdSpace from '../../components/AdSpace.vue'
+import DevSpace from '../../components/DevSpace.vue'
 
 const message = useMessage()
 
 // 顶部广告位
-const topAdSpaceRef = ref(null)
-const topAdTitle = ref('推荐服务')
+const topDevSpaceRef = ref(null)
+const topDevTitle = ref('推荐服务')
 
 // 底部广告位
-const bottomAdSpaceRef = ref(null)
-const bottomAdTitle = ref('推荐服务')
+const bottomDevSpaceRef = ref(null)
+const bottomDevTitle = ref('推荐服务')
 
 // 监听顶部广告组件引用变化
-watch(topAdSpaceRef, (newRef) => {
+watch(topDevSpaceRef, (newRef) => {
   if (newRef) {
-    console.log('顶部广告组件引用已更新，当前标题:', newRef.getCurrentAdTitle?.());
+    console.log('顶部广告组件引用已更新，当前标题:', newRef.getCurrentDevTitle?.());
     // 如果广告已加载，立即更新标题
     if (newRef.ads?.value?.length > 0) {
-      topAdTitle.value = newRef.getCurrentAdTitle();
-      console.log('从引用更新顶部标题为:', topAdTitle.value);
+      topDevTitle.value = newRef.getCurrentDevTitle();
+      console.log('从引用更新顶部标题为:', topDevTitle.value);
     }
   }
 }, { immediate: true });
 
 // 监听底部广告组件引用变化
-watch(bottomAdSpaceRef, (newRef) => {
+watch(bottomDevSpaceRef, (newRef) => {
   if (newRef) {
     // 如果广告已加载，立即更新标题
     if (newRef.ads?.value?.length > 0) {
-      bottomAdTitle.value = newRef.getCurrentAdTitle();
+      bottomDevTitle.value = newRef.getCurrentDevTitle();
     }
   }
 }, { immediate: true });

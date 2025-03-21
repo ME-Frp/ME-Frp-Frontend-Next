@@ -16,9 +16,9 @@
         </NCard>
 
         <!-- 广告区域 -->
-        <NCard :title="adTitle" class="ads-card">
-          <div class="ad-container">
-            <AdSpace ref="adSpaceRef" placement="home" v-model:title="adTitle" />
+        <NCard :title="devTitle" class="dev-card">
+          <div class="dev-container">
+            <DevSpace ref="devSpaceRef" placement="home" v-model:title="devTitle" />
           </div>
         </NCard>
       </div>
@@ -38,18 +38,18 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { AuthApi } from '../../shared/api/auth'
 import UserInfoGrid from '../../components/UserInfoGrid.vue'
-import AdSpace from '../../components/AdSpace.vue'
+import DevSpace from '../../components/DevSpace.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const adSpaceRef = ref(null)
-const adTitle = ref('推荐服务')
+const devSpaceRef = ref(null)
+const devTitle = ref('推荐服务')
 
 // 监听广告组件引用变化
-watch(adSpaceRef, (newRef) => {
+watch(devSpaceRef, (newRef) => {
   if (newRef) {
     if (newRef.ads?.value?.length > 0) {
-      adTitle.value = newRef.getCurrentAdTitle();
+      devTitle.value = newRef.getCurrentDevTitle();
     }
   }
 }, { immediate: true });

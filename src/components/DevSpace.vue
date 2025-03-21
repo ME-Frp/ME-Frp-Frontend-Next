@@ -1,5 +1,5 @@
 <template>
-  <div class="ad-space">
+  <div class="dev-space">
     <template v-if="ads.length > 0">
       <NCarousel
         :autoplay="ads.length > 1"
@@ -11,28 +11,28 @@
         effect="fade"
         arrow-placement="wrapper"
         dot-placement="bottom"
-        class="ad-carousel"
+        class="dev-carousel"
         style="width: 100%; height: 100%; min-height: 200px; box-sizing: border-box; position: relative; z-index: 1;"
         @update:current-index="handleAdChange"
       >
         <NCarouselItem v-for="ad in ads" :key="ad.adsId" style="width: 100%; height: 100%; box-sizing: border-box; ">
           <!-- 带图片的广告 -->
-          <div v-if="ad.adsImageUrl" class="ad-with-image">
+          <div v-if="ad.adsImageUrl" class="dev-with-image">
             <NImage
               :src="ad.adsImageUrl"
               :alt="ad.adsContent || '广告'"
               object-fit="cover"
               preview-disabled
-              class="ad-image"
+              class="dev-image"
               :intersection-observer-options="{
                 root: null,
                 rootMargin: '0px',
                 threshold: 0.1
               }"
             />
-            <div class="ad-overlay">
-              <div v-if="ad.adsContent" class="ad-image-content">{{ ad.adsContent }}</div>
-              <NButton class="ad-button" type="warning" size="small" @click.stop="openAdLink(ad.adsUrl, ad.adsId)">
+            <div class="dev-overlay">
+              <div v-if="ad.adsContent" class="dev-image-content">{{ ad.adsContent }}</div>
+              <NButton class="dev-button" type="warning" size="small" @click.stop="openAdLink(ad.adsUrl, ad.adsId)">
                 <template #icon>
                   <NIcon>
                     <LinkOutline />
@@ -44,12 +44,12 @@
           </div>
           
           <!-- 纯文本广告 -->
-          <div v-else class="ad-text-only">
-            <div class="ad-content">
-              <div v-if="ad.adsContent" class="ad-description">{{ ad.adsContent }}</div>
+          <div v-else class="dev-text-only">
+            <div class="dev-content">
+              <div v-if="ad.adsContent" class="dev-description">{{ ad.adsContent }}</div>
               <div style="position: relative; z-index: 20; pointer-events: all;">
                 <NButton 
-                  class="ad-button" 
+                  class="dev-button" 
                   type="warning" 
                   size="small" 
                   style="z-index: 30; position: relative;"
@@ -216,5 +216,5 @@ onMounted(fetchAds)
 </script>
 
 <style lang="scss" scoped>
-@use '../assets/styles/components/adspace.scss';
+@use '../assets/styles/components/devSpace.scss';
 </style> 

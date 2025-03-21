@@ -1,6 +1,6 @@
 @use '../variables' as *;
 
-.ad-space {
+.dev-space {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -17,7 +17,7 @@
 }
 
 // 带图片的广告容器
-.ad-space .ad-with-image {
+.dev-space .dev-with-image {
     width: 100%;
     height: 100%;
     min-height: 200px;
@@ -32,7 +32,7 @@
 }
 
 // 图片上的覆盖层
-.ad-space .ad-overlay {
+.dev-space .dev-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -49,12 +49,12 @@
     pointer-events: auto;
 }
 
-.ad-space .ad-overlay:hover {
+.dev-space .dev-overlay:hover {
     padding-bottom: 35px;
 }
 
 // 图片上的文字内容
-.ad-space .ad-image-content {
+.dev-space .dev-image-content {
     color: white;
     font-size: 16px;
     line-height: 1.5;
@@ -65,7 +65,7 @@
 }
 
 // 纯文本广告容器
-.ad-space .ad-text-only {
+.dev-space .dev-text-only {
     height: 100%;
     display: flex;
     justify-content: flex-start;
@@ -78,7 +78,7 @@
 }
 
 // 文本内容容器
-.ad-space .ad-content {
+.dev-space .dev-content {
     width: 100%;
     padding: 16px;
     display: flex;
@@ -90,7 +90,7 @@
 }
 
 // 广告描述文本
-.ad-space .ad-description {
+.dev-space .dev-description {
     font-size: 16px;
     line-height: 1.6;
     color: white;
@@ -101,7 +101,7 @@
 }
 
 // 广告图片
-.ad-space .ad-image {
+.dev-space .dev-image {
     width: 100%;
     height: 100%;
     min-height: 200px;
@@ -114,12 +114,12 @@
     pointer-events: none;
 }
 
-.ad-space .ad-with-image:hover .ad-image {
+.dev-space .dev-with-image:hover .dev-image {
     transform: scale(1.03);
 }
 
 // 广告按钮
-.ad-space .ad-button {
+.dev-space .dev-button {
     align-self: flex-start;
     margin-bottom: 0;
     transition: all 0.2s ease;
@@ -129,13 +129,13 @@
     pointer-events: auto;
 }
 
-.ad-space .ad-button:hover {
+.dev-space .dev-button:hover {
     transform: translateY(-2px);
     box-shadow: $box-shadow-hover;
 }
 
 // 空状态
-.ad-space .empty-state {
+.dev-space .empty-state {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -147,7 +147,7 @@
 }
 
 // 轮播组件样式
-.ad-carousel {
+.dev-carousel {
     position: relative;
     width: 100%;
     height: 100%;
@@ -156,12 +156,12 @@
     z-index: 5;
 }
 
-.ad-carousel :deep(.n-carousel__slides) {
+.dev-carousel :deep(.n-carousel__slides) {
     width: 100%;
     box-sizing: border-box;
 }
 
-.ad-carousel :deep(.n-carousel-dots) {
+.dev-carousel :deep(.n-carousel-dots) {
     bottom: 8px;
     position: absolute;
     width: 100%;
@@ -169,11 +169,11 @@
     z-index: 300;
 }
 
-.ad-carousel :deep(.n-carousel-dots .n-carousel-dots__dot) {
+.dev-carousel :deep(.n-carousel-dots .n-carousel-dots__dot) {
     pointer-events: auto;
 }
 
-.ad-carousel :deep(.n-carousel-arrow) {
+.dev-carousel :deep(.n-carousel-arrow) {
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
     border-radius: 50%;
@@ -188,28 +188,28 @@
     z-index: 300;
 }
 
-.ad-carousel :deep(.n-carousel-arrow:hover) {
+.dev-carousel :deep(.n-carousel-arrow:hover) {
     background-color: rgba(0, 0, 0, 0.7);
     box-shadow: $box-shadow-hover;
 }
 
-.ad-carousel :deep(.n-carousel-arrow--right) {
+.dev-carousel :deep(.n-carousel-arrow--right) {
     right: 12px;
 }
 
-.ad-carousel :deep(.n-carousel-arrow--left) {
+.dev-carousel :deep(.n-carousel-arrow--left) {
     left: 12px;
 }
 
 // 响应式样式 - 平板
 @media (max-width: 768px) {
 
-    .ad-space .ad-description {
+    .dev-space .dev-description {
         font-size: 14px;
         margin-bottom: 12px;
     }
 
-    .ad-space .ad-image-content {
+    .dev-space .dev-image-content {
         font-size: 14px;
         margin-bottom: 12px;
     }
@@ -221,55 +221,55 @@
 // 响应式样式 - 手机
 @media (max-width: 576px) {
 
-    .ad-space .ad-overlay {
+    .dev-space .dev-overlay {
         padding: 12px;
     }
 }
 
 // 富文本内容样式
-.ad-space :deep(a) {
+.dev-space :deep(a) {
     color: $primary-color;
     text-decoration: none;
     transition: $transition-all;
 }
 
-.ad-space :deep(a:hover) {
+.dev-space :deep(a:hover) {
     color: $primary-hover;
 }
 
-.ad-space :deep(h1) {
+.dev-space :deep(h1) {
     font-size: 1.6em;
     margin: 0;
 }
 
-.ad-space :deep(h2) {
+.dev-space :deep(h2) {
     font-size: 1.4em;
     margin: 0;
 }
 
-.ad-space :deep(h3) {
+.dev-space :deep(h3) {
     font-size: 1.2em;
     margin: 0;
 }
 
-.ad-space :deep(p) {
+.dev-space :deep(p) {
     margin: 0;
     line-height: 1.6;
     font-size: 1.1em;
 }
 
-.ad-space :deep(ul),
-.ad-space :deep(ol) {
+.dev-space :deep(ul),
+.dev-space :deep(ol) {
     padding-left: 1.5em;
     margin: 0;
     font-size: 1.1em;
 }
 
-.ad-space :deep(li) {
+.dev-space :deep(li) {
     margin: 0;
 }
 
-.ad-space :deep(code) {
+.dev-space :deep(code) {
     background-color: rgba(0, 0, 0, 0.05);
     padding: 0.2em 0.4em;
     border-radius: 3px;
@@ -277,7 +277,7 @@
     font-size: 1.1em;
 }
 
-.ad-space :deep(pre) {
+.dev-space :deep(pre) {
     background-color: rgba(0, 0, 0, 0.05);
     padding: 1em;
     border-radius: 5px;
@@ -285,12 +285,12 @@
     margin: 0;
 }
 
-.ad-space :deep(pre code) {
+.dev-space :deep(pre code) {
     background-color: transparent;
     padding: 0;
 }
 
-.ad-space :deep(blockquote) {
+.dev-space :deep(blockquote) {
     border-left: 4px solid $border-color;
     padding-left: 1em;
     margin: 0;
@@ -298,19 +298,19 @@
     font-size: 1.1em;
 }
 
-.ad-space :deep(table) {
+.dev-space :deep(table) {
     border-collapse: collapse;
     width: 100%;
     margin: 0;
     font-size: 1.1em;
 }
 
-.ad-space :deep(table th),
-.ad-space :deep(table td) {
+.dev-space :deep(table th),
+.dev-space :deep(table td) {
     border: 1px solid $border-color;
     padding: 0.5em;
 }
 
-.ad-space :deep(table th) {
+.dev-space :deep(table th) {
     background-color: rgba(0, 0, 0, 0.05);
 }

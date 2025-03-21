@@ -18,7 +18,7 @@
         min-width: 0;
     }
 
-    .ads-column {
+    .dev-column {
         width: 500px;
         display: flex;
         flex-direction: column;
@@ -101,20 +101,20 @@
         }
     }
 
-    .ads-card {
+    .dev-card {
         width: 100%;
         height: 100%;
     }
 
-    .top-ads-card {
+    .top-dev-card {
         margin-bottom: 0;
     }
 
-    .bottom-ads-card {
+    .bottom-dev-card {
         margin-top: 0;
     }
 
-    .ad-container {
+    .dev-container {
         width: 100%;
         min-height: 200px;
         margin: 0;
@@ -144,7 +144,7 @@
         box-sizing: border-box;
     }
 
-    :deep(.ads-card) {
+    :deep(.dev-card) {
         overflow: hidden;
         position: relative;
         width: 100%;
