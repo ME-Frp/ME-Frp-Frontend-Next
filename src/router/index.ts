@@ -257,6 +257,19 @@ const routes: RouteRecordRaw[] = [
     name: 'Contact',
     component: () => import('../views/Contact.vue'),
     meta: { title: '联系我们' }
+  },
+  {
+    path: '/404',
+    name: 'NotFound',
+    meta: {
+      title: '页面未找到',
+    },
+    component: () => import('../views/NotFound.vue')
+  },
+  // 所有未定义路由，全部重定向到404页
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/404'
   }
 ]
 
