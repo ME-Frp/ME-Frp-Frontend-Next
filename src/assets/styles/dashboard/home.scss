@@ -28,12 +28,12 @@
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .info-card,
   .dev-card {
     width: 100%;
   }
-  
+
   .dev-container {
     width: 100%;
     min-height: 200px;
@@ -49,12 +49,12 @@
     z-index: 1;
     box-sizing: border-box;
   }
-  
+
   .notice-card {
     height: 100%;
     grid-row: span 2;
   }
-  
+
   :deep(.n-card-header) {
     padding: 16px 16px 8px 16px;
     position: relative;
@@ -75,11 +75,11 @@
     width: 100%;
     box-shadow: $box-shadow;
     transition: $transition-all;
-    
+
     &:hover {
       box-shadow: $box-shadow-hover;
     }
-    
+
     .n-card__content {
       padding: 0;
       overflow: hidden;
@@ -87,99 +87,243 @@
       width: 100%;
       box-sizing: border-box;
     }
-    
+
     .n-card__action {
       padding: 0;
     }
   }
-  
-  .markdown-content {
-    :deep(a) {
+
+  // 为v-html内容添加深度选择器
+  :deep(.markdown-content) {
+    line-height: 1.6;
+    word-wrap: break-word;
+    padding: 0;
+    margin: 0;
+    
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 24px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    
+    h1 {
+      font-size: 2em;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid rgba(150, 150, 150, 0.4);
+    }
+    
+    h2 {
+      font-size: 1.5em;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid rgba(150, 150, 150, 0.4);
+    }
+
+    a {
       color: $primary-color;
       text-decoration: none;
-      transition: $transition-all;
+      position: relative;
+      transition: all 0.2s ease;
 
       &:hover {
-        color: $primary-hover;
+        text-decoration: none;
+        color: lighten($primary-color, 10%);
+
+        &::after {
+          width: 100%;
+        }
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: lighten($primary-color, 10%);
+        transition: width 0.3s ease;
       }
     }
 
-    :deep(h1) {
-      font-size: 1.6em;
-      margin: 0;
+    img {
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
-    :deep(h2) {
-      font-size: 1.4em;
-      margin: 0;
+    ul, ol {
+      padding-left: 2em;
     }
 
-    :deep(h3) {
-      font-size: 1.2em;
-      margin: 0;
+    blockquote {
+      padding: 0 1em;
+      margin-left: 0;
+      color: #6a737d;
+      border-left: 0.25em solid #dfe2e5;
     }
 
-    :deep(p) {
-      margin: 0;
-      line-height: 1.6;
-      font-size: 1.1em;
+    table {
+      border-spacing: 0;
+      border-collapse: collapse;
+
+      tr {
+        border-top: 1px solid #c6cbd1;
+      }
+
+      th, td {
+        padding: 6px 13px;
+        border: 1px solid #dfe2e5;
+      }
+
+      tr:nth-child(2n) {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
     }
 
-    :deep(ul),
-    :deep(ol) {
-      padding-left: 1.5em;
-      margin: 0;
-      font-size: 1.1em;
-    }
-
-    :deep(li) {
-      margin: 0;
-    }
-
-    :deep(code) {
-      background-color: rgba(0, 0, 0, 0.05);
-      padding: 0.2em 0.4em;
-      border-radius: 3px;
-      font-family: monospace;
-      font-size: 1.1em;
-    }
-
-    :deep(pre) {
-      background-color: rgba(0, 0, 0, 0.05);
-      padding: 1em;
+    pre {
+      background-color: #2d2d2d;
       border-radius: 5px;
-      overflow-x: auto;
-      margin: 0;
+      padding: 16px;
+      overflow: auto;
+      margin: 16px 0;
+      position: relative;
+
+      &::before {
+        content: attr(data-language);
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 2px 8px;
+        font-size: 0.7em;
+        background: rgba(0, 0, 0, 0.3);
+        color: #ccc;
+        border-bottom-left-radius: 4px;
+        font-family: sans-serif;
+        text-transform: uppercase;
+      }
 
       code {
         background-color: transparent;
         padding: 0;
+        border-radius: 0;
+        color: #d4d4d4;
+        word-break: normal;
+        white-space: pre;
+        font-size: 0.9em;
+        line-height: 1.5;
+        font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+      }
+
+      &::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #555;
+        border-radius: 4px;
+
+        &:hover {
+          background-color: #777;
+        }
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: #333;
+        border-radius: 4px;
       }
     }
 
-    :deep(blockquote) {
-      border-left: 4px solid $border-color;
-      padding-left: 1em;
-      margin: 0;
-      color: $text-color-2;
-      font-size: 1.1em;
-    }
-
-    :deep(table) {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 0;
-      font-size: 1.1em;
-    }
-
-    :deep(th),
-    :deep(td) {
-      border: 1px solid $border-color;
-      padding: 0.5em;
-    }
-
-    :deep(th) {
+    // 内联代码样式
+    :not(pre) > code {
       background-color: rgba(0, 0, 0, 0.05);
+      border-radius: 3px;
+      font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+      font-size: 0.9em;
+      padding: 0.2em 0.4em;
+      color: #d56161;
+    }
+
+    // 代码块语法高亮增强
+    .hljs {
+      color: #e9e9e9;
+      background: transparent;
+
+      &-keyword, &-selector-tag, &-literal, &-doctag, &-title, &-section, &-type, &-name, &-strong {
+        color: #569cd6;
+        font-weight: bold;
+      }
+
+      &-string, &-built_in, &-attr, &-attribute {
+        color: #ce9178;
+      }
+
+      &-symbol, &-bullet, &-addition, &-variable, &-template-tag, &-template-variable {
+        color: #b5cea8;
+      }
+
+      &-comment, &-quote, &-deletion {
+        color: #6a9955;
+        font-style: italic;
+      }
+
+      &-number, &-regexp, &-literal, &-link {
+        color: #d16969;
+      }
+
+      &-meta {
+        color: #9cdcfe;
+      }
+
+      &-emphasis {
+        font-style: italic;
+      }
+
+      &-tag {
+        color: #569cd6;
+      }
+
+      &-attr {
+        color: #9cdcfe;
+      }
+
+      &-params {
+        color: #d4d4d4;
+      }
+    }
+
+    .n-code-container {
+      margin: 16px 0;
+      max-height: 600px;
+      overflow: auto;
+
+      :deep(.n-code) {
+        max-height: none;
+        font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+
+        .n-code__line {
+          font-size: 0.9em;
+        }
+      }
+
+      &::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #555;
+        border-radius: 4px;
+
+        &:hover {
+          background-color: #777;
+        }
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: #333;
+        border-radius: 4px;
+      }
     }
   }
 }

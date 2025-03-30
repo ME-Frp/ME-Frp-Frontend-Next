@@ -37,6 +37,10 @@
   </footer>
 </template>
 
+<script setup>
+import { NButton } from 'naive-ui'
+</script>
+
 <style lang="scss" scoped>
 @use '../assets/styles/components/homeFooter.scss';
 </style>

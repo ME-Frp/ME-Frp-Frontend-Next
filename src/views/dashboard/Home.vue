@@ -33,13 +33,32 @@
 
 <script setup lang="ts">
 import { NCard, NAlert, NButton } from 'naive-ui'
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { AuthApi } from '../../shared/api/auth'
 import UserInfoGrid from '../../components/UserInfoGrid.vue'
 import DevSpace from '../../components/DevSpace.vue'
 import { useRouter } from 'vue-router'
+import hljs from 'highlight.js/lib/core'
+import javascript from 'highlight.js/lib/languages/javascript'
+import bash from 'highlight.js/lib/languages/bash'
+import ini from 'highlight.js/lib/languages/ini'
+import toml from 'highlight.js/lib/languages/ini'
+import json from 'highlight.js/lib/languages/json'
+import yaml from 'highlight.js/lib/languages/yaml'
+import 'highlight.js/styles/github-dark.css'
+
+// 注册常用的代码语言
+hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('js', javascript)
+hljs.registerLanguage('bash', bash)
+hljs.registerLanguage('sh', bash)
+hljs.registerLanguage('ini', ini)
+hljs.registerLanguage('toml', toml)
+hljs.registerLanguage('json', json)
+hljs.registerLanguage('yaml', yaml)
+hljs.registerLanguage('yml', yaml)
 
 const router = useRouter()
 const devSpaceRef = ref(null)
@@ -90,6 +109,40 @@ const fetchNotice = async (): Promise<void> => {
     console.error('获取公告失败:', error)
   }
 }
+
+// 添加一个函数来应用高亮
+const applyHighlight = () => {
+  nextTick(() => {
+    const preElements = document.querySelectorAll('.markdown-content pre');
+    preElements.forEach((pre) => {
+      const codeElement = pre.querySelector('code');
+      if (codeElement) {
+        // 检查是否已经高亮过
+        if (!codeElement.classList.contains('hljs')) {
+          hljs.highlightElement(codeElement);
+          
+          // 获取语言类并设置为pre的data-language属性
+          const languageClass = Array.from(codeElement.classList)
+            .find(cls => cls.startsWith('language-'));
+          
+          if (languageClass) {
+            const language = languageClass.replace('language-', '');
+            pre.setAttribute('data-language', language);
+          } else {
+            pre.setAttribute('data-language', 'text');
+          }
+        }
+      }
+    });
+  });
+}
+
+// 监听通知内容变化，应用代码高亮
+watch(() => renderedNotice.value, () => {
+  if (renderedNotice.value) {
+    applyHighlight();
+  }
+}, { immediate: true });
 
 onMounted(() => {
   fetchNotice()
