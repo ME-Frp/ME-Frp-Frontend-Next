@@ -4,7 +4,7 @@
       <NSpace vertical :size="24">
         <NDescriptions label-placement="left" bordered :column="1">
           <NDescriptionsItem label="面板版本">
-            v5.3.0
+            v5.3.4
           </NDescriptionsItem>
           <NDescriptionsItem label="开发者">
             <div class="user-info">

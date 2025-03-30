@@ -125,7 +125,7 @@
         </NText>
 
         <NFormItem label="访问密钥" path="accessKey">
-          <NInput v-model:value="formValue.accessKey" placeholder="请输入访问密钥" :disabled="true" />
+          <NInput v-model:value="formValue.accessKey" placeholder="访问密钥已不再支持" :disabled="true" />
         </NFormItem>
 
         <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">

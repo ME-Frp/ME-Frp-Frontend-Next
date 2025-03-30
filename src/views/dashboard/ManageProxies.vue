@@ -298,7 +298,7 @@
         </NText>
 
         <NFormItem label="访问密钥" path="accessKey">
-          <NInput v-model:value="editForm.accessKey" placeholder="请输入访问密钥" :disabled="true"/>
+          <NInput v-model:value="editForm.accessKey" placeholder="访问密钥已不再支持" :disabled="true"/>
         </NFormItem>
         <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">
           <NInput v-model:value="editForm.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值" />
@@ -363,17 +363,20 @@
       </template>
       <div style="margin: 16px 0" class="config-modal-container">
         <NCollapse v-model:expanded-names="expandedNames" :on-update:expanded-names="handleUpdateExpanded">
-          <NCollapseItem title="启动参数" name="args">
+          <NCollapseItem title="启动参数" name="args" v-if="selectedProxy?.proxyType !== 'https'">
             <NScrollbar style="max-height: 200px; overflow: auto">
               <NCode :code="runArgs" language="yaml" :hljs="hljs" />
             </NScrollbar>
             <div style="margin-top: 8px;">Windows 用户如果启动失败，请尝试把 <NCode>mefrpc</NCode> 换成 <NCode>.\mefrpc.exe</NCode>。</div>
           </NCollapseItem>
           <NCollapseItem title="配置文件" name="config">
-            <NAlert type="warning" style="margin-bottom: 16px" title="友情提示">
+            <NAlert type="error" style="margin-bottom: 16px" title="友情提示">
               此处是为专业用户准备的配置文件, 请不要在没有判断能力的情况下随意修改, 否则隧道可能无法正常启动。<br>
               请使用 "
               <NCode>./mefrpc -c </NCode>配置文件 " 进行启动。
+            </NAlert>
+            <NAlert type="warning" style="margin-bottom: 16px" title="HTTPS 隧道配置修改提示" v-if="selectedProxy?.proxyType == 'https'">
+              请修改相关 SSL 配置, 否则隧道无法正常启动。
             </NAlert>
             
             <NTabs 

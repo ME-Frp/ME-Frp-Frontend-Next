@@ -23,6 +23,15 @@
             感谢您愿意为 ME Frp 贡献节点资源！请填写以下表单提交您的节点信息。<br>
             我们将在审核通过后将您的节点添加到系统中, 并为您提供相应的权益。
           </NAlert>
+          <NAlert type="error" title="这里不是新建隧道和丢垃圾的地方" style="margin-bottom: 16px">
+            <template #icon>
+              <NIcon>
+                <InformationCircleOutline />
+              </NIcon>
+            </template>
+            创建隧道请前往 <RouterLink to="/dashboard/create-proxy">创建隧道</RouterLink>页面。<br>
+            不要在此处填写并提交无用信息, 严重者将直接封禁账户。
+          </NAlert>
 
           <NForm ref="formRef" :model="formValue" :rules="rules" label-placement="left" label-width="auto"
             require-mark-placement="right-hanging" size="medium">

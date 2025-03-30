@@ -61,7 +61,7 @@
           <NDivider>高级配置</NDivider>
 
           <NFormItem label="访问密钥" path="accessKey">
-            <NInput v-model:value="editForm.accessKey" placeholder="请输入访问密钥" :disabled="true" />
+            <NInput v-model:value="editForm.accessKey" placeholder="访问密钥已不再支持" :disabled="true" />
           </NFormItem>
           <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">
             <NInput v-model:value="editForm.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值" />
