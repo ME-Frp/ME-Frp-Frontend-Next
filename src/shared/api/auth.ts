@@ -135,6 +135,11 @@ export const AuthApi = {
     getNodeServerSecret: (data: { nodeId: number }) => {
         return baseApi.post<ApiResponse<{ serverPort: number; token: string }>>('/auth/node/secret', data);
     },
+
+    // 生成隧道配置文件
+    generateProxyConfig: (data: { proxyId: number, format: 'toml' | 'ini' | 'json' | 'yml' }) => {
+        return baseApi.post<ApiResponse<{ config: string, type: string }>>('/auth/proxy/config', data);
+    },
 };
 
 export type { RealnameInfo };

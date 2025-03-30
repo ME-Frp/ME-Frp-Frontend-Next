@@ -61,7 +61,7 @@
           <NDivider>高级配置</NDivider>
 
           <NFormItem label="访问密钥" path="accessKey">
-            <NInput v-model:value="editForm.accessKey" placeholder="请输入访问密钥" />
+            <NInput v-model:value="editForm.accessKey" placeholder="请输入访问密钥" :disabled="true" />
           </NFormItem>
           <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">
             <NInput v-model:value="editForm.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值" />
@@ -286,7 +286,7 @@ const handleEdit = (proxy: Proxy) => {
     proxyType: proxy.proxyType,
     domain: proxy.domain || '',
     location: proxy.location || '',
-    accessKey: proxy.accessKey || '',
+    accessKey: '',
     hostHeaderRewrite: proxy.hostHeaderRewrite || '',
     headerXFromWhere: proxy.headerXFromWhere || '',
     useEncryption: proxy.useEncryption || false,

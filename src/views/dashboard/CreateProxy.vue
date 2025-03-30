@@ -125,7 +125,7 @@
         </NText>
 
         <NFormItem label="访问密钥" path="accessKey">
-          <NInput v-model:value="formValue.accessKey" placeholder="请输入访问密钥" :disabled="!canEditConfig" />
+          <NInput v-model:value="formValue.accessKey" placeholder="请输入访问密钥" :disabled="true" />
         </NFormItem>
 
         <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">
@@ -440,7 +440,7 @@ const handleCreate = () => {
           remotePort: formValue.value.remotePort!,
           domain: formValue.value.type === 'http' || formValue.value.type === 'https' ? JSON.stringify(domainTags.value) : '',
           proxyType: formValue.value.type!,
-          accessKey: formValue.value.accessKey,
+          accessKey: '',
           hostHeaderRewrite: formValue.value.hostHeaderRewrite,
           headerXFromWhere: formValue.value.headerXFromWhere,
           proxyProtocolVersion: formValue.value.proxyProtocolVersion,

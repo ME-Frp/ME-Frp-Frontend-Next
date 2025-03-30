@@ -152,3 +152,40 @@
     font-size: 0.95rem;
   }
 }
+
+// 配置弹窗样式
+.config-modal-container {
+  // 移动端默认为垂直布局
+  display: flex;
+  flex-direction: column;
+
+  // 大屏使用横向布局
+  @media (min-width: 769px) {
+    :deep(.n-collapse-item.n-collapse-item--active[data-name="config"]) {
+      .n-collapse-item__content-wrapper {
+        .n-collapse-item__content-inner {
+          overflow: visible;
+        }
+      }
+    }
+
+    :deep(.n-collapse-item__content-wrapper) {
+      max-height: none !important;
+    }
+  }
+}
+
+// 额外添加弹窗样式
+:deep(.n-dialog) {
+  @media (min-width: 769px) {
+    &.config-dialog {
+      max-width: 90vw;
+      width: 900px;
+      
+      .n-dialog__content {
+        max-height: 80vh;
+        overflow: auto;
+      }
+    }
+  }
+}
