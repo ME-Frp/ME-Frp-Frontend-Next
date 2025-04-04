@@ -24,12 +24,12 @@
             <div class="summary-value">{{ formatBytes(todayTotalTraffic) }}</div>
           </div>
           <div class="summary-item">
-            <div class="summary-label">今日上传</div>
-            <div class="summary-value">{{ formatBytes(todayTrafficOut) }}</div>
+            <div class="summary-label">今日入站</div>
+            <div class="summary-value">{{ formatBytes(todayTrafficIn) }}</div>
           </div>
           <div class="summary-item">
-            <div class="summary-label">今日下载</div>
-            <div class="summary-value">{{ formatBytes(todayTrafficIn) }}</div>
+            <div class="summary-label">今日出站</div>
+            <div class="summary-value">{{ formatBytes(todayTrafficOut) }}</div>
           </div>
         </div>
         <div ref="trafficChartRef" class="traffic-chart"></div>
