@@ -86,20 +86,36 @@
         <NText depth="3" style="font-size: 13px;">签到一次可以获得 5~10 GB 的流量</NText>
       </NSpace>
     </div>
+    
+    <div v-if="!loading && !isProfilePage && userInfo.token" class="token-section">
+      <NButton text type="info" @click="copyToken">
+        <template #icon>
+          <NIcon>
+            <KeyOutline />
+          </NIcon>
+        </template>
+        复制访问密钥
+      </NButton>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { NTag, useMessage, NSkeleton, NButton, NIcon, NSpace, NText } from 'naive-ui'
-import { CalendarOutline } from '@vicons/ionicons5'
+import { CalendarOutline, KeyOutline } from '@vicons/ionicons5'
 import { type UserInfo } from '../types'
 import { AuthApi } from '../shared/api/auth'
+import { useRoute } from 'vue-router'
 
 const message = useMessage()
+const route = useRoute()
 const loading = ref(true)
 const signLoading = ref(false)
 const isSignAvailable = ref(false)
+
+// 判断当前是否在Profile页面
+const isProfilePage = computed(() => route.path === '/dashboard/profile')
 
 const userInfo = ref<UserInfo>({
   userId: 0,
@@ -115,7 +131,7 @@ const userInfo = ref<UserInfo>({
   inBound: 0,
   email: '',
   status: 0,
-  todaySigned: false
+  todaySigned: false,
 })
 
 const formatTime = (timestamp: number) => {
@@ -177,6 +193,9 @@ const fetchUserInfo = async () => {
       userInfo.value = response.data.data
       isSignAvailable.value = !response.data.data.todaySigned
       localStorage.setItem('group', userInfo.value.group)
+      
+      // 直接从localStorage获取token
+      userInfo.value.token = localStorage.getItem('token') || ''
     } else {
       message.error(response.data.message || '获取用户信息失败')
     }
@@ -189,6 +208,22 @@ const fetchUserInfo = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 复制用户访问密钥
+const copyToken = () => {
+  if (!userInfo.value.token) {
+    message.warning('无法获取访问密钥')
+    return
+  }
+  
+  navigator.clipboard.writeText(userInfo.value.token)
+    .then(() => {
+      message.success('访问密钥已复制到剪贴板')
+    })
+    .catch(() => {
+      message.error('复制失败，请手动复制')
+    })
 }
 
 onMounted(async () => {
