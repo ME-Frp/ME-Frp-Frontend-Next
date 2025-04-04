@@ -9,15 +9,13 @@ import type {
   ApplyNodeEditArgs,
   GetNodeInstallScriptArgs,
   GetNodeInstallScriptResponse,
-} from '../../types/authApi'
-import type {
   ApproveNodeDonateArgs,
   RejectNodeDonateArgs,
   ApproveNodeDeleteRequestArgs,
   RejectNodeDeleteRequestArgs,
   ApproveNodeEditRequestArgs,
   RejectNodeEditRequestArgs
-} from '../../types/adminApi'
+} from '../../types'
 
 // 用户相关API
 

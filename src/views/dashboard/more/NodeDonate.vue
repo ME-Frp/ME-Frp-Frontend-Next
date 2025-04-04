@@ -29,7 +29,7 @@
                 <InformationCircleOutline />
               </NIcon>
             </template>
-            创建隧道请前往 <RouterLink to="/dashboard/create-proxy">创建隧道</RouterLink>页面。<br>
+            创建隧道请前往相关页面。<br>
             不要在此处填写并提交无用信息, 严重者将直接封禁账户。
           </NAlert>
 
