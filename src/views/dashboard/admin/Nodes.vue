@@ -14,16 +14,14 @@
           </NButton>
         </NSpace>
 
-        <NDataTable remote :columns="columns" :data="nodes" :loading="loading" :pagination="pagination"
-          :style="{
-            '.n-data-table-td': {
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              maxWidth: '200px'
-            }
-          }"
-          @update:page="handlePageChange" />
+        <NDataTable remote :columns="columns" :data="nodes" :loading="loading" :pagination="pagination" :style="{
+          '.n-data-table-td': {
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            maxWidth: '200px'
+          }
+        }" @update:page="handlePageChange" />
       </NSpace>
 
       <NModal v-model:show="showAddModal" preset="card" title="添加节点" style="width: 600px;">
@@ -82,52 +80,98 @@
       </NModal>
 
       <NModal v-model:show="showEditModal" preset="card" title="编辑节点" style="width: 600px;">
-        <NForm ref="formRef" :model="formModel" :rules="rules" label-placement="left" label-width="auto"
-          require-mark-placement="right-hanging">
-          <NFormItem label="节点名称" path="name">
-            <NInput v-model:value="formModel.name" placeholder="请输入节点名称" />
-          </NFormItem>
-          <NFormItem label="主机名" path="hostname">
-            <NInput v-model:value="formModel.hostname" placeholder="请输入主机名" />
-          </NFormItem>
-          <NFormItem label="节点描述" path="description">
-            <NInput v-model:value="formModel.description" type="textarea" placeholder="请输入节点描述" />
-          </NFormItem>
-          <NFormItem label="Token" path="token">
-            <NInput v-model:value="formModel.token" placeholder="请输入Token" />
-          </NFormItem>
-          <NFormItem label="服务端口" path="servicePort">
-            <NInputNumber v-model:value="formModel.servicePort" placeholder="请输入服务端口" />
-          </NFormItem>
-          <NFormItem label="管理端口" path="adminPort">
-            <NInputNumber v-model:value="formModel.adminPort" placeholder="请输入管理端口" />
-          </NFormItem>
-          <NFormItem label="管理密码" path="adminPass">
-            <NInput v-model:value="formModel.adminPass" type="password" show-password-on="click"
-              placeholder="请输入管理密码" />
-          </NFormItem>
-          <NFormItem label="允许用户组" path="allowGroup">
-            <NButtonGroup>
-              <NButton v-for="group in groupOptions" :key="group.value"
-                :type="formModel.allowGroup.includes(group.value) ? 'primary' : 'default'"
-                :disabled="group.value === 'admin'" @click="toggleGroup(group.value)">
-                {{ group.label }}
-              </NButton>
-            </NButtonGroup>
-          </NFormItem>
-          <NFormItem label="允许端口" path="allowPort">
-            <NInput v-model:value="formModel.allowPort" placeholder="请输入允许的端口范围, 如: 10000-20000" />
-          </NFormItem>
-          <NFormItem label="允许协议" path="allowType">
-            <NButtonGroup>
-              <NButton v-for="protocol in protocolOptions" :key="protocol.value"
-                :type="formModel.allowType.includes(protocol.value) ? 'primary' : 'default'"
-                @click="toggleProtocol(protocol.value)">
-                {{ protocol.label }}
-              </NButton>
-            </NButtonGroup>
-          </NFormItem>
-        </NForm>
+        <NTabs type="line">
+          <NTabPane name="基本信息" tab="基本信息">
+            <NForm ref="formRef" :model="formModel" :rules="rules" label-placement="left" label-width="auto"
+              require-mark-placement="right-hanging">
+              <NFormItem label="节点名称" path="name">
+                <NInput v-model:value="formModel.name" placeholder="请输入节点名称" />
+              </NFormItem>
+              <NFormItem label="主机名" path="hostname">
+                <NInput v-model:value="formModel.hostname" placeholder="请输入主机名" />
+              </NFormItem>
+              <NFormItem label="节点描述" path="description">
+                <NInput v-model:value="formModel.description" type="textarea" placeholder="请输入节点描述" />
+              </NFormItem>
+              <NFormItem label="Token" path="token">
+                <NInput v-model:value="formModel.token" placeholder="请输入Token" />
+              </NFormItem>
+              <NFormItem label="服务端口" path="servicePort">
+                <NInputNumber v-model:value="formModel.servicePort" placeholder="请输入服务端口" />
+              </NFormItem>
+              <NFormItem label="管理端口" path="adminPort">
+                <NInputNumber v-model:value="formModel.adminPort" placeholder="请输入管理端口" />
+              </NFormItem>
+              <NFormItem label="管理密码" path="adminPass">
+                <NInput v-model:value="formModel.adminPass" type="password" show-password-on="click"
+                  placeholder="请输入管理密码" />
+              </NFormItem>
+              <NFormItem label="允许用户组" path="allowGroup">
+                <NButtonGroup>
+                  <NButton v-for="group in groupOptions" :key="group.value"
+                    :type="formModel.allowGroup.includes(group.value) ? 'primary' : 'default'"
+                    :disabled="group.value === 'admin'" @click="toggleGroup(group.value)">
+                    {{ group.label }}
+                  </NButton>
+                </NButtonGroup>
+              </NFormItem>
+              <NFormItem label="允许端口" path="allowPort">
+                <NInput v-model:value="formModel.allowPort" placeholder="请输入允许的端口范围, 如: 10000-20000" />
+              </NFormItem>
+              <NFormItem label="允许协议" path="allowType">
+                <NButtonGroup>
+                  <NButton v-for="protocol in protocolOptions" :key="protocol.value"
+                    :type="formModel.allowType.includes(protocol.value) ? 'primary' : 'default'"
+                    @click="toggleProtocol(protocol.value)">
+                    {{ protocol.label }}
+                  </NButton>
+                </NButtonGroup>
+              </NFormItem>
+            </NForm>
+          </NTabPane>
+          <NTabPane name="安装脚本" tab="安装脚本">
+            <NSpace vertical>
+              <NForm label-placement="left" label-width="auto">
+                <NFormItem label="系统类型">
+                  <NSelect v-model:value="scriptSystem" :options="systemOptions" placeholder="请选择系统类型" />
+                </NFormItem>
+                <NFormItem label="架构">
+                  <NSelect v-model:value="scriptArch" :options="archOptions" placeholder="请选择系统架构"
+                    :loading="loadingArchs" />
+                </NFormItem>
+                <NFormItem>
+                  <NButton type="primary" :loading="generatingScript"
+                    :disabled="!editingNode || !scriptSystem || !scriptArch" @click="generateScript">
+                    生成安装脚本
+                  </NButton>
+                </NFormItem>
+              </NForm>
+              <div v-if="scriptUrl">
+                <NAlert type="success">
+                  已生成安装脚本，请点击复制按钮复制下载链接或安装命令
+                </NAlert>
+                <div style="margin-top: 16px;">
+                  <NInput v-model:value="scriptUrl" readonly>
+                  </NInput>
+                  <NButton style="margin-top: 8px;" type="primary" @click="copyScriptUrl">
+                    复制下载链接
+                  </NButton>
+                </div>
+                <div style="margin-top: 16px;">
+                  <p>一键安装命令（{{ scriptSystem === 'linux' ? 'Linux Shell' : 'Windows PowerShell' }}）：</p>
+                  <div style="margin-top: 8px;">
+                    <NInput :value="getInstallCommand" readonly />
+                    <div style="margin-top: 8px;">
+                      <NButton type="primary" @click="copyInstallCommand">
+                        复制安装命令
+                      </NButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </NSpace>
+          </NTabPane>
+        </NTabs>
         <template #footer>
           <NSpace justify="end">
             <NButton @click="showEditModal = false">取消</NButton>
@@ -136,25 +180,65 @@
         </template>
       </NModal>
 
-      <NModal v-model:show="showToggleModal" preset="dialog" 
-        :title="currentNode?.isDisabled ? '启用节点' : '禁用节点'" 
-        style="width: 400px;"
-        :show-icon="false">
+      <NModal v-model:show="showToggleModal" preset="dialog" :title="currentNode?.isDisabled ? '启用节点' : '禁用节点'"
+        style="width: 400px;" :show-icon="false">
         <div>确定要{{ currentNode?.isDisabled ? '启用' : '禁用' }}节点 "{{ currentNode?.name }}" 吗？</div>
         <template #action>
           <NButton secondary size="small" @click="showToggleModal = false">取消</NButton>
-          <NButton secondary size="small" type="warning" :loading="submitting" @click="() => currentNode && handleToggleNode(currentNode)">确定</NButton>
+          <NButton secondary size="small" type="warning" :loading="submitting"
+            @click="() => currentNode && handleToggleNode(currentNode)">确定</NButton>
         </template>
       </NModal>
 
-      <NModal v-model:show="showDeleteModal" preset="dialog" 
-        title="删除节点" 
-        style="width: 400px;"
-        :show-icon="false">
+      <NModal v-model:show="showDeleteModal" preset="dialog" title="删除节点" style="width: 400px;" :show-icon="false">
         <div>确定要删除节点 "{{ currentNode?.name }}" 吗？此操作不可恢复！</div>
         <template #action>
           <NButton secondary size="small" @click="showDeleteModal = false">取消</NButton>
-          <NButton secondary size="small" type="error" :loading="submitting" @click="() => currentNode && handleDeleteNode(currentNode)">删除</NButton>
+          <NButton secondary size="small" type="error" :loading="submitting"
+            @click="() => currentNode && handleDeleteNode(currentNode)">删除</NButton>
+        </template>
+      </NModal>
+
+      <NModal v-model:show="showDashboardTipModal" preset="card" title="访问管理面板提示" style="width: 460px;">
+        <div>
+          <NSpace vertical>
+            <div>您正在访问 Frp 服务端面板，请注意以下事项：</div>
+            <NAlert type="warning">
+              由于 Basic Auth 机制的限制, Frp 服务端可能会提示 "从 Frp 服务端获取服务器信息失败！"<br>
+              请在成功登录管理面板后，手动编辑地址栏，移除用户名和密码部分。
+            </NAlert>
+            <NDivider />
+            <NDescriptions bordered size="small">
+              <NDescriptionsItem label="用户名">
+                <NText code>admin</NText>
+                <NButton size="tiny" text type="primary" @click="() => copyAdminUsername()" style="margin-left: 8px;">
+                  <template #icon>
+                    <NIcon>
+                      <CopyOutline />
+                    </NIcon>
+                  </template>
+                  复制
+                </NButton>
+              </NDescriptionsItem>
+              <NDescriptionsItem label="密码">
+                <NText code>{{ currentDashboardNode?.adminPass }}</NText>
+                <NButton size="tiny" text type="primary" @click="() => copyAdminPassword()" style="margin-left: 8px;">
+                  <template #icon>
+                    <NIcon>
+                      <CopyOutline />
+                    </NIcon>
+                  </template>
+                  复制
+                </NButton>
+              </NDescriptionsItem>
+            </NDescriptions>
+          </NSpace>
+        </div>
+        <template #footer>
+          <NSpace justify="end">
+            <NButton @click="showDashboardTipModal = false">取消</NButton>
+            <NButton type="primary" @click="confirmOpenDashboard">确定</NButton>
+          </NSpace>
         </template>
       </NModal>
     </NCard>
@@ -162,13 +246,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h } from 'vue'
-import { NCard, NSpace, NDataTable, NButton, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag, NDropdown, NIcon } from 'naive-ui'
-import { EllipsisHorizontalCircleOutline, CreateOutline, PowerOutline, TrashOutline } from '@vicons/ionicons5'
+import { ref, h, computed, watch } from 'vue'
+import { NCard, NSpace, NDataTable, NButton, NModal, NForm, NFormItem, NInput, NInputNumber, useMessage, NButtonGroup, NSelect, NTag, NDropdown, NIcon, NTabs, NTabPane, NAlert, NDivider, NDescriptions, NDescriptionsItem, NText } from 'naive-ui'
+import { EllipsisHorizontalCircleOutline, CreateOutline, PowerOutline, TrashOutline, AppsOutline, CopyOutline } from '@vicons/ionicons5'
 import type { DataTableColumns, FormRules, FormInst, SelectOption, DropdownOption } from 'naive-ui'
 import { AdminApi } from '../../../shared/api/admin'
 import { AuthApi } from '../../../shared/api/auth'
-import type { Node, UpdateNodeArgs, GetNodesArgs } from '../../../types/adminApi'
+import { getNodeInstallScript } from '../../../shared/api/nodeDonate'
+import type { Node, UpdateNodeArgs, GetNodesArgs, Product } from '../../../types/adminApi'
 
 const message = useMessage()
 const loading = ref(false)
@@ -176,6 +261,16 @@ const submitting = ref(false)
 const nodes = ref<Node[]>([])
 const showAddModal = ref(false)
 const formRef = ref<FormInst | null>(null)
+const showDashboardTipModal = ref(false)
+const currentDashboardNode = ref<Node | null>(null)
+
+// 安装脚本相关变量
+const scriptSystem = ref<string>('linux')
+const scriptArch = ref<string>('')
+const scriptUrl = ref<string>('')
+const generatingScript = ref(false)
+const loadingArchs = ref(false)
+const products = ref<Product[]>([])
 
 const searchKeyword = ref('')
 const selectedOnline = ref<string | null>(null)
@@ -516,6 +611,11 @@ const handleEdit = (row: Node) => {
     allowType: row.allowType.split(';')
   }
   showEditModal.value = true
+
+  // 重置脚本相关状态
+  scriptSystem.value = 'linux'
+  scriptArch.value = ''
+  scriptUrl.value = ''
 }
 
 const handleEditSubmit = () => {
@@ -670,6 +770,13 @@ const dropdownOptions = (row: Node): DropdownOption[] => [
     icon: () => h(NIcon, null, { default: () => h(CreateOutline) })
   },
   {
+    label: '管理面板',
+    key: 'dashboard',
+    disabled: !(row as any).isOnline,
+    type: 'info',
+    icon: () => h(NIcon, null, { default: () => h(AppsOutline) })
+  },
+  {
     label: row.isDisabled ? '启用' : '禁用',
     key: 'toggle',
     disabled: false,
@@ -689,6 +796,9 @@ const handleSelect = (key: string, row: Node) => {
   switch (key) {
     case 'edit':
       handleEdit(row)
+      break
+    case 'dashboard':
+      openDashboard(row)
       break
     case 'toggle':
       currentNode.value = row
@@ -755,7 +865,232 @@ const loadData = () => {
   fetchUserGroups()
 }
 
+// 系统类型选项
+const systemOptions: SelectOption[] = [
+  { label: 'Linux', value: 'linux' },
+  { label: 'Windows', value: 'windows' }
+]
+
+// 根据系统类型计算可用的架构选项
+const archOptions = computed(() => {
+  const system = scriptSystem.value
+
+  // 过滤出MEFrps产品，并且系统类型匹配
+  const filteredProducts = products.value.filter(p =>
+    p.productId.includes('MEFrp_Next') &&
+    p.system.includes(system)
+  )
+
+  if (filteredProducts.length === 0) {
+    return []
+  }
+
+  // 参考 NodeDonate.vue 的处理方式，从 arch 字段中提取架构信息
+  // 架构格式：windows:386/amd64/arm/arm64|darwin:amd64/arm64|linux:386/amd64/arm/arm64|android:arm64
+  const archMap = new Map()
+
+  filteredProducts.forEach(product => {
+    if (!product.arch) return
+
+    product.arch.split('|').forEach(item => {
+      const [sys, archs] = item.split(':')
+      if (sys === system) {
+        archMap.set(sys, archs.split('/'))
+      }
+    })
+  })
+
+  // 获取当前系统的架构列表
+  const archs = archMap.get(system) || []
+
+  // 转换为选项格式
+  return archs.map(arch => {
+    let label = arch
+
+    // 为常见架构添加友好名称
+    if (arch === 'x86_64') label = 'x86_64 (64 位)'
+    else if (arch === 'amd64') label = 'amd64 (64 位)'
+    else if (arch === 'i386') label = 'i386 (32 位)'
+    else if (arch === '386') label = '386 (32 位)'
+    else if (arch === 'arm64') label = 'arm64 (ARM64)'
+    else if (arch === 'armv7') label = 'armv7 (ARM)'
+    else if (arch === 'arm') label = 'arm (ARM)'
+
+    return { label, value: arch }
+  })
+})
+
+// 监听系统类型变化，自动选择第一个架构
+watch(() => scriptSystem.value, (_newSystem) => {
+  // 使用计算属性中的逻辑获取架构选项
+  const options = archOptions.value
+
+  if (options.length > 0) {
+    scriptArch.value = options[0].value
+  } else {
+    scriptArch.value = ''
+  }
+})
+
+// 获取系统架构信息
+const fetchProducts = async () => {
+  loadingArchs.value = true
+  try {
+    const res = await AuthApi.getProducts()
+    if (res.data.code === 200) {
+      products.value = res.data.data || []
+
+      // 设置默认架构
+      setTimeout(() => {
+        const options = archOptions.value
+        if (options.length > 0) {
+          scriptArch.value = options[0].value
+        }
+      }, 0)
+    } else {
+      message.error(res.data.message || '获取产品信息失败')
+    }
+  } catch (error) {
+    console.error(error)
+    message.error('获取产品信息失败，请稍后重试')
+  } finally {
+    loadingArchs.value = false
+  }
+}
+
+// 生成安装脚本
+const generateScript = async () => {
+  if (!editingNode.value || !scriptSystem.value || !scriptArch.value) {
+    message.warning('请选择系统类型和架构')
+    return
+  }
+
+  try {
+    generatingScript.value = true
+    const response = await getNodeInstallScript({
+      nodeId: String(editingNode.value.nodeId),
+      system: scriptSystem.value as 'linux' | 'windows',
+      arch: scriptArch.value
+    })
+
+    if (response.data.code === 200) {
+      scriptUrl.value = response.data.data.downloadUrl
+      message.success('安装脚本生成成功')
+    } else {
+      message.error(response.data.message || '生成安装脚本失败')
+    }
+  } catch (error: any) {
+    message.error(error?.response?.data?.message || '生成安装脚本失败')
+  } finally {
+    generatingScript.value = false
+  }
+}
+
+// 复制脚本链接
+const copyScriptUrl = () => {
+  if (!scriptUrl.value) {
+    message.warning('没有可复制的脚本链接')
+    return
+  }
+
+  navigator.clipboard.writeText(scriptUrl.value)
+    .then(() => {
+      message.success('脚本下载链接已复制到剪贴板')
+    })
+    .catch(() => {
+      message.error('复制失败，请手动复制')
+    })
+}
+
+// 获取一键安装命令
+const getInstallCommand = computed(() => {
+  if (!scriptUrl.value) {
+    return ''
+  }
+
+  const downloadUrl = scriptUrl.value
+
+  if (scriptSystem.value === 'linux') {
+    return `wget -O install.sh "${downloadUrl}" && chmod +x install.sh && bash install.sh`
+  } else {
+    // Windows PowerShell命令，使用Set-ExecutionPolicy绕过执行策略限制
+    return `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iwr -useb "${downloadUrl}" | iex`
+  }
+})
+
+// 复制安装命令到剪贴板
+const copyInstallCommand = () => {
+  if (!getInstallCommand.value) {
+    message.warning('请先生成脚本')
+    return
+  }
+
+  try {
+    navigator.clipboard.writeText(getInstallCommand.value)
+    message.success('安装命令已复制到剪贴板')
+  } catch (error) {
+    message.error('复制失败，请手动复制')
+    console.error('复制安装命令错误:', error)
+  }
+}
+
+// 打开frps管理面板
+const openDashboard = (node: Node) => {
+  if (!(node as any).isOnline) {
+    message.warning('节点离线，无法访问管理面板')
+    return
+  }
+
+  currentDashboardNode.value = node
+  showDashboardTipModal.value = true
+}
+
+// 复制管理员用户名
+const copyAdminUsername = () => {
+  navigator.clipboard.writeText('admin')
+    .then(() => {
+      message.success('用户名已复制到剪贴板')
+    })
+    .catch(() => {
+      message.error('复制失败，请手动复制')
+    })
+}
+
+// 复制管理员密码
+const copyAdminPassword = () => {
+  if (!currentDashboardNode.value) return
+
+  navigator.clipboard.writeText(currentDashboardNode.value.adminPass)
+    .then(() => {
+      message.success('密码已复制到剪贴板')
+    })
+    .catch(() => {
+      message.error('复制失败，请手动复制')
+    })
+}
+
+// 确认打开管理面板
+const confirmOpenDashboard = () => {
+  if (!currentDashboardNode.value) return
+
+  // 构建URL
+  const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:'
+  const username = 'admin' // frps的默认用户名是admin
+  const password = currentDashboardNode.value.adminPass // 使用节点配置的管理密码
+
+  // 构建带有Basic Auth的URL (用户名:密码@主机:端口)
+  const dashboardUrl = `${protocol}//${encodeURIComponent(username)}:${encodeURIComponent(password)}@${currentDashboardNode.value.hostname}:${currentDashboardNode.value.adminPort}`
+
+  console.log(dashboardUrl)
+  // 打开新窗口
+  window.open(dashboardUrl, '_blank')
+
+  // 关闭提示模态框
+  showDashboardTipModal.value = false
+}
+
 // 在组件挂载时获取用户组列表
 fetchUserGroups()
 fetchNodes()
+fetchProducts()
 </script>
