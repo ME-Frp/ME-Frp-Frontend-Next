@@ -3,8 +3,43 @@
     <NCard title="个人中心" class="info-card">
       <UserInfoGrid />
     </NCard>
-    <NCard title="实名认证" class="security-card" style="user-select: none">
-      <div class="security-item">
+    <NCard title="流量历史记录" class="traffic-card">
+      <div v-if="trafficLoading" class="loading-container">
+        <NSpin size="large" />
+      </div>
+      <div v-else-if="trafficError" class="error-container">
+        <NResult status="error" title="获取流量数据失败" :description="trafficError">
+          <template #footer>
+            <NButton @click="loadTrafficStats">重试</NButton>
+          </template>
+        </NResult>
+      </div>
+      <div v-else-if="!trafficStats || !trafficStats.dates || trafficStats.dates.length === 0" class="empty-container">
+        <NEmpty description="暂无流量数据" />
+      </div>
+      <div v-else>
+        <div class="traffic-summary">
+          <div class="summary-item">
+            <div class="summary-label">今日总流量</div>
+            <div class="summary-value">{{ formatBytes(todayTotalTraffic) }}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">今日上传</div>
+            <div class="summary-value">{{ formatBytes(todayTrafficOut) }}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">今日下载</div>
+            <div class="summary-value">{{ formatBytes(todayTrafficIn) }}</div>
+          </div>
+        </div>
+        <div ref="trafficChartRef" class="traffic-chart"></div>
+      </div>
+    </NCard>
+    <NCard title="账户与安全" class="security-card">
+      <div class="security-item" style="user-select: none">
+        <div class="security-label">
+          <span>实名认证</span>
+        </div>
         <div class="security-desc">
           实名认证后可获得更多权限，包括更高的带宽限制和更多的节点使用权限。<br>
           注意：实名认证信息将会使用 RSA 加密存储, 一旦认证成功, 将被安全存储。<br>
@@ -21,8 +56,7 @@
           </NSpace>
         </div>
       </div>
-    </NCard>
-    <NCard title="账户与安全" class="security-card">
+      <NDivider />
       <div class="security-item" style="user-select: none">
         <div class="security-label">
           <span>账户密码</span>
@@ -181,7 +215,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import {
   NCard,
   NButton,
@@ -196,13 +230,16 @@ import {
   NText,
   NTag,
   NEmpty,
-  NPopconfirm
+  NPopconfirm,
+  NSpin,
+  NResult
 } from 'naive-ui'
 import { RefreshOutline, CopyOutline, KeyOutline, TrashOutline, AddOutline } from '@vicons/ionicons5'
 import type { FormInst } from 'naive-ui'
 import UserInfoGrid from '../../components/UserInfoGrid.vue'
 import { AuthApi } from '../../shared/api/auth'
-import { IcpDomain } from '../../types'
+import { IcpDomain, UserTrafficStats } from '../../types'
+import * as echarts from 'echarts'
 
 const message = useMessage()
 const showTokenResetModal = ref(false)
@@ -481,9 +518,176 @@ const handleRealnameSubmit = () => {
   })
 }
 
+// 流量历史记录相关
+const trafficChartRef = ref<HTMLElement | null>(null)
+const trafficStats = ref<UserTrafficStats | null>(null)
+const trafficLoading = ref(true)
+const trafficError = ref<string | null>(null)
+let trafficChart: echarts.ECharts | null = null
+
+const todayTrafficIn = computed(() => {
+  if (!trafficStats.value || !trafficStats.value.trafficIn || trafficStats.value.trafficIn.length === 0) {
+    return 0
+  }
+  // 获取最后一天的流量数据（字节单位）
+  return trafficStats.value.trafficIn[trafficStats.value.trafficIn.length - 1]
+})
+
+const todayTrafficOut = computed(() => {
+  if (!trafficStats.value || !trafficStats.value.trafficOut || trafficStats.value.trafficOut.length === 0) {
+    return 0
+  }
+  // 获取最后一天的流量数据（字节单位）
+  return trafficStats.value.trafficOut[trafficStats.value.trafficOut.length - 1]
+})
+
+const todayTotalTraffic = computed(() => {
+  // 直接相加字节单位的数值
+  return todayTrafficIn.value + todayTrafficOut.value
+})
+
+// 格式化流量数据显示，统一使用GB为单位
+const formatBytes = (bytes: number) => {
+  if (bytes === 0) return '0 GB'
+  // 转换字节为GB
+  const gb = bytes / (1024 * 1024 * 1024)
+  return gb.toFixed(2) + ' GB'
+}
+
+// 加载流量统计数据
+const loadTrafficStats = async () => {
+  trafficLoading.value = true
+  trafficError.value = null
+  
+  try {
+    const response = await AuthApi.getUserTrafficStats()
+    if (response.data.code === 200) {
+      trafficStats.value = response.data.data
+      
+      // 下一帧更新图表
+      setTimeout(() => {
+        initTrafficChart()
+      }, 0)
+    } else {
+      trafficError.value = response.data.message || '获取流量统计数据失败'
+    }
+  } catch (error: any) {
+    trafficError.value = error?.response?.data?.message || '获取流量统计数据失败'
+  } finally {
+    trafficLoading.value = false
+  }
+}
+
+// 初始化流量图表
+const initTrafficChart = () => {
+  if (!trafficChartRef.value || !trafficStats.value) return
+  
+  if (trafficChart) {
+    trafficChart.dispose()
+  }
+  
+  trafficChart = echarts.init(trafficChartRef.value)
+  
+  // 将字节数据转换为GB单位
+  const chartData = {
+    dates: trafficStats.value.dates,
+    trafficIn: trafficStats.value.trafficIn.map((bytes: number) => bytes / (1024 * 1024 * 1024)),
+    trafficOut: trafficStats.value.trafficOut.map((bytes: number) => bytes / (1024 * 1024 * 1024)),
+    totalTraffic: trafficStats.value.totalTraffic.map((bytes: number) => bytes / (1024 * 1024 * 1024))
+  }
+  
+  // 准备图表数据
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      formatter: function(params: any) {
+        let result = `${params[0].axisValue}<br/>`
+        params.forEach((item: any) => {
+          // 值已转换为GB单位
+          result += `${item.seriesName}: ${item.value.toFixed(2)} GB<br/>`
+        })
+        return result
+      }
+    },
+    legend: {
+      data: ['上传流量', '下载流量', '总流量']
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: chartData.dates
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: function(value: number) {
+          // 值已转换为GB单位
+          return value.toFixed(2) + ' GB'
+        }
+      }
+    },
+    series: [
+      {
+        name: '上传流量',
+        type: 'line',
+        areaStyle: { opacity: 0.3 },
+        data: chartData.trafficOut,
+        smooth: true,
+        lineStyle: { width: 2 },
+        itemStyle: { color: '#18a058' }
+      },
+      {
+        name: '下载流量',
+        type: 'line',
+        areaStyle: { opacity: 0.3 },
+        data: chartData.trafficIn,
+        smooth: true,
+        lineStyle: { width: 2 },
+        itemStyle: { color: '#2080f0' }
+      },
+      {
+        name: '总流量',
+        type: 'line',
+        areaStyle: { opacity: 0.3 },
+        data: chartData.totalTraffic,
+        smooth: true,
+        lineStyle: { width: 2 },
+        itemStyle: { color: '#f0a020' }
+      }
+    ]
+  }
+  
+  trafficChart.setOption(option)
+  
+  // 响应窗口大小变化
+  window.addEventListener('resize', handleResize)
+}
+
+const handleResize = () => {
+  if (trafficChart) {
+    trafficChart.resize()
+  }
+}
+
 onMounted(() => {
   loadIcpDomains()
   loadRealnameStatus()
+  loadTrafficStats()
+})
+
+onBeforeUnmount(() => {
+  // 清理图表实例和事件监听器
+  if (trafficChart) {
+    trafficChart.dispose()
+    trafficChart = null
+  }
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 

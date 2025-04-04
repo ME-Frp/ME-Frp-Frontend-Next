@@ -5,6 +5,52 @@
     margin-bottom: 16px;
   }
 
+  .traffic-card {
+    margin-bottom: 16px;
+
+    .loading-container,
+    .error-container,
+    .empty-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+    }
+
+    .traffic-summary {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      border-radius: 4px;
+      background-color: $bg-color-hover;
+      padding: 16px;
+
+      .summary-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+
+        .summary-label {
+          font-size: 14px;
+          color: $text-color-2;
+          margin-bottom: 8px;
+        }
+
+        .summary-value {
+          font-size: 18px;
+          font-weight: bold;
+          color: $text-color;
+        }
+      }
+    }
+
+    .traffic-chart {
+      height: 300px;
+      margin-top: 16px;
+    }
+  }
+
   .security-card {
     margin-bottom: 16px;
 

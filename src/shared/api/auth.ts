@@ -1,15 +1,7 @@
 import baseApi from './config';
 import type { ApiResponse } from './config';
-import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData, UserNodeName, NodeUsage, IcpDomain, DownloadSource, GetNodeFreePortArgs } from '../../types';
-import type { Product } from '../../types/adminApi';
+import type { UserInfo, UserNode, Proxy, UpdateProxyArgs, CreateProxyArgs, GetUserGroupsData, UserNodeName, NodeUsage, IcpDomain, DownloadSource, GetNodeFreePortArgs, UserTrafficStats, RealnameInfo, Product } from '../../types';
 
-// 在 UserInfo 类型中添加实名信息接口
-interface RealnameInfo {
-  realname: string;
-  idCard: string;
-  time: number;
-  status: number;
-}
 
 export const AuthApi = {
     // 获取公告
@@ -140,7 +132,13 @@ export const AuthApi = {
     generateProxyConfig: (data: { proxyId: number, format: 'toml' | 'ini' | 'json' | 'yml' }) => {
         return baseApi.post<ApiResponse<{ config: string, type: string }>>('/auth/proxy/config', data);
     },
+
+    // 获取用户流量统计
+    getUserTrafficStats: () => {
+        return baseApi.get<ApiResponse<UserTrafficStats>>('/auth/user/trafficStats');
+    },
 };
 
 export type { RealnameInfo };
+export type { UserTrafficStats };
 export default AuthApi;

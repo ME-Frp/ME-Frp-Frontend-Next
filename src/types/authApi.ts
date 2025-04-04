@@ -13,8 +13,22 @@ export interface UserInfo {
   email: string
   status: number
   todaySigned: boolean
+  token?: string
 }
 
+export interface RealnameInfo {
+  realname: string;
+  idCard: string;
+  time: number;
+  status: number;
+}
+
+export interface UserTrafficStats {
+  dates: string[];
+  trafficIn: number[];
+  trafficOut: number[];
+  totalTraffic: number[];
+}
 export interface UserNode {
   nodeId: number;
   name: string;
