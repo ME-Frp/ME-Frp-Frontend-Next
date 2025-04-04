@@ -52,14 +52,14 @@
                 </div>
                 <NText depth="3" style="font-size: 13px;">{{ node.description }}</NText>
                 <NSpace vertical size="small">
-                  <div class="info-item">
+                  <!-- <div class="info-item">
                     <span class="label">用户组:</span>
                     <NSpace>
                       <NTag v-for="group in node.allowGroups" :key="group.name" size="small" type="info">
                         {{ group.friendlyName }}
                       </NTag>
                     </NSpace>
-                  </div>
+                  </div> -->
                   <div class="info-item">
                     <span class="label">支持协议:</span>
                     <NSpace>
