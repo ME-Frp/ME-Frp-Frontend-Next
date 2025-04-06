@@ -5,12 +5,12 @@
         <div class="contact-intro">
           <p>如有任何问题或建议，欢迎通过以下方式与我们联系。我们会尽快回复您的询问。</p>
         </div>
-        
+
         <n-divider />
-        
+
         <h3 class="section-title">联系方式</h3>
         <div class="contact-cards">
-          <n-card title="官方QQ群" class="contact-card">
+          <n-card title="官方 QQ 群" class="contact-card">
             <n-space vertical :size="8">
               <div class="contact-label">
                 <n-tag type="success" size="small">推荐</n-tag>
@@ -24,7 +24,7 @@
               </div>
             </n-space>
           </n-card>
-          
+
           <n-card title="用户支持邮箱" class="contact-card">
             <n-space vertical :size="8">
               <div class="contact-label">
@@ -40,7 +40,30 @@
             </n-space>
           </n-card>
         </div>
-        
+
+        <div class="contact-cards">
+          <n-card title="企业微信群（用微信加入）" class="contact-card">
+            <n-space vertical :size="8">
+              <div class="contact-label">
+                <n-tag type="success" size="small">推荐</n-tag>
+                <span>快速响应</span>
+              </div>
+              <div class="contact-value">
+                <img src="https://resources.mefrp.com/d/ME-Frp/Local/Others/wxwork.jpg" alt="企业微信群"
+                  style="max-width: 90%;">
+              </div>
+              <div class="contact-desc">
+                <p>加入我们的用户交流群，获取实时帮助</p>
+                <div class="contact-value">
+                  可尝试使用链接：<a
+                    href="https://work.weixin.qq.com/apph5/external_room/join/group_mng?plg_id=dcff145c51cfbbb3dd38bbff87c9fa99&"
+                    target="_blank">点击此处</a>
+                </div>
+              </div>
+            </n-space>
+          </n-card>
+        </div>
+
         <div class="contact-note">
           <p>我们的工作人员会尽快回复您的问题。如需技术支持，请提供详细的问题描述和系统环境信息，以便我们更好地为您提供帮助。</p>
         </div>
@@ -71,7 +94,7 @@ import { NCard, NTag, NSpace, NDivider } from 'naive-ui'
 
 .contact-intro {
   margin-bottom: 20px;
-  
+
   p {
     font-size: 16px;
     line-height: 1.6;
@@ -90,7 +113,7 @@ import { NCard, NTag, NSpace, NDivider } from 'naive-ui'
   display: flex;
   gap: 20px;
   margin-bottom: 30px;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -105,7 +128,7 @@ import { NCard, NTag, NSpace, NDivider } from 'naive-ui'
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   span {
     font-size: 14px;
     color: var(--n-text-color-2);
@@ -115,11 +138,11 @@ import { NCard, NTag, NSpace, NDivider } from 'naive-ui'
 .contact-value {
   font-size: 16px;
   font-weight: 500;
-  
+
   a {
     color: var(--n-primary-color);
     text-decoration: none;
-    
+
     &:hover {
       text-decoration: underline;
     }
@@ -128,7 +151,7 @@ import { NCard, NTag, NSpace, NDivider } from 'naive-ui'
 
 .contact-desc {
   margin-top: 5px;
-  
+
   p {
     font-size: 14px;
     color: var(--n-text-color-3);
@@ -140,7 +163,7 @@ import { NCard, NTag, NSpace, NDivider } from 'naive-ui'
   margin-top: 20px;
   padding: 15px;
   background-color: var(--n-color-hover);
-  
+
   p {
     margin: 0;
     font-size: 14px;

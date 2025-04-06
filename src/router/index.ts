@@ -253,6 +253,27 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '隐私政策' }
   },
   {
+    path: '/docs',
+    name: 'Documentation',
+    component: () => import('../views/Docs.vue'),
+    redirect: '/docs/readme',
+    meta: { title: '使用文档' },
+    children: [
+      {
+        path: 'test',
+        name: 'docs-test',
+        component: () => import('../views/DocPage.vue'),
+        meta: { title: '测试' }
+      },
+      {
+        path: 'readme',
+        name: 'docs-readme',
+        component: () => import('../views/DocPage.vue'),
+        meta: { title: 'ME Frp 简介' }
+      },
+    ]
+  },
+  {
     path: '/contact',
     name: 'Contact',
     component: () => import('../views/Contact.vue'),
@@ -304,6 +325,10 @@ router.beforeEach((to, _from) => {
     document.title = '找回 ME Frp 账户'
   } else {
     document.title = `${to.meta.title} | ME Frp 5.0 管理面板`
+  }
+
+  if (to.path.startsWith('/docs')) {
+    document.title = `${to.meta.title} | ME Frp 5.0 使用文档`
   }
 
   if (!window.$loadingBar) return true

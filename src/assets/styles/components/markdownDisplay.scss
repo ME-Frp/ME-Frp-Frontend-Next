@@ -1,0 +1,625 @@
+@use '../variables' as *;
+
+img {
+  max-height: 300px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.markdown-container {
+
+  width: 100%;
+  text-align: left;
+  font-family: -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  Oxygen,
+  Ubuntu,
+  Cantarell,
+  'Fira Sans',
+  'Droid Sans',
+  'Helvetica Neue',
+  sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: $text-color;
+  word-wrap: break-word;
+
+  // 为所有可能成为锚点目标的元素添加滚动边距
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    scroll-margin-top: 70px; // 桌面端默认偏移
+  }
+
+  // 确保段落有合适的间距
+  p {
+    margin-bottom: 16px;
+    margin-top: 16px;
+    white-space: pre-wrap;
+  }
+
+  // 确保列表项有合适的间距
+  ul,
+  ol {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    padding-left: 2em;
+
+    li {
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+    position: relative;
+  }
+
+  h1 {
+    font-size: 2em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid rgba(150, 150, 150, 0.4);
+  }
+
+  h2 {
+    font-size: 1.5em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid rgba(150, 150, 150, 0.4);
+  }
+
+  a {
+    color: $primary-color;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.2s ease;
+
+    &:hover {
+      text-decoration: none;
+      color: $primary-color;
+
+      &::after {
+        width: 100%;
+      }
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background-color: $primary-color;
+      transition: width 0.3s ease;
+    }
+  }
+
+  /* 确保特定组件中的链接不使用下划线效果 */
+  .code-header a,
+  .n-code-fallback a,
+  .n-code-mount-point a {
+    &::after {
+      display: none !important;
+    }
+
+    &:hover::after {
+      display: none !important;
+      width: 0 !important;
+    }
+  }
+
+  .header-anchor {
+    font-size: 0.85em;
+    float: left;
+    margin-left: -0.68em;
+    padding-right: 0.23em;
+    margin-top: 0.125em;
+    opacity: 0.2;
+    text-decoration: none;
+    border-bottom: none !important;
+    transition: all 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1.2);
+      color: $primary-color;
+    }
+
+    &::after {
+      display: none;
+    }
+  }
+
+  h1:hover,
+  h2:hover,
+  h3:hover,
+  h4:hover,
+  h5:hover,
+  h6:hover {
+    .header-anchor {
+      opacity: 0.7;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  blockquote {
+    padding: 0 1em;
+    margin-left: 0;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    color: $text-color;
+    border-left: 0.25em solid #dfe2e5;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
+  }
+
+  // 内联代码样式
+  .inline-code {
+    padding: 0.2em 0.4em;
+    margin: 0 0.2em;
+    font-size: 85%;
+    background-color: rgba(175, 184, 193, 0.2);
+    border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: var(--inline-code-color, #d56161);
+  }
+
+  .dark-theme .inline-code {
+    background-color: rgba(110, 118, 129, 0.4);
+    color: var(--inline-code-dark-color, #ff9292);
+  }
+
+  // 确保pre>code块不受内联代码样式影响
+  pre>code {
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    background-color: transparent;
+  }
+
+  // 代码块相关样式 - 开始
+  .n-code-fallback {
+    position: relative;
+    margin: 16px 0;
+    padding: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: none;
+    /* 始终使用深色主题的边框色 */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.2s ease;
+    /* 始终使用深色主题的背景色 */
+    background-color: #1e1e1e;
+  }
+
+  .dark-theme .n-code-fallback {
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+    background-color: #1e1e1e;
+  }
+
+  .n-code-fallback:hover {
+    box-shadow: none;
+  }
+
+  .dark-theme .n-code-fallback:hover {
+    box-shadow: none;
+  }
+
+  .n-code-mount-point {
+    margin: 16px 0;
+    border-radius: 6px;
+    overflow: hidden;
+    /* 移除阴影效果 */
+    box-shadow: none;
+    transition: all 0.2s ease;
+  }
+
+  .dark-theme .n-code-mount-point {
+    box-shadow: none;
+  }
+
+  .n-code-mount-point:hover {
+    box-shadow: none;
+  }
+
+  .dark-theme .n-code-mount-point:hover {
+    box-shadow: none;
+  }
+
+  /* 修复代码块头部的链接样式问题 */
+  .code-header * {
+    &::after {
+      /* 禁用任何可能继承的::after */
+      display: none !important;
+    }
+  }
+
+  /* 代码块头部样式 */
+  .code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    /* 始终使用深色主题的头部背景 */
+    background-color: rgba(255, 255, 255, 0.03);
+    user-select: none;
+    /* 始终使用深色主题的边框色 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .dark-theme .code-header {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  /* 语言标签样式 */
+  .language-tag {
+    font-size: 12px;
+    /* 始终使用深色主题的文本颜色 */
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    /* 确保有相对定位 */
+  }
+
+  .language-tag::after {
+    display: none !important;
+    /* 确保没有after伪元素 */
+  }
+
+  .dark-theme .language-tag {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  /* 动作按钮基本样式 */
+  .action-button {
+    background-color: transparent;
+    /* 使用深色主题的边框 */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    /* 使用深色主题的文本色 */
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 3px;
+    padding: 2px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+    line-height: 1.5;
+    position: relative;
+    /* 确保有相对定位 */
+  }
+
+  .action-button::after {
+    display: none !important;
+    /* 确保没有after伪元素 */
+  }
+
+  .action-button.copied {
+    background-color: #059669;
+    color: white;
+    border-color: #047857;
+  }
+
+  .dark-theme .action-button.copied {
+    background-color: #059669;
+    border-color: #047857;
+  }
+
+  .dark-theme .action-button {
+    border-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .action-button:hover {
+    /* 始终使用深色主题的悬停样式 */
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .dark-theme .action-button:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* 代码内容区域 */
+  .code-content {
+    margin: 0;
+    padding: 12px 10px;
+    overflow: auto;
+    /* 始终使用深色主题的文本色 */
+    color: rgba(255, 255, 255, 0.85);
+    font-family: ui-monospace, SFMono-Regular, Monaco, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+    /* 始终使用深色主题的背景色 */
+    background-color: #1e1e1e;
+  }
+
+  .dark-theme .code-content {
+    background-color: #1e1e1e;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  // 代码块相关样式 - 结束
+
+  // 其他内联样式
+  br {
+    display: block;
+    content: "";
+    margin-top: 0.5em;
+  }
+
+  :not(pre)>code {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+    font-size: 0.9em;
+    padding: 0.2em 0.4em;
+    color: #d56161;
+  }
+}
+
+// 图片模态框样式
+.modal-image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .modal-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+}
+
+// 代码块封装样式
+.n-code-wrapper {
+  margin: 16px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: transparent;
+  box-shadow: none;
+  transition: $transition-all;
+
+  &:hover {
+    box-shadow: none;
+  }
+}
+
+// naive-ui 组件样式
+.naive-alert-wrapper {
+  margin: 16px 0;
+  box-shadow: $box-shadow;
+  transition: $transition-all;
+
+  &:hover {
+    box-shadow: $box-shadow-hover;
+  }
+
+  .n-alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    display: flex;
+    align-items: flex-start;
+
+    &--success {
+      background-color: rgba(24, 160, 88, 0.1);
+      border-left: 4px solid #18a058;
+    }
+
+    &--warning {
+      background-color: rgba(240, 160, 32, 0.1);
+      border-left: 4px solid #f0a020;
+    }
+
+    &--error {
+      background-color: rgba(208, 48, 80, 0.1);
+      border-left: 4px solid #d03050;
+    }
+
+    &--info {
+      background-color: rgba(32, 128, 240, 0.1);
+      border-left: 4px solid #2080f0;
+    }
+
+    .n-alert-icon {
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .n-alert-content {
+      flex: 1;
+    }
+
+    .n-alert-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .n-alert-body {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+  }
+}
+
+.img-wrapper {
+  margin: 16px 0;
+  display: inline-block;
+  max-width: 100%;
+  box-shadow: $box-shadow;
+  transition: $transition-all;
+  border-radius: 4px;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: $box-shadow-hover;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.01);
+    }
+  }
+}
+
+.error {
+  color: var(--error-color, #d03050);
+  text-align: center;
+  padding: 20px;
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+  .markdown-container {
+    font-size: 14px;
+
+    // 移动端增加锚点定位偏移量，考虑submenu的48px高度
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      scroll-margin-top: 118px; // 70px + 48px = 118px
+    }
+  }
+
+  .header-anchor {
+    margin-left: -1em;
+
+    &:hover {
+      transform: scale(1.15);
+    }
+  }
+
+  .n-code-wrapper {
+    .code-content {
+      .line-numbers {
+        padding: 16px 4px 16px 8px;
+        min-width: 32px;
+      }
+
+      pre {
+        padding: 16px 8px;
+
+        code {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+// 代码高亮样式
+.hljs {
+  display: block;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-doctag,
+.hljs-title,
+.hljs-section,
+.hljs-type,
+.hljs-name,
+.hljs-strong {
+  color: #569cd6;
+  font-weight: bold;
+}
+
+.hljs-string,
+.hljs-built_in,
+.hljs-attr,
+.hljs-attribute {
+  color: #ce9178;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition,
+.hljs-variable,
+.hljs-template-tag,
+.hljs-template-variable {
+  color: #b5cea8;
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-deletion {
+  color: #6a9955;
+  font-style: italic;
+}
+
+.hljs-number,
+.hljs-regexp,
+.hljs-literal,
+.hljs-link {
+  color: #d16969;
+}
+
+.hljs-meta {
+  color: #9cdcfe;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-tag {
+  color: #569cd6;
+}
+
+.hljs-attr {
+  color: #9cdcfe;
+}
+
+.hljs-params {
+  color: #d4d4d4;
+}

@@ -1,11 +1,11 @@
 <template>
-  <HomeMenu v-if="!isDashboard" />
+  <HomeMenu v-if="!isDashboard && !isDocs" />
   <RouterView v-slot="{ Component }">
     <transition name="fade" mode="out-in" appear>
       <component :is="Component" />
     </transition>
   </RouterView>
-  <HomeFooter v-if="!isDashboard" />
+  <HomeFooter v-if="!isDashboard && !isDocs" />
   <NGlobalStyle />
 </template>
 
@@ -22,6 +22,7 @@ declare const window: Window
 
 const route = useRoute()
 const isDashboard = computed(() => route.path.startsWith('/dashboard'))
+const isDocs = computed(() => route.path.startsWith('/docs'))
 
 // 初始化全局UI组件
 onMounted(() => {

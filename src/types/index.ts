@@ -18,4 +18,7 @@ export interface Window extends globalThis.Window {
   $message?: any
   $dialog?: any
   $notification?: any
+  $naive?: any
+  __tableParsingTested?: boolean
+  __manualTableTested?: boolean
 }
