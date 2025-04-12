@@ -12,7 +12,6 @@ import { NMenu, NIcon } from 'naive-ui'
 import type { MenuOption } from 'naive-ui'
 import {
   AlertCircleOutline,
-  BookOutline,
   BugOutline,
   RocketOutline,
 } from '@vicons/ionicons5'
