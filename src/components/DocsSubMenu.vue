@@ -42,7 +42,7 @@ import { PropType } from 'vue'
 
 // 路由排序
 const docRoutes = [
-  'readme',
+  // 'readme',
   'safety',
   'usage/common',
   'usage/fnnas',

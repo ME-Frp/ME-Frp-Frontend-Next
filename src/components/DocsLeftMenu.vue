@@ -33,11 +33,12 @@ const activeKey = computed(() => {
 
 // 菜单项配置
 const menuOptions = computed<MenuOption[]>(() => [
+  // {
+  //   label: 'ME Frp 简介',
+  //   key: 'readme',
+  //   icon: renderIcon(BookOutline),
+  // },
   {
-    label: 'ME Frp 简介',
-    key: 'readme',
-    icon: renderIcon(BookOutline),
-  }, {
     label: '安全提醒',
     key: 'safety',
     icon: renderIcon(AlertCircleOutline),
