@@ -1,13 +1,7 @@
 <template>
   <div class="menu-container">
-    <NMenu
-      :value="activeKey"
-      :options="menuOptions"
-      :indent="18"
-      :collapsed-width="64"
-      :collapsed-icon-size="22"
-      @update:value="handleMenuClick"
-    />
+    <NMenu :value="activeKey" :options="menuOptions" :indent="18" :collapsed-width="64" :collapsed-icon-size="22"
+      @update:value="handleMenuClick" />
   </div>
 </template>
 
@@ -17,15 +11,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { NMenu, NIcon } from 'naive-ui'
 import type { MenuOption } from 'naive-ui'
 import {
-  BookOutline,
-  RocketOutline,
-  DownloadOutline,
-  DocumentTextOutline,
-  CubeOutline,
-  SettingsOutline,
-  HelpCircleOutline,
   AlertCircleOutline,
+  BookOutline,
   BugOutline,
+  RocketOutline,
 } from '@vicons/ionicons5'
 
 
@@ -48,6 +37,25 @@ const menuOptions = computed<MenuOption[]>(() => [
     label: 'ME Frp 简介',
     key: 'readme',
     icon: renderIcon(BookOutline),
+  }, {
+    label: '安全提醒',
+    key: 'safety',
+    icon: renderIcon(AlertCircleOutline),
+  },
+  {
+    label: '启动隧道教程',
+    key: 'usage',
+    icon: renderIcon(RocketOutline),
+    children: [
+      {
+        label: '通用客户端',
+        key: 'usage/common',
+      },
+      {
+        label: 'fnOS 飞牛私有云',
+        key: 'usage/fnnas',
+      },
+    ]
   },
   {
     label: '测试',
@@ -68,7 +76,7 @@ function handleMenuClick(key: string) {
   } else {
     router.push(`/docs/${key}`)
   }
-  
+
   emit('menu-click')
 }
 </script>
@@ -78,4 +86,4 @@ function handleMenuClick(key: string) {
   height: 100%;
   overflow-y: auto;
 }
-</style> 
+</style>

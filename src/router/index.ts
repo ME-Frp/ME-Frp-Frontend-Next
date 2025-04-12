@@ -117,12 +117,6 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '个人中心' }
       },
       {
-        path: 'cash',
-        name: 'cash',
-        component: () => import('../views/dashboard/Cash.vue'),
-        meta: { title: '增值服务' }
-      },
-      {
         path: 'about',
         name: 'about',
         component: () => import('../views/dashboard/About.vue'),
@@ -141,6 +135,12 @@ const routes: RouteRecordRaw[] = [
               title: '节点捐赠',
               requiresAuth: true
             }
+          },
+          {
+            path: 'cash',
+            name: 'more-cash',
+            component: () => import('../views/dashboard/Cash.vue'),
+            meta: { title: '增值服务' }
           },
           // {
           //   path: 'nodes',
@@ -260,16 +260,34 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '使用文档' },
     children: [
       {
-        path: 'test',
-        name: 'docs-test',
-        component: () => import('../views/DocPage.vue'),
-        meta: { title: '测试' }
-      },
-      {
         path: 'readme',
         name: 'docs-readme',
         component: () => import('../views/DocPage.vue'),
         meta: { title: 'ME Frp 简介' }
+      },
+      {
+        path: 'safety',
+        name: 'docs-safety',
+        component: () => import('../views/DocPage.vue'),
+        meta: { title: '安全提醒' }
+      },
+      {
+        path: 'usage/common',
+        name: 'docs-usage-common',
+        component: () => import('../views/DocPage.vue'),
+        meta: { title: '通用客户端' }
+      },
+      {
+        path: 'usage/fnnas',
+        name: 'docs-usage-fnnas',
+        component: () => import('../views/DocPage.vue'),
+        meta: { title: 'fnOS 飞牛私有云' }
+      },
+      {
+        path: 'test',
+        name: 'docs-test',
+        component: () => import('../views/DocPage.vue'),
+        meta: { title: '测试' }
       },
     ]
   },

@@ -1,9 +1,7 @@
 <template>
   <div>
     <NLayout position="absolute">
-      <NLayoutHeader bordered style="height: 64px; padding: 0">
-        <TopMenu />
-      </NLayoutHeader>
+      <TopMenu />
       <NLayout has-sider position="absolute" style="top: 64px">
         <NLayoutSider v-if="!isMobile" bordered collapse-mode="width" :collapsed-width="64" :width="240"
           :collapsed="collapsed" :native-scrollbar="false" show-trigger @update:collapsed="collapsed = $event">
@@ -26,7 +24,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { NLayout, NLayoutContent, NLayoutSider, NLayoutHeader } from 'naive-ui'
+import { NLayout, NLayoutContent, NLayoutSider } from 'naive-ui'
 import TopMenu from '../components/TopMenu.vue'
 import LeftMenu from '../components/LeftMenu.vue'
 
@@ -49,7 +47,3 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 </script>
-
-<style lang="scss">
-@use "../assets/styles/dashboard.scss";
-</style>

@@ -20,18 +20,10 @@
         <!-- <p><a href="https://beian.miit.gov.cn"></a></p> -->
       </div>
       <div class="footer-right">
-          <RouterLink to="/privacy">
-            <NButton text>隐私政策</NButton>
-          </RouterLink>
-          <RouterLink to="/content">
-            <NButton text>内容策略</NButton>
-          </RouterLink>
-          <RouterLink to="/terms">
-            <NButton text>服务条款</NButton>
-          </RouterLink>
-          <RouterLink to="/contact">
-            <NButton text>联系我们</NButton>
-          </RouterLink>
+          <a href="/privacy">隐私政策</a>
+          <a href="/content">内容策略</a>
+          <a href="/terms">服务条款</a>
+          <a href="/contact">联系我们</a>
       </div>
     </div>
   </footer>

@@ -43,6 +43,9 @@ import { PropType } from 'vue'
 // 路由排序
 const docRoutes = [
   'readme',
+  'safety',
+  'usage/common',
+  'usage/fnnas',
 ]
 
 defineProps({
@@ -67,7 +70,7 @@ const currentTitle = computed(() => {
 
 // 计算前一个和后一个路由
 const currentIndex = computed(() => {
-  const path = route.path.split('/').pop() || ''
+  const path = route.path.split('docs/').pop() || ''
   return docRoutes.indexOf(path)
 })
 

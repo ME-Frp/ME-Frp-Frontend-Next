@@ -1,6 +1,6 @@
 <template>
   <!-- PC端导航栏 -->
-  <NLayoutHeader bordered class="navbar pc-navbar" style="user-select: none">
+  <NLayoutHeader bordered class="navbar pc-navbar" position="absolute" style="height: 53px; z-index: 999; user-select: none">
     <div class="navbar-content">
       <div class="logo">
         <div class="logo-link">
@@ -70,7 +70,6 @@ import type { MenuOption } from 'naive-ui'
 import { MenuOutline, Moon, Sunny } from '@vicons/ionicons5'
 import {
   HomeOutline,
-  DocumentTextOutline,
   LogInOutline,
   PersonAddOutline,
   InformationCircleOutline,
@@ -102,11 +101,6 @@ const menuOptions: MenuOption[] = [
     label: '首页',
     key: 'home',
     icon: renderIcon(HomeOutline)
-  },
-  {
-    label: '文档',
-    key: 'docs',
-    icon: renderIcon(DocumentTextOutline)
   },
   {
     type: 'divider',
@@ -152,9 +146,6 @@ function handleMenuSelect(key: string) {
   switch (key) {
     case 'home':
       router.push('/')
-      break
-    case 'docs':
-      router.push('/docs')
       break
     case 'login':
       router.push('/auth/login')

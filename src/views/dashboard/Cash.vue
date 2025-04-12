@@ -73,7 +73,7 @@
           <!-- VIP 会员 -->
           <NCard class="service-card" title="VIP 会员">
             <div class="price">
-              ¥25.00 <span class="unit">/ 月</span>
+              ¥26.00 <span class="unit">/ 月</span>
             </div>
             <div class="features">
               <div class="feature-item">

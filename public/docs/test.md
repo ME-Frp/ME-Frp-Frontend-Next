@@ -11,6 +11,31 @@
 ##### H5 Title
 
 ###### H6 Title
+
+___
+
+## Alert Test
+
+:::default Default
+This is a default alert
+:::
+
+:::info Info
+This is a info alert
+:::
+
+:::success Success
+This is a success alert
+:::
+
+:::warning Warning
+This is a warning alert
+:::
+
+:::error Error
+This is a error alert
+:::
+
 ___
 
 ## Text style test

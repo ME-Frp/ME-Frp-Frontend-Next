@@ -1,11 +1,9 @@
 <template>
   <div>
     <NLayout position="absolute">
-      <NLayoutHeader>
-        <DocsTopMenu />
-      </NLayoutHeader>
+      <DocsTopMenu />
       <DocsSubMenu :openDrawer="openDrawer" :title="currentTitle" />
-      <NLayout has-sider position="absolute" style="top: 53px">
+      <NLayout has-sider position="absolute" style="margin-top: 53px;">
         <NLayoutSider v-if="!isMobile" bordered collapse-mode="width" :collapsed-width="64" :width="240"
           :collapsed="collapsed" :native-scrollbar="false" show-trigger @update:collapsed="collapsed = $event">
           <DocsLeftMenu />
@@ -36,7 +34,7 @@
 <script setup lang="ts">
 import { RouterView, useRoute } from 'vue-router'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import { NLayout, NLayoutContent, NLayoutSider, NLayoutHeader, NDrawer, NDrawerContent } from 'naive-ui'
+import { NLayout, NLayoutContent, NLayoutSider, NDrawer, NDrawerContent } from 'naive-ui'
 import DocsTopMenu from '../components/DocsTopMenu.vue'
 import DocsLeftMenu from '../components/DocsLeftMenu.vue'
 import DocsSubMenu from '../components/DocsSubMenu.vue'
@@ -68,7 +66,7 @@ const ensureHeadingAnchors = () => {
   nextTick(() => {
     // 给所有标题添加锚点和ID
     const headings = document.querySelectorAll('.docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6');
-    
+
     headings.forEach((heading, index) => {
       // 检查标题是否已有ID
       if (!heading.id) {
@@ -78,10 +76,10 @@ const ensureHeadingAnchors = () => {
           .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
           .replace(/^-+|-+$/g, '')
           .replace(/^(\d)/, 'h-$1');
-        
+
         heading.id = headingId || `heading-${index}`;
       }
-      
+
       // 检查锚点是否存在
       if (!heading.querySelector('.header-anchor')) {
         const anchor = document.createElement('a');
@@ -100,7 +98,7 @@ const ensureHeadingAnchors = () => {
 watch(() => route.path, () => {
   // 路由变化时处理锚点
   setTimeout(ensureHeadingAnchors, 500);
-  
+
   // 如果URL中包含锚点，处理滚动定位
   nextTick(() => {
     const hash = window.location.hash;
@@ -130,7 +128,12 @@ onUnmounted(() => {
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+
+.n-drawer-body-content-wrapper {
+  padding: 0;
+}
+
 .docs-content {
   margin: 0 auto;
   padding: 0 20px;
@@ -184,7 +187,8 @@ onUnmounted(() => {
     overflow-x: auto;
     display: block;
 
-    th, td {
+    th,
+    td {
       padding: 8px 12px;
       text-align: left;
       border-bottom: 1px solid var(--border-color);
@@ -212,7 +216,12 @@ onUnmounted(() => {
     }
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin-top: 24px;
     margin-bottom: 16px;
     font-weight: 600;
@@ -239,20 +248,22 @@ onUnmounted(() => {
     font-size: 1em;
   }
 
-  p, li {
+  p,
+  li {
     line-height: 1.7;
     margin-bottom: 16px;
   }
 
-  ul, ol {
+  ul,
+  ol {
     padding-left: 24px;
     margin-bottom: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .n-layout-header + .n-layout {
+  .n-layout-header+.n-layout {
     top: 112px !important;
   }
 }
-</style> 
+</style>

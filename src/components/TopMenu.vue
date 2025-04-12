@@ -174,3 +174,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 </script>
+
+<style lang="scss" scoped>
+@use "../assets/styles/components/topMenu.scss";
+</style>

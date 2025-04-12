@@ -46,12 +46,6 @@ const baseMenuOptions: MenuOption[] = [
     link: '/dashboard/profile',
   },
   {
-    label: '增值服务',
-    key: 'cash',
-    icon: renderIcon(WalletOutline),
-    link: '/dashboard/cash',
-  },
-  {
     label: '关于面板',
     icon: renderIcon(InformationCircleOutline),
     key: 'about',
@@ -69,6 +63,13 @@ const moreMenuOptions: MenuOption = {
       key: 'more-node-donate', 
       link: '/dashboard/more/node-donate',
       icon: renderIcon(CafeOutline)
+    },
+    {
+      label: '增值服务',
+      key: 'more-cash',
+      disabled: true,
+      icon: renderIcon(WalletOutline),
+      link: '/dashboard/more/cash',
     },
     {
       label: '广告投放',

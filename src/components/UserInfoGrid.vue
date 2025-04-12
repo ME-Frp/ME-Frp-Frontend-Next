@@ -8,12 +8,12 @@
       </template>
       <template v-else>
         <div class="user-info-item">
-          <div class="user-info-label">用户名</div>
+          <NText depth="3" style="font-size: 13px;">用户名</NText>
           <div class="user-info-value">{{ userInfo.username }}</div>
         </div>
 
         <div class="user-info-item">
-          <div class="user-info-label">用户 ID</div>
+          <NText depth="3" style="font-size: 13px;">用户 ID</NText>
           <div class="user-info-value">
             <NTag type="warning" size="small">
               # {{ userInfo.userId }}
@@ -22,7 +22,7 @@
         </div>
 
         <div class="user-info-item">
-          <div class="user-info-label">实名认证</div>
+          <NText depth="3" style="font-size: 13px;">实名认证</NText>
           <div class="user-info-value">
             <NTag :type="userInfo.isRealname ? 'success' : 'default'" size="small">
               {{ userInfo.isRealname ? '已实名' : '未实名' }}
@@ -31,7 +31,7 @@
         </div>
 
         <div class="user-info-item">
-          <div class="user-info-label">用户组</div>
+          <NText depth="3" style="font-size: 13px;">用户组</NText>
           <div class="user-info-value">
             <NTag type="info" size="small">
               {{ userInfo.friendlyGroup }}
@@ -40,34 +40,34 @@
         </div>
 
         <div class="user-info-item">
-          <div class="user-info-label">注册时间</div>
+          <NText depth="3" style="font-size: 13px;">注册时间</NText>
           <div class="user-info-value">{{ formattedRegTime }}</div>
         </div>
 
         <div class="user-info-item">
-          <div class="user-info-label">注册邮箱</div>
+          <NText depth="3" style="font-size: 13px;">注册邮箱</NText>
           <div class="user-info-value">{{ userInfo.email }}</div>
         </div>
 
         <div class="user-info-item">
-          <div class="user-info-label">隧道数量</div>
+          <NText depth="3" style="font-size: 13px;">隧道数量</NText>
           <div class="user-info-value">{{ userInfo.usedProxies }} / {{ userInfo.maxProxies }}</div>
         </div>
 
         <div class="user-info-item">
-          <div class="user-info-label">剩余流量</div>
+          <NText depth="3" style="font-size: 13px;">剩余流量</NText>
           <div class="user-info-value">
             {{ formattedTraffic }}
           </div>
         </div>
 
         <div class="user-info-item">
-          <div class="user-info-label">入站带宽</div>
+          <NText depth="3" style="font-size: 13px;">入站带宽</NText>
           <div class="user-info-value">{{ userInfo.inBound / 128 }} Mbps</div>
         </div>
 
         <div class="user-info-item">
-          <div class="user-info-label">出站带宽</div>
+          <NText depth="3" style="font-size: 13px;">出站带宽</NText>
           <div class="user-info-value">{{ userInfo.outBound / 128 }} Mbps</div>
         </div>
       </template>

@@ -11,15 +11,74 @@
 
     <!-- 使用NaiveUI的NModal组件 -->
     <!-- 图片查看模态框 -->
-    <NModal v-model:show="showImageModal" :mask-closable="true" preset="card"
-      style="width: 90vw; max-width: 1200px; height: 90vh;" :auto-focus="false">
+    <NModal v-model:show="showImageModal" :mask-closable="true" 
+      style="width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.9);"
+      :auto-focus="false"
+      preset="card"
+      content-style="padding: 0; background-color: transparent; width: 100%; max-width: 100%; height: 100%; display: flex; flex-direction: column;"
+      :bordered="false"
+      transform-origin="center"
+      :show-icon="false"
+      :closable="false"
+      class="image-modal">
       <template #header>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span>图片查看</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background-color: rgba(30, 30, 30, 0.7); backdrop-filter: blur(5px);">
+          <div class="image-toolbar">
+            <button class="image-toolbar-btn" @click="rotateImage(-90)" title="向左旋转">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M7.11 8.53L5.7 7.11C4.8 8.27 4.24 9.61 4.07 11h2.02c.14-.87.49-1.72 1.02-2.47zM6.09 13H4.07c.17 1.39.72 2.73 1.62 3.89l1.41-1.42c-.52-.75-.87-1.59-1.01-2.47zm1.01 5.32c1.16.9 2.51 1.44 3.9 1.61V17.9c-.87-.15-1.71-.49-2.46-1.03L7.1 18.32zM13 4.07V1L8.45 5.55 13 10V6.09c2.84.48 5 2.94 5 5.91s-2.16 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93s-3.05-7.44-7-7.93z"/>
+              </svg>
+            </button>
+            <button class="image-toolbar-btn" @click="rotateImage(90)" title="向右旋转">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M15.55 5.55L11 1v3.07C7.06 4.56 4 7.92 4 12s3.05 7.44 7 7.93v-2.02c-2.84-.48-5-2.94-5-5.91s2.16-5.43 5-5.91V10l4.55-4.45zM19.93 11c-.17-1.39-.72-2.73-1.62-3.89l-1.42 1.42c.54.75.88 1.6 1.02 2.47h2.02zM13 17.9v2.02c1.39-.17 2.74-.71 3.9-1.61l-1.44-1.44c-.75.54-1.59.89-2.46 1.03zm3.89-2.42l1.42 1.41c.9-1.16 1.45-2.5 1.62-3.89h-2.02c-.14.87-.48 1.72-1.02 2.48z"/>
+              </svg>
+            </button>
+            <button class="image-toolbar-btn" @click="zoomImage(0.1)" title="放大">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                <path fill="currentColor" d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"/>
+              </svg>
+            </button>
+            <button class="image-toolbar-btn" @click="zoomImage(-0.1)" title="缩小">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                <path fill="currentColor" d="M7 9h5v1H7z"/>
+              </svg>
+            </button>
+            <button class="image-toolbar-btn" @click="resetImage()" title="重置">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+              </svg>
+            </button>
+            <button class="image-toolbar-btn" @click="downloadImage()" title="下载">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+              </svg>
+            </button>
+            <button class="image-toolbar-btn close-btn" @click="closeImageModal()" title="关闭">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </template>
-      <div class="modal-image-container">
-        <img :src="modalImage" class="modal-image" alt="查看大图" />
+      <div class="modal-image-container" @wheel.prevent="handleImageWheel">
+        <div class="image-wrapper">
+          <img 
+            :src="modalImage" 
+            class="modal-image" 
+            alt="查看大图" 
+            ref="modalImageRef"
+            :style="{ 
+              transform: `rotate(${imageRotation}deg) scale(${imageScale})`,
+              maxHeight: '80vh', 
+              maxWidth: '100%',
+              transition: 'transform 0.3s ease'
+            }"
+          />
+        </div>
       </div>
     </NModal>
 
@@ -37,23 +96,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick, onUnmounted, h, createApp, computed, inject } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch, nextTick, inject } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import hljs from 'highlight.js/lib/core'
 import {
   NSpin,
   NCode,
-  NTable,
-  NAlert,
   NModal,
-  NButton,
-  NCard,
-  NSpace,
-  NConfigProvider,
-  useMessage
+  // useMessage
 } from 'naive-ui'
-import { useRoute } from 'vue-router'
 import 'highlight.js/styles/vs2015.css'
 
 // 导入语言
@@ -70,7 +122,7 @@ import markdown from 'highlight.js/lib/languages/markdown'
 import 'highlight.js/styles/github-dark.css'
 import { Window } from '../types'
 
-// 声明window类型，使$message可用
+// 声明window类型, 使$message可用
 declare const window: Window & {
   $message?: any;
   __tableParsingTested?: boolean;
@@ -102,9 +154,21 @@ const themeStore = inject('theme') as {
   toggleTheme: () => void
 }
 
-const message = useMessage()
+// const message = useMessage()
 // 使用全局消息服务（已在AppContent中初始化）
 const globalMessage = window.$message
+
+// 全局错误处理函数
+const handleErrors = (event: ErrorEvent) => {
+  console.error('Markdown渲染错误:', event);
+  const errorMessage = event.message || '渲染Markdown时发生未知错误';
+
+  // 如果是marked相关错误, 提供更友好的提示
+  if (errorMessage.includes('marked') || errorMessage.includes('toLowerCase')) {
+    error.value = '解析Markdown时出现问题, 可能是格式不正确或内容损坏';
+    globalMessage.error('Markdown解析失败, 请检查文档格式');
+  }
+};
 
 const props = defineProps({
   content: {
@@ -129,12 +193,10 @@ const modalImage = ref('')
 const showCodeModal = ref(false)
 const modalCodeContent = ref('')
 
-// 获取操作系统主题
-const osTheme = computed(() => themeStore.isDarkMode.value ? 'dark' : 'light')
-// 主题配置
-const themeRef = computed(() => {
-  return osTheme.value === 'dark' ? themeStore.theme.value : themeStore.theme.value
-})
+// 图片处理相关状态
+const imageRotation = ref(0)
+const imageScale = ref(1)
+const modalImageRef = ref<HTMLImageElement | null>(null)
 
 // 设置CSS变量的通用函数
 const setupThemeVariables = () => {
@@ -151,7 +213,6 @@ const setupThemeVariables = () => {
     rootElement.style.setProperty('--inline-code-color', '#d56161');
     rootElement.style.setProperty('--inline-code-dark-color', '#ff9292');
   }
-  console.log('内联代码CSS变量已更新，当前主题:', isDark ? '暗色' : '亮色');
 };
 
 // 配置 marked
@@ -159,17 +220,76 @@ const setupThemeVariables = () => {
 marked.use({
   breaks: true,  // 将单个换行符转换为 <br>
   gfm: true,     // 使用 GitHub 风格的 Markdown (自动包含表格支持)
-  pedantic: false // 不使用pedantic模式，这样标准markdown表格格式可以正确解析
+  pedantic: false // 不使用pedantic模式, 这样标准markdown表格格式可以正确解析
 })
 
-// 在处理Markdown前，预处理表格语法以确保它们被正确解析
+// 在处理Markdown前, 预处理警告框语法
+const preprocessAlerts = (text: string): string => {
+  if (!text.includes(':::')) return text;
+  
+  const lines = text.split('\n');
+  let inAlert = false;
+  let alertType = '';
+  let alertTitle = '';
+  let alertContent = [];
+  let processedLines = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    // 检测警告框开始
+    if (!inAlert && line.startsWith(':::')) {
+      // 提取警告框类型和标题
+      const match = line.match(/^:::(\w+)(?:\s+(.+))?$/);
+      if (match) {
+        alertType = match[1];
+        alertTitle = match[2] || '';
+        
+        // 验证警告框类型
+        if (['default', 'info', 'success', 'warning', 'error', 'tip'].includes(alertType)) {
+          inAlert = true;
+          alertContent = [];
+          continue;
+        }
+      }
+      
+      // 如果不是有效的警告框类型或格式不对, 保留原始行
+      processedLines.push(lines[i]);
+    }
+    // 检测警告框结束
+    else if (inAlert && line === ':::') {
+      // 构建警告框的HTML, 包含标题
+      const alertHTML = `<div class="n-alert-wrapper" data-type="${alertType}" data-title="${encodeURIComponent(alertTitle)}" data-content="${encodeURIComponent(alertContent.join('\n'))}"></div>`;
+      processedLines.push(alertHTML);
+      inAlert = false;
+      alertType = '';
+      alertTitle = '';
+    }
+    // 收集警告框内容
+    else if (inAlert) {
+      alertContent.push(lines[i]);
+    }
+    // 非警告框的内容直接保留
+    else {
+      processedLines.push(lines[i]);
+    }
+  }
+
+  // 处理未关闭的警告框
+  if (inAlert) {
+    // 如果警告框没有正确关闭, 将收集的内容作为普通文本添加
+    processedLines.push(...alertContent);
+  }
+
+  return processedLines.join('\n');
+};
+
+// 在处理Markdown前, 预处理表格语法以确保它们被正确解析
 const preprocessMarkdownTables = (text: string): string => {
   // 检测是否包含表格语法
   if (!text.includes('|')) return text;
 
-  console.log('检测到包含管道符号的文本，开始处理表格...');
-
-  // 将文本按行分割，方便处理表格
+  // 将文本按行分割, 方便处理表格
   const lines = text.split('\n');
   let inTable = false;
   let tableStartIndex = -1;
@@ -180,21 +300,19 @@ const preprocessMarkdownTables = (text: string): string => {
     const line = lines[i];
     const trimmedLine = line.trim();
 
-    // 检测表格开始行（包含至少两个 | 字符，这意味着至少有一列）
+    // 检测表格开始行（包含至少两个 | 字符, 这意味着至少有一列）
     if (!inTable && trimmedLine.includes('|') && (trimmedLine.match(/\|/g) || []).length >= 2) {
       inTable = true;
       tableStartIndex = i;
       processedLines.push(line); // 添加表格头部行
-      console.log(`检测到表格开始行: ${trimmedLine}`);
 
       // 检查下一行是否是分隔符行
       const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : '';
       if (!nextLine.includes('|') || !nextLine.includes('-')) {
-        // 如果下一行不是有效的分隔符行，插入一个
+        // 如果下一行不是有效的分隔符行, 插入一个
         const cellCount = (trimmedLine.match(/\|/g) || []).length - 1;
         const separatorLine = '|' + ' --- |'.repeat(cellCount);
         processedLines.push(separatorLine);
-        console.log(`自动添加分隔符行: ${separatorLine}`);
       }
       continue;
     }
@@ -206,7 +324,6 @@ const preprocessMarkdownTables = (text: string): string => {
         inTable = false;
         // 添加空行以结束表格
         processedLines.push('');
-        console.log('检测到表格结束');
       } else {
         // 针对缺少前导或尾部|的行进行修复
         let fixedLine = trimmedLine;
@@ -245,19 +362,12 @@ const preprocessMarkdownTables = (text: string): string => {
     }
   }
 
-  // 如果文件末尾正好是表格，需要添加空行结束表格
+  // 如果文件末尾正好是表格, 需要添加空行结束表格
   if (inTable) {
     processedLines.push('');
-    console.log('文件末尾是表格，添加空行');
   }
 
   const result = processedLines.join('\n');
-  console.log('表格预处理完成');
-
-  // 确保表格结构完整，添加调试信息
-  console.log('预处理后的表格内容示例:');
-  const tableLines = result.split('\n').filter(line => line.trim().includes('|')).slice(0, 5);
-  tableLines.forEach((line, i) => console.log(`预处理后表格行 ${i + 1}: ${line}`));
 
   return result;
 };
@@ -269,20 +379,18 @@ const preprocessMarkdownTables = (text: string): string => {
  */
 function processMarkdown(text: string): string {
   try {
-    console.log('开始处理Markdown文本，长度:', text.length);
-
     // 使用前先确保所有表格相关标记都被清除
     if (typeof window !== 'undefined') {
-      // 记录处理状态，而不是重置状态
+      // 记录处理状态, 而不是重置状态
       if (!window.__tableParsingTested) {
-        console.log('首次处理表格，设置状态标记');
         window.__tableParsingTested = true;
-      } else {
-        console.log('已有表格处理记录，保持现有状态');
       }
     }
 
-    // 预处理特殊值，确保null和undefined能正确显示
+    // 预处理警告框语法
+    text = preprocessAlerts(text);
+
+    // 预处理特殊值, 确保null和undefined能正确显示
     text = text.replace(/^null$/gm, '`null`');
     text = text.replace(/^undefined$/gm, '`undefined`');
 
@@ -299,15 +407,12 @@ function processMarkdown(text: string): string {
 
       const processedTables = tempDiv.querySelectorAll('.table-responsive table.markdown-table');
       if (processedTables.length > 0) {
-        console.log(`检测到${processedTables.length}个已处理的表格，跳过表格处理`);
       } else {
-        // 增强表格处理
-        console.log('未检测到已处理的表格，进行表格增强处理');
-        html = enhanceTablesInHTML(html, themeStore.isDarkMode.value);
+        html = enhanceTablesInHTML(html);
       }
     } else {
       // 在非浏览器环境中简单处理
-      html = enhanceTablesInHTML(html, false);
+      html = enhanceTablesInHTML(html);
     }
 
     // 应用代码高亮
@@ -318,13 +423,16 @@ function processMarkdown(text: string): string {
       // 处理代码块
       tempDiv.querySelectorAll('pre code').forEach((el) => {
         try {
+          // 添加代码字体样式类
+          el.classList.add('code-font');
+          
           if (el.className.includes('language-')) {
             const lang = el.className.replace('language-', '').trim();
             if (hljs.getLanguage(lang)) {
               hljs.highlightElement(el as HTMLElement);
             }
           } else {
-            // 手动获取文本内容并高亮，而不是直接传递元素
+            // 手动获取文本内容并高亮, 而不是直接传递元素
             const codeText = el.textContent || '';
             const result = hljs.highlightAuto(codeText);
             el.innerHTML = result.value;
@@ -346,7 +454,6 @@ function processMarkdown(text: string): string {
       html = tempDiv.innerHTML;
     }
 
-    console.log('Markdown处理完成，输出HTML长度:', html.length);
     return html;
   } catch (error) {
     console.error('处理Markdown出错:', error);
@@ -354,258 +461,15 @@ function processMarkdown(text: string): string {
   }
 }
 
-// 从原始文本中提取完整的表格块
-const extractTableBlocks = (text: string): string[] => {
-  try {
-    const lines = text.split('\n');
-    const tableBlocks: string[] = [];
-    let currentTable: string[] = [];
-    let inTable = false;
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-
-      // 检测表格开始
-      if (!inTable && line.includes('|') && (line.match(/\|/g) || []).length >= 2) {
-        inTable = true;
-        currentTable = [lines[i]];
-
-        // 检查下一行是否是分隔符行
-        if (i + 1 < lines.length) {
-          const nextLine = lines[i + 1].trim();
-          if (nextLine.includes('|') && nextLine.includes('-')) {
-            // 下一行是分隔符行，添加并继续
-            i++;
-            currentTable.push(lines[i]);
-            continue;
-          } else if (nextLine.includes('|')) {
-            // 下一行是数据行但不是分隔符行，需要自动添加一个分隔符行
-            const cellCount = (line.match(/\|/g) || []).length - 1;
-            currentTable.push('|' + ' --- |'.repeat(cellCount));
-            // 不增加i，下一行将在下一次循环中处理
-          } else {
-            // 下一行不是表格内容，结束表格
-            inTable = false;
-            if (currentTable.length >= 2) { // 至少需要有表头和分隔符
-              tableBlocks.push(currentTable.join('\n'));
-            }
-            currentTable = [];
-          }
-        }
-      }
-      // 处理表格中的行
-      else if (inTable) {
-        if (line === '' || !line.includes('|')) {
-          // 表格结束
-          inTable = false;
-          if (currentTable.length >= 2) {
-            tableBlocks.push(currentTable.join('\n'));
-          }
-          currentTable = [];
-        } else {
-          // 添加表格行
-          currentTable.push(lines[i]);
-        }
-      }
-    }
-
-    // 处理文件末尾的表格
-    if (inTable && currentTable.length >= 2) {
-      tableBlocks.push(currentTable.join('\n'));
-    }
-
-    return tableBlocks;
-  } catch (e) {
-    console.error('提取表格块时出错:', e);
-    return [];
-  }
-};
-
-// 手动构建表格HTML的辅助函数
-const constructTableHtml = (markdownText: string): string => {
-  try {
-    console.log('正在手动构建表格HTML，输入文本长度:', markdownText.length);
-
-    // 提取所有表格相关行，去除空行
-    const tableLines = markdownText.split('\n')
-      .map(line => line.trim())
-      .filter(line => line && line.includes('|'));
-
-    if (tableLines.length < 2) {
-      console.log('表格行数不足，至少需要2行');
-      return '';
-    }
-
-    console.log(`找到${tableLines.length}行表格内容`);
-
-    // 查找分隔行的索引（包含 '-' 字符的行）
-    let separatorIndex = -1;
-    for (let i = 0; i < tableLines.length; i++) {
-      if (tableLines[i].includes('-') && tableLines[i].includes('|')) {
-        separatorIndex = i;
-        break;
-      }
-    }
-
-    // 如果没有找到分隔行，尝试将第二行作为分隔行
-    if (separatorIndex === -1 && tableLines.length >= 2) {
-      separatorIndex = 1;
-      console.log('未找到明确的分隔行，以第二行作为分隔行');
-    } else if (separatorIndex === -1) {
-      console.log('未找到分隔行且行数不足');
-      return '';
-    }
-
-    console.log(`识别到分隔行索引: ${separatorIndex}, 内容: ${tableLines[separatorIndex]}`);
-
-    // 提取列对齐信息
-    const alignInfo = [];
-    const separatorParts = tableLines[separatorIndex]
-      .split('|')
-      .map(part => part.trim())
-      .filter(part => part !== '');
-
-    separatorParts.forEach(part => {
-      if (part.startsWith(':') && part.endsWith(':')) {
-        alignInfo.push('center'); // 居中对齐 :---:
-      } else if (part.endsWith(':')) {
-        alignInfo.push('right');  // 右对齐 ---:
-      } else {
-        alignInfo.push('left');   // 默认左对齐 ---
-      }
-    });
-
-    console.log('列对齐信息:', alignInfo.join(', '));
-
-    // 提取表头行和数据行
-    const headerLine = tableLines[0];
-    const dataLines = tableLines.slice(separatorIndex + 1);
-
-    console.log(`数据行数量: ${dataLines.length}`);
-    if (dataLines.length > 0) {
-      console.log('数据行示例:', dataLines[0]);
-    }
-
-    // 解析表头单元格
-    const headers = headerLine
-      .split('|')
-      .map(cell => cell.trim())
-      .filter(cell => cell !== '');
-
-    if (headers.length === 0) {
-      console.log('未找到有效的表头单元格');
-      return '';
-    }
-
-    console.log(`提取了${headers.length}个表头单元格:`, headers.join(', '));
-
-    // 均匀分配列宽
-    const columnCount = headers.length;
-    const isSimpleTable = columnCount <= 5;
-    const columnWidth = isSimpleTable ? `${Math.floor(100 / columnCount)}%` : 'auto';
-    console.log(`列数: ${columnCount}, 是否简单表格: ${isSimpleTable}, 列宽: ${columnWidth}`);
-
-    // 选择表格布局模式
-    const layoutMode = columnCount > 5 ? 'fixed' : 'adaptive';
-
-    // 创建唯一ID，避免生成重复的表格
-    const tableId = `md-table-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-
-    // 创建表格HTML
-    let tableHtml = `<table id="${tableId}" class="markdown-table table-${layoutMode}" style="width:100%;">`;
-    tableHtml += '<thead><tr>';
-
-    // 添加表头单元格，应用对齐样式
-    headers.forEach((header, index) => {
-      const align = index < alignInfo.length ? alignInfo[index] : 'left';
-      const style = `text-align:${align};` + (isSimpleTable ? `width:${columnWidth};` : '');
-      tableHtml += `<th style="${style}" class="align-${align}">${header}</th>`;
-    });
-
-    tableHtml += '</tr></thead><tbody>';
-
-    // 添加数据行
-    let dataRowCount = 0;
-    dataLines.forEach(line => {
-      if (!line || !line.includes('|')) return;
-
-      const cells = line
-        .split('|')
-        .map(cell => cell.trim())
-        .filter(cell => cell !== '');
-
-      if (cells.length > 0) {
-        dataRowCount++;
-        tableHtml += '<tr>';
-
-        // 处理每个单元格，应用对齐样式
-        cells.forEach((cell, index) => {
-          // 确保单元格数不超过表头数，如果超过就合并到最后一列
-          if (index >= headers.length && headers.length > 0) {
-            const lastIndex = headers.length - 1;
-            const lastAlign = lastIndex < alignInfo.length ? alignInfo[lastIndex] : 'left';
-            const isNumeric = /^[\$¥€£]?\s*-?\d+(\.\d+)?%?$/.test(cell);
-            const finalAlign = isNumeric ? 'right' : lastAlign;
-            const style = `text-align:${finalAlign};` + (isSimpleTable ? `width:${columnWidth};` : '');
-
-            tableHtml += `<td style="${style}" class="align-${lastAlign}">${cell}</td>`;
-          } else {
-            const align = index < alignInfo.length ? alignInfo[index] : 'left';
-            const alignClass = `align-${align}`;
-            const isNumeric = /^[\$¥€£]?\s*-?\d+(\.\d+)?%?$/.test(cell);
-            const finalAlign = isNumeric ? 'right' : align;
-            const style = `text-align:${finalAlign};` + (isSimpleTable ? `width:${columnWidth};` : '');
-
-            tableHtml += `<td style="${style}" class="${alignClass}">${cell}</td>`;
-          }
-        });
-
-        // 如果单元格数少于表头数，添加空单元格
-        if (cells.length < headers.length) {
-          for (let i = cells.length; i < headers.length; i++) {
-            const align = i < alignInfo.length ? alignInfo[i] : 'left';
-            const style = `text-align:${align};` + (isSimpleTable ? `width:${columnWidth};` : '');
-            tableHtml += `<td style="${style}" class="align-${align}"></td>`;
-          }
-        }
-
-        tableHtml += '</tr>';
-      }
-    });
-
-    // 如果没有数据行，添加一个空行
-    if (dataRowCount === 0) {
-      tableHtml += '<tr>';
-      headers.forEach((_, index) => {
-        const align = index < alignInfo.length ? alignInfo[index] : 'left';
-        const style = `text-align:${align};` + (isSimpleTable ? `width:${columnWidth};` : '');
-        tableHtml += `<td style="${style}" class="align-${align}">-</td>`;
-      });
-      tableHtml += '</tr>';
-    }
-
-    tableHtml += '</tbody></table>';
-
-    // 包装表格为响应式布局
-    const wrapperId = `wrapper-${tableId}`;
-    const wrapperHtml = `<div id="${wrapperId}" class="table-responsive table-${layoutMode}" style="width:100%;display:block;" data-original-table="${tableId}">${tableHtml}</div>`;
-
-    console.log(`手动生成表格HTML成功，数据行数: ${dataRowCount}, HTML长度: ${wrapperHtml.length}`);
-    return wrapperHtml;
-  } catch (e) {
-    console.error('手动构建表格HTML出错:', e);
-    return '';
-  }
-};
-
-// 深度清理内容的辅助函数，用于移除所有[object Object]相关内容
+// 深度清理内容的辅助函数, 用于移除所有[object Object]相关内容
 const deepCleanContent = (content: any): string => {
   // 处理空值情况
   if (content === null || content === undefined) {
     return '';
   }
 
-  // 确保是字符串，无论输入是什么类型
+  // 确保是字符串, 无论输入是什么类型
   let cleanedContent = String(content);
 
   // 替换掉各种特殊字符和特殊字面量 - 保留null和undefined文本
@@ -627,69 +491,6 @@ const deepCleanContent = (content: any): string => {
   return cleanedContent;
 };
 
-// 增强渲染后的内容 - 简化逻辑，仅处理必要功能
-const enhanceRenderedContent = (html: string) => {
-  try {
-    // 创建临时div用于DOM操作
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-
-    // 确保标题有ID和锚点
-    const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    headings.forEach((heading, index) => {
-      // 为每个标题添加ID，使用标题文本作为ID
-      const headingText = heading.textContent || '';
-      // 创建一个基于标题文本的ID，去除特殊字符和空格
-      const headingId = headingText
-        .toLowerCase()
-        .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-') // 保留中文和数字字母，其他替换为短横线
-        .replace(/^-+|-+$/g, '') // 移除开头和结尾的短横线
-        .replace(/^(\d)/, 'h-$1'); // 如果ID以数字开头，添加前缀
-
-      // 使用标题文本作为ID，如果为空则使用序号
-      heading.id = headingId || `heading-${index}`;
-
-      // 如果标题没有锚点链接，添加一个
-      if (!heading.querySelector('.header-anchor')) {
-        const anchor = document.createElement('a');
-        anchor.href = `#${heading.id}`;
-        anchor.className = 'header-anchor';
-        anchor.textContent = '#';
-        heading.insertBefore(anchor, heading.firstChild);
-      }
-    });
-
-    // 处理所有的图片，添加点击放大功能
-    const images = tempDiv.querySelectorAll('img');
-    images.forEach(img => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'img-wrapper';
-      const newImg = img.cloneNode(true) as HTMLImageElement;
-      wrapper.appendChild(newImg);
-      img.parentNode?.replaceChild(wrapper, img);
-      newImg.dataset.action = 'zoom';
-      newImg.dataset.src = newImg.src;
-    });
-
-    // 处理所有链接
-    const links = tempDiv.querySelectorAll('a');
-    links.forEach(link => {
-      // 检查是否是外部链接
-      if (link.href && link.hostname !== window.location.hostname) {
-        link.setAttribute('target', '_blank');
-        link.setAttribute('rel', 'noopener noreferrer');
-      } else if (link.hash) {
-        // 内部锚点链接，添加平滑滚动
-        link.dataset.smooth = 'true';
-      }
-    });
-
-    return tempDiv.innerHTML;
-  } catch (err) {
-    console.error('增强渲染内容时出错:', err);
-    return html; // 出错时返回原始内容
-  }
-};
 
 // 获取并渲染 Markdown 内容
 const fetchMarkdownContent = async () => {
@@ -697,7 +498,7 @@ const fetchMarkdownContent = async () => {
   error.value = '';
 
   try {
-    // 如果提供了直接内容，直接渲染
+    // 如果提供了直接内容, 直接渲染
     if (props.content) {
       // 预处理内容
       markdownText.value = deepCleanContent(props.content);
@@ -714,24 +515,20 @@ const fetchMarkdownContent = async () => {
           (markdownText.value.includes('\n|') || markdownText.value.includes('|\n'));
 
         if (hasTableSyntax) {
-          console.log('内容中检测到表格，进行预处理...');
           markdownText.value = preprocessMarkdownTables(markdownText.value);
         }
 
         // 处理 Markdown
-        console.log('处理Markdown前的内容长度:', markdownText.value.length);
         renderedContent.value = processMarkdown(markdownText.value);
-        console.log('处理Markdown后设置renderedContent，长度:', renderedContent.value.length);
 
-        // DOM更新后尝试处理代码块，但不立即执行
+        // DOM更新后尝试处理代码块, 但不立即执行
         loading.value = false;
 
-        // 不要在这里调用renderNaiveUIComponents，让watch处理
+        // 不要在这里调用renderNaiveUIComponents, 让watch处理
         setTimeout(() => {
           if (contentRef.value) {
-            console.log('💥延迟处理：DOM已准备好，处理事件');
             setupEventListeners();
-            // 代码块的渲染由watch处理，这里不调用renderNaiveUIComponents
+            // 代码块的渲染由watch处理, 这里不调用renderNaiveUIComponents
           } else {
             console.warn('💥延迟处理后contentRef仍不存在');
           }
@@ -740,7 +537,7 @@ const fetchMarkdownContent = async () => {
         return;
       } catch (parseError) {
         console.error('Markdown解析错误:', parseError);
-        error.value = '内容格式不正确，无法解析';
+        error.value = '内容格式不正确, 无法解析';
         loading.value = false;
         return;
       }
@@ -753,12 +550,12 @@ const fetchMarkdownContent = async () => {
       throw new Error('未提供有效的Markdown路径');
     }
 
-    // 如果路径不是以 '/' 开头，添加前缀
+    // 如果路径不是以 '/' 开头, 添加前缀
     if (!filePath.startsWith('/')) {
       filePath = `/docs/${filePath}`;
     }
 
-    // 如果路径不是以 '.md' 结尾，添加后缀
+    // 如果路径不是以 '.md' 结尾, 添加后缀
     if (!filePath.endsWith('.md')) {
       filePath = `${filePath}.md`;
     }
@@ -786,19 +583,17 @@ const fetchMarkdownContent = async () => {
       }
 
       // 处理 Markdown
-      console.log('处理Markdown前的内容长度:', markdownText.value.length);
       renderedContent.value = processMarkdown(markdownText.value);
-      console.log('处理Markdown后设置renderedContent，长度:', renderedContent.value.length);
 
       // 使用延迟处理替代立即执行
       loading.value = false;
 
-      // 使用延迟处理机制，给DOM更多时间渲染
+      // 使用延迟处理机制, 给DOM更多时间渲染
       setTimeout(() => {
         if (contentRef.value) {
-          console.log('💥延迟处理：DOM已准备好，处理事件');
+          console.log('💥延迟处理：DOM已准备好, 处理事件');
           setupEventListeners();
-          // 代码块的渲染由watch处理，这里不调用renderNaiveUIComponents
+          // 代码块的渲染由watch处理, 这里不调用renderNaiveUIComponents
         } else {
           console.warn('💥延迟处理后contentRef仍不存在');
         }
@@ -806,7 +601,7 @@ const fetchMarkdownContent = async () => {
 
     } catch (parseError) {
       console.error('Markdown文件解析错误:', parseError);
-      error.value = '文档格式不正确，无法解析';
+      error.value = '文档格式不正确, 无法解析';
       loading.value = false;
       return;
     }
@@ -823,14 +618,21 @@ const setupEventListeners = () => {
   if (!contentRef.value) return;
 
   // 图片点击放大
-  const images = contentRef.value.querySelectorAll('[data-action="zoom"]');
+  const images = contentRef.value.querySelectorAll('img:not(.modal-image)');
   images.forEach((img: HTMLImageElement) => {
-    img.addEventListener('click', () => {
-      const src = img.dataset.src || img.src;
-      if (src) {
-        openImageModal(src);
-      }
-    });
+    if (!img.classList.contains('event-attached')) {
+      img.classList.add('event-attached');
+      img.style.cursor = 'zoom-in';
+      img.dataset.action = 'zoom';
+      img.addEventListener('click', () => {
+        const src = img.dataset.src || img.src;
+        if (src) {
+          // 重置图片状态
+          resetImage();
+          openImageModal(src);
+        }
+      });
+    }
   });
 
   // 平滑滚动锚点链接
@@ -852,7 +654,7 @@ const setupEventListeners = () => {
             window.scrollBy(0, 30);
           }
 
-          // 更新 URL，但不触发跳转
+          // 更新 URL, 但不触发跳转
           history.pushState(null, '', href);
         }
       }
@@ -860,11 +662,10 @@ const setupEventListeners = () => {
   });
 };
 
-// 重置渲染标记，在内容变化时调用
+// 重置渲染标记, 在内容变化时调用
 const resetRenderingFlags = () => {
   if (!contentRef.value) return;
 
-  console.log('💥重置渲染标记');
   contentRef.value.removeAttribute('data-code-rendered');
 
   // 重置所有已处理的代码块标记
@@ -874,11 +675,11 @@ const resetRenderingFlags = () => {
   });
 };
 
-// 监听 content 属性变化，重新渲染内容
+// 监听 content 属性变化, 重新渲染内容
 watch(() => props.content, (newContent) => {
   if (newContent !== undefined && newContent !== null) {
     try {
-      // 重置渲染状态，确保新内容能够被处理
+      // 重置渲染状态, 确保新内容能够被处理
       resetRenderingFlags();
 
       // 使用深度清理函数处理内容
@@ -891,24 +692,20 @@ watch(() => props.content, (newContent) => {
         }
 
         // 处理 Markdown
-        console.log('处理Markdown前的内容长度:', markdownText.value.length);
         renderedContent.value = processMarkdown(markdownText.value);
-        console.log('处理Markdown后设置renderedContent，长度:', renderedContent.value.length);
 
         // 使用nextTick包装而不是await
         nextTick(() => {
-          console.log('content watch: DOM已更新，准备处理事件和NCode');
           if (contentRef.value) {
-            console.log('contentRef存在，调用setupEventListeners和renderNaiveUIComponents');
             setupEventListeners();
             renderNaiveUIComponents();
           } else {
-            console.warn('contentRef不存在，无法设置事件和渲染NCode');
+            console.warn('contentRef不存在, 无法设置事件和渲染NCode');
           }
         });
       } catch (parseError) {
         console.error('动态内容解析错误:', parseError);
-        error.value = '内容格式不正确，无法解析';
+        error.value = '内容格式不正确, 无法解析';
         return;
       }
     } catch (err) {
@@ -918,10 +715,10 @@ watch(() => props.content, (newContent) => {
   }
 }, { immediate: false });
 
-// 监听 path 属性变化，重新加载内容
+// 监听 path 属性变化, 重新加载内容
 watch(() => props.path, (newPath) => {
   if (newPath) {
-    // 重置渲染状态，确保新内容能够被处理
+    // 重置渲染状态, 确保新内容能够被处理
     resetRenderingFlags();
     fetchMarkdownContent();
   }
@@ -929,7 +726,6 @@ watch(() => props.path, (newPath) => {
 
 // 初始化时和每次路由变化时都确保CSS变量设置正确
 watch(() => props.path, () => {
-  console.log('路径变化，重新设置CSS变量');
   setupThemeVariables();
 
   // 检查是否需要重新加载内容
@@ -940,7 +736,6 @@ watch(() => props.path, () => {
 
 // 监听内容变化
 watch(() => props.content, () => {
-  console.log('内容变化，重新设置CSS变量');
   setupThemeVariables();
 
   // 检查是否需要重新处理内容
@@ -950,18 +745,6 @@ watch(() => props.content, () => {
 }, { immediate: true });
 
 onMounted(() => {
-  // 添加全局错误处理
-  const handleErrors = (event: ErrorEvent) => {
-    console.error('Markdown渲染错误:', event);
-    const errorMessage = event.message || '渲染Markdown时发生未知错误';
-
-    // 如果是marked相关错误，提供更友好的提示
-    if (errorMessage.includes('marked') || errorMessage.includes('toLowerCase')) {
-      error.value = '解析Markdown时出现问题，可能是格式不正确或内容损坏';
-      globalMessage.error('Markdown解析失败，请检查文档格式');
-    }
-  };
-
   // 注册全局错误处理
   window.addEventListener('error', handleErrors);
 
@@ -969,26 +752,22 @@ onMounted(() => {
   setupThemeVariables();
 
   // 初始加载内容
-  console.log('💥组件挂载，开始初始加载内容');
   if (props.path || props.content) {
-    console.log('💥调用fetchMarkdownContent加载内容');
     fetchMarkdownContent();
   }
 
-  // 在组件挂载后，完全依赖watch来处理代码块的渲染
+  // 在组件挂载后, 完全依赖watch来处理代码块的渲染
   // 不再在这里手动调用renderNaiveUIComponents
-  console.log('💥组件挂载完成，代码块将由watch监听器渲染');
 
-  // 确保标题锚点存在，并添加额外检查
+  // 确保标题锚点存在, 并添加额外检查
   setTimeout(() => {
     if (contentRef.value) {
-      console.log('💥检查并确保标题锚点存在');
       const headings = contentRef.value.querySelectorAll('h1, h2, h3, h4, h5, h6');
 
       headings.forEach((heading, index) => {
         // 检查标题是否已有ID
         if (!heading.id) {
-          // 为每个标题添加ID，使用标题文本作为ID
+          // 为每个标题添加ID, 使用标题文本作为ID
           const headingText = heading.textContent || '';
           const headingId = headingText
             .toLowerCase()
@@ -996,7 +775,7 @@ onMounted(() => {
             .replace(/^-+|-+$/g, '')
             .replace(/^(\d)/, 'h-$1');
 
-          // 使用标题文本作为ID，如果为空则使用序号
+          // 使用标题文本作为ID, 如果为空则使用序号
           heading.id = headingId || `heading-${index}`;
         }
 
@@ -1008,55 +787,115 @@ onMounted(() => {
           anchor.textContent = '#';
           anchor.style.opacity = '0.5'; // 增加默认可见度
           heading.insertBefore(anchor, heading.firstChild);
-          console.log(`💥为标题 "${heading.textContent}" 添加了锚点`);
         }
       });
     }
   }, 500); // 增加等待时间确保内容已渲染
 });
 
+// 重置图片状态
+const resetImage = () => {
+  imageRotation.value = 0;
+  imageScale.value = 1;
+};
+
+// 处理图片旋转
+const rotateImage = (degrees: number) => {
+  imageRotation.value = (imageRotation.value + degrees) % 360;
+};
+
+// 处理图片缩放
+const zoomImage = (factor: number) => {
+  const newScale = imageScale.value + factor;
+  // 限制缩放范围，防止过小或过大
+  if (newScale >= 0.1 && newScale <= 5) {
+    imageScale.value = newScale;
+  }
+};
+
+// 处理鼠标滚轮缩放
+const handleImageWheel = (e: WheelEvent) => {
+  if (e.deltaY < 0) {
+    zoomImage(0.1); // 放大
+  } else {
+    zoomImage(-0.1); // 缩小
+  }
+};
+
+// 下载当前查看的图片
+const downloadImage = () => {
+  if (!modalImage.value) return;
+  
+  const link = document.createElement('a');
+  link.href = modalImage.value;
+  link.download = modalImage.value.split('/').pop() || 'image';
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 // 打开图片模态框
 const openImageModal = (src: string) => {
   modalImage.value = src;
   showImageModal.value = true;
+  
+  // 添加键盘事件监听
+  nextTick(() => {
+    document.addEventListener('keydown', handleImageKeydown);
+  });
 };
 
 // 关闭图片模态框
 const closeImageModal = () => {
   showImageModal.value = false;
+  resetImage();
+  
+  // 移除键盘事件监听
+  document.removeEventListener('keydown', handleImageKeydown);
 };
 
-// 打开代码模态框
-const openCodeModal = (codeHtml: string) => {
-  modalCodeContent.value = codeHtml;
-  showCodeModal.value = true;
-};
-
-// 关闭代码模态框
-const closeCodeModal = () => {
-  showCodeModal.value = false;
-};
-
-// 复制代码到剪贴板
-const copyToClipboard = async (text: string, el: HTMLElement) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    el.classList.add('copied');
-    el.textContent = '已复制';
-    globalMessage.success('代码已复制到剪贴板');
-    setTimeout(() => {
-      el.classList.remove('copied');
-      el.textContent = '复制';
-    }, 2000);
-  } catch (err) {
-    globalMessage.error('复制失败，请手动复制');
-    console.error('无法复制到剪贴板:', err);
+// 处理键盘事件
+const handleImageKeydown = (e: KeyboardEvent) => {
+  if (!showImageModal.value) return;
+  
+  switch (e.key) {
+    case 'Escape':
+      closeImageModal();
+      break;
+    case '+':
+    case '=':
+      zoomImage(0.1);
+      e.preventDefault();
+      break;
+    case '-':
+      zoomImage(-0.1);
+      e.preventDefault();
+      break;
+    case 'ArrowLeft':
+      rotateImage(-90);
+      e.preventDefault();
+      break;
+    case 'ArrowRight':
+      rotateImage(90);
+      e.preventDefault();
+      break;
+    case 'r':
+    case 'R':
+      resetImage();
+      e.preventDefault();
+      break;
+    case 'd':
+    case 'D':
+      downloadImage();
+      e.preventDefault();
+      break;
   }
 };
 
-// 创建包含语法高亮的HTML，考虑主题样式
-const createCodeHtml = (highlighted, codeLang, codeContent) => {
-  // 简化复制按钮，只使用文本并确保CSS变量正确生效
+// 创建包含语法高亮的HTML, 考虑主题样式
+const createCodeHtml = (highlighted, codeLang) => {
+  // 简化复制按钮, 只使用文本并确保CSS变量正确生效
   return `
     <div class="n-code-fallback">
       <div class="code-header">
@@ -1070,40 +909,97 @@ const createCodeHtml = (highlighted, codeLang, codeContent) => {
 
 // 获取主题相关的样式
 const getFallbackStyles = () => {
-  // 始终返回深色主题的颜色，不再受全局主题影响
+  // 始终返回深色主题的颜色, 不再受全局主题影响
   const bgColor = '#1e1e1e';
   const textColor = 'rgba(255, 255, 255, 0.85)';
 
   return { bgColor, textColor };
 };
 
-// 处理 Markdown 内容后，渲染 NCode 组件
+// 处理 Markdown 内容后, 渲染 NCode 组件
 const renderNaiveUIComponents = () => {
-  console.log('💥开始执行renderNaiveUIComponents函数💥');
   if (!contentRef.value) {
-    console.error('contentRef不存在，无法渲染NCode组件');
+    console.error('contentRef不存在, 无法渲染NCode组件');
     return;
   }
 
-  // 检查是否已经渲染过，避免重复渲染
+  // 检查是否已经渲染过, 避免重复渲染
   if (contentRef.value.getAttribute('data-code-rendered') === 'true') {
-    console.log('💥代码块已经渲染过，跳过重复渲染');
     return;
   }
 
   try {
-    // 直接在整个容器中查找所有pre>code元素
-    console.log('💥直接查找所有代码元素');
+    // 处理警告框
+    const alertWrappers = contentRef.value.querySelectorAll('.n-alert-wrapper');
+    if (alertWrappers.length > 0) {
+      Array.from(alertWrappers).forEach((wrapper: HTMLElement, index) => {
+        // 检查此警告框是否已经处理过
+        if (wrapper.getAttribute('data-processed') === 'true') {
+          return;
+        }
+
+        try {
+          // 标记为已处理
+          wrapper.setAttribute('data-processed', 'true');
+
+          // 获取警告框类型、标题和内容
+          const alertType = wrapper.getAttribute('data-type') || 'default';
+          let alertTitle = '';
+          let alertContent = '';
+
+          try {
+            // 尝试从data-title属性解码
+            const encodedTitle = wrapper.getAttribute('data-title');
+            if (encodedTitle) {
+              alertTitle = decodeURIComponent(encodedTitle);
+            }
+            
+            // 尝试从data-content属性解码
+            const encodedContent = wrapper.getAttribute('data-content');
+            if (encodedContent) {
+              alertContent = decodeURIComponent(encodedContent);
+            }
+          } catch (decodeError) {
+            console.error('💥解码警告框内容或标题出错:', decodeError);
+          }
+
+          // 确保内容非空
+          if (!alertContent) {
+            alertContent = wrapper.textContent || '';
+          }
+
+          // 处理内容中的Markdown
+          try {
+            alertContent = marked.parse(alertContent) as string;
+            alertContent = DOMPurify.sanitize(alertContent);
+          } catch (mdError) {
+            console.error('💥处理警告框Markdown内容出错:', mdError);
+          }
+
+          // 创建NAlert
+          const alertDiv = document.createElement('div');
+          alertDiv.className = 'n-alert-mount-point';
+          alertDiv.setAttribute('data-processed', 'true');
+
+          // 根据类型设置样式和图标
+          const alertHTML = getAlertHTML(alertType, alertContent, alertTitle);
+
+          // 设置HTML内容
+          alertDiv.innerHTML = alertHTML;
+          wrapper.replaceWith(alertDiv);
+        } catch (err) {
+          console.error(`💥处理警告框 #${index + 1} 时出错:`, err);
+        }
+      });
+    }
+
     const preCodes = contentRef.value.querySelectorAll('pre > code');
-    console.log('💥找到pre>code元素数量:', preCodes.length);
 
     if (preCodes.length > 0) {
-      console.log('💥开始处理pre>code元素');
       // 直接处理pre>code元素
       Array.from(preCodes).forEach((codeEl: HTMLElement, index) => {
         // 检查此代码块是否已经处理过
         if (codeEl.parentElement?.getAttribute('data-processed') === 'true') {
-          console.log(`💥代码块 #${index + 1} 已处理过，跳过`);
           return;
         }
 
@@ -1152,7 +1048,7 @@ const renderNaiveUIComponents = () => {
             preEl.setAttribute('data-processed', 'true'); // 标记为已处理
             preEl.parentNode?.replaceChild(mountPoint, preEl);
 
-            // 直接渲染代码块，不调用外部函数
+            // 直接渲染代码块, 不调用外部函数
             try {
               let highlighted = codeContent;
 
@@ -1160,7 +1056,7 @@ const renderNaiveUIComponents = () => {
               if (codeLang && hljs.getLanguage(codeLang)) {
                 try {
                   highlighted = hljs.highlight(codeContent, { language: codeLang }).value;
-                  console.log(`💥成功使用highlight.js高亮代码，语言: ${codeLang}`);
+                  console.log(`💥成功使用highlight.js高亮代码, 语言: ${codeLang}`);
                 } catch (e) {
                   console.error('💥Highlight.js语法高亮失败:', e);
                 }
@@ -1177,11 +1073,10 @@ const renderNaiveUIComponents = () => {
               }
 
               // 创建包含语法高亮的HTML
-              const html = createCodeHtml(highlighted, codeLang, codeContent);
+              const html = createCodeHtml(highlighted, codeLang);
 
               // 设置HTML内容
               mountPoint.innerHTML = html;
-              console.log(`💥代码块 #${index + 1} 渲染成功 (HTML方式)`);
 
               // 添加复制功能
               const copyButton = mountPoint.querySelector('.copy-btn');
@@ -1197,7 +1092,7 @@ const renderNaiveUIComponents = () => {
                       copyButton.classList.remove('copied');
                     }, 2000);
                   } catch (err) {
-                    globalMessage.error('复制失败，请手动复制');
+                    globalMessage.error('复制失败, 请手动复制');
                     console.error('无法复制到剪贴板:', err);
                   }
                 });
@@ -1217,14 +1112,13 @@ const renderNaiveUIComponents = () => {
 
       // 处理内联代码元素
       const inlineCodeElements = contentRef.value.querySelectorAll('code:not(pre > code)');
-      console.log('💥找到内联code元素数量:', inlineCodeElements.length);
 
       if (inlineCodeElements.length > 0) {
         Array.from(inlineCodeElements).forEach((codeEl: HTMLElement, index) => {
           try {
             const codeContent = codeEl.textContent || '';
             if (codeContent.trim().length > 0) {
-              // 只需添加基本样式即可，不需要高亮
+              // 只需添加基本样式即可, 不需要高亮
               codeEl.classList.add('inline-code');
             }
           } catch (err) {
@@ -1235,15 +1129,12 @@ const renderNaiveUIComponents = () => {
     } else {
       // 查找所有需要渲染为 NCode 的元素
       const nCodeWrappers = contentRef.value.querySelectorAll('.n-code-wrapper');
-      console.log('💥找到.n-code-wrapper元素数量:', nCodeWrappers.length);
 
       if (nCodeWrappers.length > 0) {
-        console.log('💥开始处理.n-code-wrapper元素');
         // 处理特殊格式的代码块
         Array.from(nCodeWrappers).forEach((wrapper: HTMLElement, index) => {
           // 检查此代码块是否已经处理过
           if (wrapper.getAttribute('data-processed') === 'true') {
-            console.log(`💥代码块包装器 #${index + 1} 已处理过，跳过`);
             return;
           }
 
@@ -1265,16 +1156,14 @@ const renderNaiveUIComponents = () => {
               const encodedCode = codeEl.getAttribute('data-code');
               if (encodedCode) {
                 codeContent = decodeURIComponent(encodedCode);
-                console.log(`💥成功从data-code解码代码内容，长度: ${codeContent.length}`);
               }
             } catch (decodeError) {
               console.error('💥解码代码内容出错:', decodeError);
             }
 
-            // 如果解码失败，使用textContent作为备选
+            // 如果解码失败, 使用textContent作为备选
             if (!codeContent) {
               codeContent = codeEl.textContent || '';
-              console.log(`💥使用textContent作为备选，长度: ${codeContent.length}`);
             }
 
             // 创建挂载点
@@ -1292,7 +1181,7 @@ const renderNaiveUIComponents = () => {
               if (codeLang && hljs.getLanguage(codeLang)) {
                 try {
                   highlighted = hljs.highlight(codeContent, { language: codeLang }).value;
-                  console.log(`💥成功使用highlight.js高亮代码，语言: ${codeLang}`);
+                  console.log(`💥成功使用highlight.js高亮代码, 语言: ${codeLang}`);
                 } catch (e) {
                   console.error('💥Highlight.js语法高亮失败:', e);
                 }
@@ -1308,11 +1197,10 @@ const renderNaiveUIComponents = () => {
               }
 
               // 创建包含语法高亮的HTML
-              const html = createCodeHtml(highlighted, codeLang, codeContent);
+              const html = createCodeHtml(highlighted, codeLang);
 
               // 设置HTML内容
               mountPoint.innerHTML = html;
-              console.log(`💥代码块 #${index + 1} 渲染成功 (HTML方式)`);
 
               // 添加复制功能
               const copyButton = mountPoint.querySelector('.copy-btn');
@@ -1328,7 +1216,7 @@ const renderNaiveUIComponents = () => {
                       copyButton.classList.remove('copied');
                     }, 2000);
                   } catch (err) {
-                    globalMessage.error('复制失败，请手动复制');
+                    globalMessage.error('复制失败, 请手动复制');
                     console.error('无法复制到剪贴板:', err);
                   }
                 });
@@ -1347,10 +1235,8 @@ const renderNaiveUIComponents = () => {
       } else {
         // 处理孤立的code标签
         const codeElements = contentRef.value.querySelectorAll('code');
-        console.log('💥找到普通code元素数量:', codeElements.length);
 
         if (codeElements.length === 0) {
-          console.log('💥未找到任何代码块元素');
           console.log('💥内容结构:', contentRef.value.innerHTML.substring(0, 300) + '...');
           return;
         }
@@ -1358,10 +1244,8 @@ const renderNaiveUIComponents = () => {
         // 处理普通的code元素
         Array.from(codeElements).forEach((codeEl: HTMLElement, index) => {
           try {
-            const codeContent = codeEl.textContent || '';
             // 内联代码直接添加样式
             codeEl.classList.add('inline-code');
-            console.log(`💥处理内联代码 #${index + 1}`);
           } catch (err) {
             console.error(`💥处理内联代码 #${index + 1} 时出错:`, err);
           }
@@ -1369,166 +1253,44 @@ const renderNaiveUIComponents = () => {
       }
     }
 
-    // 标记容器为已渲染，避免重复处理
+    // 标记容器为已渲染, 避免重复处理
     contentRef.value.setAttribute('data-code-rendered', 'true');
-    console.log('💥renderNaiveUIComponents函数执行完成，已标记为已渲染');
   } catch (error) {
-    console.error('💥渲染 NCode 组件时出错:', error);
+    console.error('💥渲染组件时出错:', error);
   }
 };
 
-// 表格解析测试函数
-const testTableParsing = async (customMarkdown?: string) => {
-  const testTableMarkdown = customMarkdown || `
-# 表格测试
+// 获取警告框HTML
+const getAlertHTML = (type: string, content: string, title: string = ''): string => {
+  // 处理tip类型, 将其映射为info类型
+  const displayType = type === 'tip' ? 'info' : type;
+  
+  return `
+    <div class="n-alert n-alert--${displayType}">
+      <div class="n-alert-icon">
+        ${getAlertIcon(displayType)}
+      </div>
+      <div class="n-alert-content">
+        ${title ? `<div class="n-alert-title">${title}</div>` : ''}
+        <div class="n-alert-body">${content}</div>
+      </div>
+    </div>
+  `;
+};
 
-下面是一个简单的表格:
-
-| 标题1 | 标题2 | 标题3 |
-| ---- | ---- | ---- |
-| 单元格1 | 单元格2 | 单元格3 |
-| 100 | 200 | 300 |
-
-## 另一个表格
-
-| 名称 | 年龄 | 职业 |
-| ---- | ---- | ---- |
-| 张三 | 25 | 工程师 |
-| 李四 | 30 | 设计师 |
-| 王五 | 28 | 产品经理 |
-`;
-
-  // 尝试解析表格
-  console.log('开始表格解析测试...');
-  console.log('测试Markdown内容:', testTableMarkdown);
-  try {
-    // 第1步：预处理表格
-    console.log('第1步：预处理表格...');
-    const processed = preprocessMarkdownTables(testTableMarkdown);
-    console.log('预处理后的表格Markdown:', processed);
-
-    // 第2步：解析Markdown为HTML
-    console.log('第2步：解析Markdown为HTML...');
-    // 处理可能的异步解析
-    let parsedHtml = '';
-    try {
-      const parsed = marked.parse(processed);
-      // 处理可能是Promise的情况
-      if (parsed instanceof Promise) {
-        parsedHtml = await parsed;
-        console.log('异步解析完成');
-      } else {
-        parsedHtml = parsed as string;
-        console.log('同步解析完成');
-      }
-    } catch (e) {
-      console.error('marked.parse 执行错误:', e);
-      // 尝试直接解析，跳过marked
-      console.log('尝试备用解析方法...');
-      const lines = processed.split('\n');
-      let html = '<div>';
-      let inTable = false;
-      let tableHtml = '';
-
-      for (const line of lines) {
-        if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
-          if (!inTable) {
-            inTable = true;
-            tableHtml = '<table border="1"><thead>';
-          }
-
-          // 处理表格行
-          const cells = line.split('|').filter(cell => cell.trim() !== '');
-          const isHeader = line.includes('---');
-
-          if (isHeader) {
-            continue; // 跳过分隔符行
-          }
-
-          const rowHtml = cells.map(cell => `<td>${cell.trim()}</td>`).join('');
-          tableHtml += `<tr>${rowHtml}</tr>`;
-
-          if (inTable && (line.trim() === '' || !line.includes('|'))) {
-            inTable = false;
-            tableHtml += '</tbody></table>';
-            html += tableHtml;
-          }
-        } else if (inTable) {
-          inTable = false;
-          tableHtml += '</tbody></table>';
-          html += tableHtml;
-        } else {
-          html += `<p>${line}</p>`;
-        }
-      }
-
-      if (inTable) {
-        tableHtml += '</tbody></table>';
-        html += tableHtml;
-      }
-
-      html += '</div>';
-      parsedHtml = html;
-      console.log('备用解析完成:', parsedHtml);
-    }
-
-    // 第3步：分析生成的HTML
-    console.log('第3步：分析生成的HTML...');
-    console.log('HTML长度:', parsedHtml.length);
-    console.log('HTML摘要:', parsedHtml.substring(0, 200) + '...');
-
-    // 检查是否包含表格标签
-    if (typeof parsedHtml === 'string' && parsedHtml.includes('<table>') && parsedHtml.includes('</table>')) {
-      console.log('表格解析成功!');
-
-      // 计算生成的表格数量
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = parsedHtml;
-      const tableCount = tempDiv.querySelectorAll('table').length;
-      console.log(`检测到 ${tableCount} 个表格`);
-
-      // 检查表格结构
-      const firstTable = tempDiv.querySelector('table');
-      if (firstTable) {
-        console.log('表格结构:', {
-          rows: firstTable.querySelectorAll('tr').length,
-          hasThead: !!firstTable.querySelector('thead'),
-          hasTbody: !!firstTable.querySelector('tbody'),
-          cells: firstTable.querySelectorAll('td').length
-        });
-
-        // 输出HTML结构以便调试
-        console.log('表格HTML结构:', firstTable.outerHTML);
-      }
-    } else {
-      console.warn('表格解析失败，未找到<table>标签');
-
-      // 尝试手动生成表格HTML
-      console.log('尝试手动生成表格HTML...');
-      const lines = processed.split('\n');
-      const tableParts = [];
-      let currentTable = [];
-
-      for (const line of lines) {
-        if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
-          currentTable.push(line);
-        } else if (currentTable.length > 0) {
-          tableParts.push([...currentTable]);
-          currentTable = [];
-        }
-      }
-
-      if (currentTable.length > 0) {
-        tableParts.push([...currentTable]);
-      }
-
-      console.log('识别到的表格部分数量:', tableParts.length);
-      for (let i = 0; i < tableParts.length; i++) {
-        console.log(`表格 #${i + 1}:`, tableParts[i]);
-      }
-    }
-  } catch (error) {
-    console.error('表格解析测试出错:', error);
+// 获取警告框图标
+const getAlertIcon = (type: string): string => {
+  switch (type) {
+    case 'info':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="info-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>';
+    case 'success':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="success-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+    case 'warning':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="warning-icon"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+    case 'error':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="error-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>';
+    default:
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="default-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>';
   }
 };
 
@@ -1544,11 +1306,9 @@ declare global {
 
 // 在处理完 Markdown 后调用 NCode 渲染
 watch(() => renderedContent.value, () => {
-  console.log('💥监测到renderedContent变化，准备渲染NCode组件');
 
   // 渲染前先检查是否已经渲染过
   if (contentRef.value && contentRef.value.getAttribute('data-code-rendered') === 'true') {
-    console.log('💥内容已经渲染过代码块，跳过重复渲染');
     return;
   }
 
@@ -1560,21 +1320,18 @@ watch(() => renderedContent.value, () => {
     if (contentRef.value) {
       // 再次检查是否已渲染过
       if (contentRef.value.getAttribute('data-code-rendered') === 'true') {
-        console.log('💥DOM已更新，但代码块已渲染过，跳过');
         return true;
       }
 
-      console.log('💥DOM已更新，调用setupEventListeners和renderNaiveUIComponents');
       setupEventListeners();
       renderNaiveUIComponents();
       return true;
     } else if (attempts < maxAttempts) {
       attempts++;
-      console.log(`💥contentRef.value不存在，尝试第${attempts}次等待 (剩余${maxAttempts - attempts}次)`);
       setTimeout(tryRender, 100); // 每100ms检查一次
       return false;
     } else {
-      console.warn('💥达到最大尝试次数，contentRef仍不存在');
+      console.warn('💥达到最大尝试次数, contentRef仍不存在');
       return false;
     }
   };
@@ -1582,90 +1339,33 @@ watch(() => renderedContent.value, () => {
   // 先用 nextTick 尝试一次
   nextTick(() => {
     if (!tryRender()) {
-      console.log('💥初次尝试失败，开始轮询等待contentRef');
     }
   });
 }, { immediate: true }); // 添加immediate: true确保初始化时也执行
 
-// 监听主题变化，更新代码块样式
+// 监听主题变化, 更新代码块样式
 watch(() => themeStore.isDarkMode.value, () => {
-  console.log('主题变化，更新CSS变量和代码块样式');
 
   // 调用通用函数更新CSS变量
   setupThemeVariables();
 
-  // 当主题变化时，仅更新代码块的样式
+  // 当主题变化时, 仅更新代码块的样式
   if (contentRef.value) {
     // 找到所有已渲染的代码块挂载点
     const mountPoints = contentRef.value.querySelectorAll('.n-code-mount-point');
     if (mountPoints.length > 0) {
-      console.log(`找到 ${mountPoints.length} 个代码块，样式已通过CSS变量更新`);
     }
 
     // 同时更新内联代码样式
     try {
       const inlineCodes = contentRef.value.querySelectorAll('.inline-code');
       if (inlineCodes.length > 0) {
-        console.log(`找到 ${inlineCodes.length} 个内联代码，样式已通过CSS变量更新`);
       }
     } catch (err) {
       console.error('更新内联代码样式出错:', err);
     }
   }
 });
-
-// 计算当前是否为暗黑模式
-const isDarkMode = computed(() => themeStore.isDarkMode.value);
-
-// 为直接提供的内容测试表格解析功能
-const testDirectContentTableParsing = async (content: string) => {
-  if (!content) return;
-
-  console.log('测试直接内容表格解析...');
-  console.log('内容预览:', content.substring(0, 100) + (content.length > 100 ? '...' : ''));
-
-  try {
-    // 清理并预处理内容
-    const cleanedContent = deepCleanContent(content);
-    const processed = preprocessMarkdownTables(cleanedContent);
-
-    // 使用处理后的内容来渲染，这将触发正常的渲染流程
-    markdownText.value = processed;
-    renderedContent.value = processMarkdown(markdownText.value);
-
-    // 通过设置一个标志值表示已经进行过测试
-    if (typeof window !== 'undefined') {
-      window.__tableParsingTested = true;
-    }
-
-    console.log('直接内容表格解析测试完成');
-  } catch (error) {
-    console.error('直接内容表格解析测试失败:', error);
-  }
-};
-
-// 监听 props.content 变化并测试表格解析
-watch(() => props.content, (newContent) => {
-  // 只在内容第一次设置时进行测试，避免无限循环
-  if (newContent && typeof window !== 'undefined' && !window.__tableParsingTested) {
-    testDirectContentTableParsing(newContent);
-  }
-}, { immediate: true });
-
-// 检测一个列是否应该是数字对齐的（包含数字、金额、百分比等）
-function isNumericColumn(values: string[]): boolean {
-  // 如果没有值，则不是数字列
-  if (values.length === 0) return false;
-
-  // 检查所有值
-  return values.every(value => {
-    const trimmed = value.trim();
-    // 空值不影响判断
-    if (trimmed === '') return true;
-    // 测试是否是数字（包括带有货币符号、小数点、逗号的数字）
-    return /^[\$¥€£]?\s*-?\d+([,\.]\d+)*%?$/.test(trimmed);
-  });
-}
 
 // 添加使用NTable处理表格的函数
 const processTablesWithNTable = () => {
@@ -1674,16 +1374,13 @@ const processTablesWithNTable = () => {
   // 查找所有表格元素
   const contentElement = contentRef.value as HTMLElement;
   const tables = contentElement.querySelectorAll('table');
-  console.log(`找到${tables.length}个表格，准备处理样式`);
 
   if (tables.length === 0) {
-    console.log('没有找到表格，跳过处理');
     return;
   }
 
   // 检查是否已经处理过表格
   if (typeof window !== 'undefined' && window.__manualTableTested) {
-    console.log('表格已经处理过，避免重复处理');
     return;
   }
 
@@ -1693,14 +1390,12 @@ const processTablesWithNTable = () => {
     try {
       // 检查表格是否已经处理过
       if (table.getAttribute('data-processed') === 'true') {
-        console.log(`表格 #${index + 1} 已处理过，跳过`);
         return;
       }
 
       // 检查表格是否已经在响应式包装器中
       const isInWrapper = table.closest('.table-responsive') !== null;
       if (isInWrapper) {
-        console.log(`表格 #${index + 1} 已在响应式包装器中，跳过创建包装器`);
         table.setAttribute('data-processed', 'true');
         table.classList.add('markdown-table');
         table.style.width = '100%';
@@ -1708,7 +1403,6 @@ const processTablesWithNTable = () => {
       }
 
       tableCount++;
-      console.log(`处理表格 ${tableCount}`);
 
       // 标记表格为已处理
       table.setAttribute('data-processed', 'true');
@@ -1721,7 +1415,7 @@ const processTablesWithNTable = () => {
       const headers = table.querySelectorAll('thead th');
       const rows = table.querySelectorAll('tbody tr');
 
-      // 检查表格特征，用于决定布局模式
+      // 检查表格特征, 用于决定布局模式
       const columnCount = headers.length || (rows[0]?.querySelectorAll('td').length || 0);
       const hasLongContent = checkForLongContent(table);
       const isWideTable = columnCount > 5;
@@ -1734,9 +1428,8 @@ const processTablesWithNTable = () => {
 
       // 添加布局模式类
       table.classList.add(`table-${layoutMode}`);
-      console.log(`表格模式: ${layoutMode} (列数: ${columnCount}, 是否有长内容: ${hasLongContent})`);
 
-      // 如果列数较少，均匀分配列宽
+      // 如果列数较少, 均匀分配列宽
       if (layoutMode === 'adaptive' && columnCount > 0 && columnCount <= 5) {
         const width = `${Math.floor(100 / columnCount)}%`;
 
@@ -1753,7 +1446,6 @@ const processTablesWithNTable = () => {
           });
         }
 
-        console.log(`设置列均匀宽度: ${width}`);
       }
 
       // 处理表格对齐方式
@@ -1764,11 +1456,6 @@ const processTablesWithNTable = () => {
       wrapper.className = `table-responsive table-${layoutMode}`;
       wrapper.style.width = '100%';
       wrapper.style.display = 'block';
-
-      // 确保表格父容器具有足够宽度
-      const parentWidth = table.parentElement?.offsetWidth || 0;
-      const containerWidth = contentElement.offsetWidth || 0;
-      console.log(`表格父容器宽度: ${parentWidth}, 内容容器宽度: ${containerWidth}`);
 
       // 放置表格到包装器中
       if (table.parentNode) {
@@ -1809,7 +1496,6 @@ const processTablesWithNTable = () => {
     window.__manualTableTested = true;
   }
 
-  console.log(`表格处理完成: 总共处理了 ${tableCount} 个表格`);
 
   // 在处理完成后再次检查表格宽度
   setTimeout(() => {
@@ -1817,13 +1503,10 @@ const processTablesWithNTable = () => {
     allTables.forEach((table, index) => {
       const actualWidth = (table as HTMLElement).offsetWidth;
       const parentWidth = table.parentElement?.offsetWidth || 0;
-      const wrapperWidth = table.closest('.table-responsive')?.clientWidth || 0;
 
-      console.log(`表格 #${index + 1} 的实际宽度: ${actualWidth}px, 父容器宽度: ${parentWidth}px, 包装器宽度: ${wrapperWidth}px`);
-
-      // 如果表格宽度不足，强制设置为100%
+      // 如果表格宽度不足, 强制设置为100%
       if (actualWidth < parentWidth * 0.95) {
-        console.log(`表格 #${index + 1} 宽度不足，强制设置为100%`);
+        console.log(`表格 #${index + 1} 宽度不足, 强制设置为100%`);
         (table as HTMLElement).style.width = '100%';
       }
     });
@@ -1907,7 +1590,7 @@ function updateScrollIndicator(wrapper: HTMLElement, indicator: Element) {
 
   const hasHorizontalScroll = wrapper.scrollWidth > wrapper.clientWidth;
 
-  // 如果没有水平滚动，隐藏指示器
+  // 如果没有水平滚动, 隐藏指示器
   if (!hasHorizontalScroll) {
     indicator.classList.add('hidden');
     return;
@@ -1934,27 +1617,6 @@ function updateScrollIndicator(wrapper: HTMLElement, indicator: Element) {
   }
 }
 
-// 检测一个列是否应该是数字对齐的（包含数字、金额、百分比等）
-const isNumberColumn = (data: Record<string, string>[], headerKey: string): boolean => {
-  // 如果没有数据，默认为左对齐
-  if (data.length === 0) return false;
-
-  // 检查至少70%的单元格是否包含数字格式
-  let numberCount = 0;
-
-  for (const row of data) {
-    const value = String(row[headerKey] || '').trim();
-
-    // 判断是否为数字格式（整数、小数、金额、百分比）
-    if (/^[\$¥€£]?\s*-?\d+(\.\d+)?%?$/.test(value)) {
-      numberCount++;
-    }
-  }
-
-  // 如果超过70%的单元格是数字格式，则认为这一列应该右对齐
-  return (numberCount / data.length) >= 0.7;
-};
-
 // 在内容渲染完成后处理表格
 watch(() => renderedContent.value, () => {
   // 确保DOM已更新
@@ -1973,10 +1635,9 @@ watch(() => renderedContent.value, () => {
 
 // 添加监听主题变化时重新渲染表格
 watch(() => themeStore.isDarkMode.value, () => {
-  // 主题变化后只更新表格样式，而不重新创建结构
+  // 主题变化后只更新表格样式, 而不重新创建结构
   nextTick(() => {
     if (contentRef.value) {
-      console.log('主题变化，只更新表格样式');
 
       // 获取所有表格和包装器
       const tables = contentRef.value.querySelectorAll('table.markdown-table');
@@ -1984,14 +1645,8 @@ watch(() => themeStore.isDarkMode.value, () => {
 
       // 检查是否存在表格
       if (tables.length === 0) {
-        console.log('没有找到表格，无需更新样式');
         return;
       }
-
-      console.log(`找到 ${tables.length} 个表格，${wrappers.length} 个包装器，更新样式`);
-
-      // 只更新表格样式，不重新创建结构
-      const isDark = themeStore.isDarkMode.value;
 
       // 更新滚动指示器状态
       wrappers.forEach(wrapper => {
@@ -2002,18 +1657,15 @@ watch(() => themeStore.isDarkMode.value, () => {
           }
         }
       });
-
-      console.log('表格样式更新完成');
     }
   });
 });
 
 /**
- * 处理Markdown表格，将其替换为更好的HTML表格结构
+ * 处理Markdown表格, 将其替换为更好的HTML表格结构
  * @param {string} html - 原始HTML
- * @param {boolean} isDarkTheme - 是否为暗色主题
  */
-function enhanceTablesInHTML(html: string, isDarkTheme = false) {
+function enhanceTablesInHTML(html: string) {
   if (!html) return html;
 
   if (typeof document === 'undefined') return html;
@@ -2032,14 +1684,12 @@ function enhanceTablesInHTML(html: string, isDarkTheme = false) {
     // 检查表格是否已经在响应式包装器中
     const isInWrapper = table.closest('.table-responsive') !== null;
     if (isInWrapper) {
-      console.log(`表格已在响应式包装器中，跳过创建包装器`);
       table.classList.add('markdown-table');
       (table as HTMLElement).style.width = '100%';
       return;
     }
 
     tableCount++;
-    console.log(`处理表格 ${tableCount}`);
 
     // 为表格添加基础样式类和宽度属性
     table.classList.add('markdown-table');
@@ -2049,7 +1699,7 @@ function enhanceTablesInHTML(html: string, isDarkTheme = false) {
     const headers = table.querySelectorAll('thead th');
     const rows = table.querySelectorAll('tbody tr');
 
-    // 检查表格特征，用于决定布局模式
+    // 检查表格特征, 用于决定布局模式
     const columnCount = headers.length || (rows[0]?.querySelectorAll('td').length || 0);
     const hasLongContent = checkForLongContent(table);
     const isWideTable = columnCount > 5;
@@ -2062,9 +1712,8 @@ function enhanceTablesInHTML(html: string, isDarkTheme = false) {
 
     // 添加布局模式类
     table.classList.add(`table-${layoutMode}`);
-    console.log(`表格模式: ${layoutMode} (列数: ${columnCount}, 是否有长内容: ${hasLongContent})`);
 
-    // 如果列数较少，均匀分配列宽
+    // 如果列数较少, 均匀分配列宽
     if (layoutMode === 'adaptive' && columnCount > 0 && columnCount <= 5) {
       const width = `${Math.floor(100 / columnCount)}%`;
 
@@ -2080,8 +1729,6 @@ function enhanceTablesInHTML(html: string, isDarkTheme = false) {
           (cell as HTMLElement).style.width = width;
         });
       }
-
-      console.log(`设置列均匀宽度: ${width}`);
     }
 
     // 处理表格对齐方式
@@ -2108,13 +1755,347 @@ function enhanceTablesInHTML(html: string, isDarkTheme = false) {
 
   return tempDiv.innerHTML;
 }
+
+// 组件卸载前清理事件监听器
+onBeforeUnmount(() => {
+  // 移除全局错误处理
+  window.removeEventListener('error', handleErrors);
+  
+  // 如果有图片模态框正在显示，清理键盘事件
+  if (showImageModal.value) {
+    document.removeEventListener('keydown', handleImageKeydown);
+  }
+  
+  // 清理滚动事件监听器
+  if (contentRef.value) {
+    const wrappers = contentRef.value.querySelectorAll('.table-responsive.table-fixed');
+    wrappers.forEach(wrapper => {
+      if (wrapper instanceof HTMLElement) {
+        wrapper.removeEventListener('scroll', () => {
+          const indicator = wrapper.querySelector('.scroll-indicator');
+          if (indicator) {
+            updateScrollIndicator(wrapper, indicator);
+          }
+        });
+      }
+    });
+  }
+});
+
 </script>
 
 <style lang="scss">
 @use '../assets/styles/components/markdownDisplay.scss';
 
-/* 表格样式 */
+
+/* 代码字体样式 */
+.code-font {
+  font-family: 'Consolas', 'Monaco', 'Menlo', 'Source Code Pro', 'Courier New', monospace !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+.markdown-container pre code {
+  font-family: 'Consolas', 'Monaco', 'Menlo', 'Source Code Pro', 'Courier New', monospace !important;
+}
+
+/* 确保内联代码也使用正确的字体 */
+.markdown-container .inline-code {
+  font-family: 'Consolas', 'Monaco', 'Menlo', 'Source Code Pro', 'Courier New', monospace !important;
+}
+
+/* 图片查看模态框样式 */
+.modal-image-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0 auto;
+  position: relative;
+}
+
+.image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+
+.modal-image {
+  display: block;
+  object-fit: contain;
+  max-width: calc(100% - 40px);
+  max-height: 80vh;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transform-origin: center;
+  user-select: none;
+  margin: 0 auto;
+}
+
+.image-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.image-toolbar-btn {
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #aaa;
+  transition: all 0.2s;
+  padding: 0;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+  
+  &.close-btn {
+    margin-left: 8px;
+    color: #ff9292;
+    
+    &:hover {
+      background-color: rgba(255, 0, 0, 0.2);
+      color: #fff;
+    }
+  }
+}
+
+/* 为Markdown内容中的图片添加悬停样式 */
+.markdown-container img {
+  transition: transform 0.2s, filter 0.2s;
+  max-width: 100%;
+  
+  &:hover {
+    filter: brightness(1.05);
+    transform: scale(1.01);
+  }
+  
+  &[data-action="zoom"] {
+    cursor: zoom-in;
+  }
+}
+
+/* 警告框样式 */
 .markdown-container {
+  .n-alert-mount-point {
+    margin: 16px 0;
+  }
+
+  .n-alert {
+    display: flex;
+    padding: 16px;
+    border-radius: 4px;
+    align-items: flex-start;
+    line-height: 1.6;
+    font-size: 14px;
+    
+    .n-alert-icon {
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+    
+    .n-alert-content {
+      flex: 1;
+      
+      .n-alert-title {
+        font-weight: bold;
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+      
+      .n-alert-body {
+        p:first-child {
+          margin-top: 0;
+        }
+        
+        p:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+    
+    /* 默认样式 */
+    &.n-alert--default {
+      background-color: #f7f8fa;
+      border: 1px solid #e5e6eb;
+      
+      .default-icon {
+        fill: #86909c;
+      }
+      
+      .n-alert-title {
+        color: #4e5969;
+      }
+    }
+    
+    /* 信息样式 */
+    &.n-alert--info {
+      background-color: #e8f4ff;
+      border: 1px solid #b7d4ff;
+      
+      .info-icon {
+        fill: #1890ff;
+      }
+      
+      .n-alert-title {
+        color: #1890ff;
+      }
+    }
+    
+    /* 成功样式 */
+    &.n-alert--success {
+      background-color: #e8ffea;
+      border: 1px solid #b7f0c7;
+      
+      .success-icon {
+        fill: #52c41a;
+      }
+      
+      .n-alert-title {
+        color: #52c41a;
+      }
+    }
+    
+    /* 警告样式 */
+    &.n-alert--warning {
+      background-color: #fffbe8;
+      border: 1px solid #ffe7a3;
+      
+      .warning-icon {
+        fill: #faad14;
+      }
+      
+      .n-alert-title {
+        color: #faad14;
+      }
+    }
+    
+    /* 错误样式 */
+    &.n-alert--error {
+      background-color: #ffebe8;
+      border: 1px solid #ffccc7;
+      
+      .error-icon {
+        fill: #ff4d4f;
+      }
+      
+      .n-alert-title {
+        color: #ff4d4f;
+      }
+    }
+  }
+  
+  /* 暗色模式下的警告框样式 */
+  &.dark-theme {
+    .n-alert {
+      /* 暗色默认样式 */
+      &.n-alert--default {
+        background-color: #2a2a2a;
+        border-color: #505050;
+        color: #d9d9d9;
+        
+        .default-icon {
+          fill: #a6a6a6;
+        }
+        
+        .n-alert-title {
+          color: #e1e1e1;
+        }
+      }
+      
+      /* 暗色信息样式 */
+      &.n-alert--info {
+        background-color: #111d2c;
+        border-color: #15395b;
+        color: #d9d9d9;
+        
+        .info-icon {
+          fill: #177ddc;
+        }
+        
+        .n-alert-title {
+          color: #177ddc;
+        }
+      }
+      
+      /* 暗色成功样式 */
+      &.n-alert--success {
+        background-color: #162312;
+        border-color: #274916;
+        color: #d9d9d9;
+        
+        .success-icon {
+          fill: #49aa19;
+        }
+        
+        .n-alert-title {
+          color: #49aa19;
+        }
+      }
+      
+      /* 暗色警告样式 */
+      &.n-alert--warning {
+        background-color: #2b2111;
+        border-color: #594214;
+        color: #d9d9d9;
+        
+        .warning-icon {
+          fill: #d89614;
+        }
+        
+        .n-alert-title {
+          color: #d89614;
+        }
+      }
+      
+      /* 暗色错误样式 */
+      &.n-alert--error {
+        background-color: #2a1215;
+        border-color: #58181c;
+        color: #d9d9d9;
+        
+        .error-icon {
+          fill: #a61d24;
+        }
+        
+        .n-alert-title {
+          color: #d0363a;
+        }
+      }
+    }
+  }
+}
+
+
+.markdown-container {
+  font-family: 'Arial', sans-serif;
   .table-responsive {
     overflow-x: auto;
     margin-bottom: 1rem;
@@ -2133,29 +2114,6 @@ function enhanceTablesInHTML(html: string, isDarkTheme = false) {
       background-color: rgba(136, 136, 136, 0.5);
       border-radius: 3px;
     }
-
-    // /* 自适应表格样式 */
-    // &.table-adaptive {
-    //   overflow-x: visible;
-
-    //   table {
-    //     table-layout: auto;
-    //     width: 100% !important; /* 强制宽度100% */
-    //     max-width: 100%;
-
-    //     td, th {
-    //       word-break: break-word;
-    //       hyphens: auto;
-    //     }
-
-    //     .truncate-text {
-    //       max-width: 200px;
-    //       white-space: nowrap;
-    //       overflow: hidden;
-    //       text-overflow: ellipsis;
-    //     }
-    //   }
-    // }
 
     /* 固定宽度表格样式 */
     &.table-fixed {
@@ -2336,6 +2294,42 @@ function enhanceTablesInHTML(html: string, isDarkTheme = false) {
       .scroll-indicator {
         color: #aaa;
       }
+    }
+  }
+}
+
+/* 模态框动画效果 */
+.image-modal {
+  &.n-modal {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .n-modal-mask {
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    transition: opacity 0.3s ease;
+  }
+  
+  .n-modal-body-wrapper {
+    background-color: transparent;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 90vw !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  &.n-modal--enter-from, &.n-modal--leave-to {
+    opacity: 0;
+    
+    .n-modal-body-wrapper {
+      transform: scale(0.95);
+      opacity: 0;
     }
   }
 }

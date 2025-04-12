@@ -367,7 +367,7 @@
             <NScrollbar style="max-height: 200px; overflow: auto">
               <NCode :code="runArgs" language="yaml" :hljs="hljs" />
             </NScrollbar>
-            <div style="margin-top: 8px;">Windows 用户如果启动失败，请尝试把 <NCode>mefrpc</NCode> 换成 <NCode>.\mefrpc.exe</NCode>。</div>
+            <div style="margin-top: 8px;">Windows 用户如果使用命令提示符，请把 <NCode>./mefrpc</NCode> 换成 <NCode>mefrpc</NCode>。</div>
           </NCollapseItem>
           <NCollapseItem title="配置文件" name="config">
             <NAlert type="error" style="margin-bottom: 16px" title="友情提示">
