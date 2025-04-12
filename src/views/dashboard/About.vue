@@ -36,8 +36,9 @@
             其他所有组件均为自主研发, 受《中华人民共和国著作权法》保护。
           </span><br>
           <span>
-            中国内网穿透联盟致力于聚集各个行业同僚, 可在 <a href="https://xn--v6qw21h0gd43u.xn--fiqs8s" target="_blank">内网穿透.中国</a> 了解更多信息。
-          </span><br>
+            如果您有捐赠节点的意向, 可直接前往 <RouterLink to="/dashboard/more/node-donate">捐赠页面</RouterLink> 进行捐赠。
+          </span>
+          <br>
           <span>
             如需了解我们的相关规定, 请访问相应链接: <RouterLink to="/terms">服务条款</RouterLink>&nbsp;
             <RouterLink to="/privacy">隐私政策</RouterLink>&nbsp;
@@ -78,10 +79,6 @@
         </NDescriptions>
         <div>
           <span>
-            如果您有捐赠节点的意向, 可联系 <a href="mailto:support@mefrp.com" target="_blank">support@mefrp.com</a>, 或加入 QQ 群 <a
-              href="https://qm.qq.com/q/9iibikyupG" target="_blank">1019501085</a> 进行咨询。
-          </span><br>
-          <span>
             中国内网穿透联盟致力于聚集各个友好的行业同僚, 可在 <a href="https://xn--v6qw21h0gd43u.xn--fiqs8s" target="_blank">内网穿透.中国</a> 了解更多信息。
           </span>
         </div>
@@ -116,6 +113,7 @@
 <script setup lang="ts">
 import { NCard, NSpace, NDescriptions, NDescriptionsItem, NTag, NAvatar, NTable, NAlert } from 'naive-ui'
 import { oldSponsors } from '../../shared/oldSponsors'
+import { RouterLink } from 'vue-router'
 
 const openUrl = (url: string) => {
   window.open(url, '_blank')

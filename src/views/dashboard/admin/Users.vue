@@ -75,6 +75,20 @@
         </NSpace>
       </template>
     </NModal>
+
+    <!-- 封禁理由模态框 -->
+    <NModal v-model:show="banModalVisible" preset="dialog" title="封禁用户" style="width: 500px;">
+      <div>
+        <p>您正在封禁用户：<strong>{{ currentUser?.username }}</strong></p>
+        <NFormItem label="封禁理由" required>
+          <NInput v-model:value="banReason" type="textarea" placeholder="请输入封禁理由" :rows="4" />
+        </NFormItem>
+      </div>
+      <NSpace justify="end">
+        <NButton size="small" @click="banModalVisible = false">取消</NButton>
+        <NButton type="primary" size="small" @click="handleBanSubmit">确认封禁</NButton>
+      </NSpace>
+    </NModal>
   </div>
 </template>
 
@@ -272,24 +286,15 @@ const columns: DataTableColumns<UserInfo> = [
               { default: () => '编辑' }
             ),
             h(
-              NPopconfirm,
+              NButton,
               {
-                onPositiveClick: () => handleToggleStatus(row),
-                positiveText: '确定',
-                negativeText: '取消'
+                size: 'small',
+                type: row.status === 1 ? 'success' : 'error',
+                onClick: () => row.status === 1
+                  ? handleToggleStatus(row, "") // 解封直接调用，传空字符串
+                  : showBanModal(row) // 封禁显示对话框
               },
-              {
-                default: () => row.status === 1 ? '确认解封此用户？' : '确认封禁此用户？',
-                trigger: () =>
-                  h(
-                    NButton,
-                    {
-                      size: 'small',
-                      type: row.status === 1 ? 'success' : 'error'
-                    },
-                    { default: () => row.status === 1 ? '解封' : '封禁' }
-                  )
-              }
+              { default: () => row.status === 1 ? '解封' : '封禁' }
             )
           ]
         }
@@ -325,9 +330,42 @@ const handleStatusFilter = () => {
   loadData()
 }
 
-const handleToggleStatus = async (user: UserInfo) => {
+const banModalVisible = ref(false)
+const banReason = ref('')
+const currentUser = ref<UserInfo | null>(null)
+
+const showBanModal = (user: UserInfo) => {
+  // 只有正常状态的用户才能被封禁
+  if (user.status !== 0) {
+    message.warning('只有正常状态的用户才能被封禁')
+    return
+  }
+
+  currentUser.value = user
+  banReason.value = '' // 清空之前的理由
+  banModalVisible.value = true
+}
+
+const handleBanSubmit = async () => {
+  if (!currentUser.value) return
+
+  // 封禁理由不能为空
+  if (!banReason.value.trim()) {
+    message.error('请输入封禁理由')
+    return
+  }
+
   try {
-    const data = await AdminApi.toggleUser(user.userId, user.status === 1)
+    await handleToggleStatus(currentUser.value, banReason.value)
+    banModalVisible.value = false
+  } catch (error) {
+    console.error('处理封禁失败:', error)
+  }
+}
+
+const handleToggleStatus = async (user: UserInfo, banReason: string) => {
+  try {
+    const data = await AdminApi.toggleUser(user.userId, banReason)
     if (data.data.code === 200) {
       message.success(data.data.message || '操作成功')
     } else {

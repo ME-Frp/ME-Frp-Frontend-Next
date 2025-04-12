@@ -9,8 +9,8 @@ export const AdminApi = {
   },
 
   // 禁用/启用用户
-  toggleUser: (userId: number, isDisabled: boolean) => {
-    return baseApi.post<ApiResponse<void>>('/admin/user/toggle', { userId, isDisabled })
+  toggleUser: (userId: number, banReason: string) => {
+    return baseApi.post<ApiResponse<void>>('/admin/user/toggle', { userId, banReason })
   },
 
   // 获取用户信息
