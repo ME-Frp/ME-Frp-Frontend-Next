@@ -64,7 +64,6 @@
               {{ node.name }}
             </div>
             <NSpace>
-              <NTag :bordered="false" type="info" size="small">{{ node.version }}</NTag>
               <NTag :bordered="false" :type="node.isOnline ? 'success' : 'error'" size="small">
                 {{ node.isOnline ? '在线' : '离线' }}
               </NTag>
@@ -77,7 +76,7 @@
               <div class="stat-value">
                 <NNumberAnimation :from="0" :to="node.onlineProxy" />
               </div>
-            </div>
+            </div>            
             <div class="stat-item">
               <div class="stat-label">当前连接</div>
               <div class="stat-value">
@@ -85,12 +84,25 @@
               </div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">入站流量</div>
-              <div class="stat-value">{{ formatTraffic(node.totalTrafficIn) }}</div>
+              <div class="stat-label">流量统计</div>
+              <div class="stat-value">
+                <NSpace align="center" :size="4">
+                  <NIcon>
+                    <ArrowDownCircleOutline />
+                  </NIcon>
+                  <span>{{ formatTraffic(node.totalTrafficIn) }}</span>
+                  <NIcon>
+                    <ArrowUpCircleOutline />
+                  </NIcon>
+                  <span>{{ formatTraffic(node.totalTrafficOut) }}</span>
+                </NSpace>
+              </div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">出站流量</div>
-              <div class="stat-value">{{ formatTraffic(node.totalTrafficOut) }}</div>
+              <div class="stat-label">节点版本</div>
+              <div class="stat-value">
+                {{ node.version }}
+              </div>
             </div>
           </div>
 
@@ -106,6 +118,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDownCircleOutline, ArrowUpCircleOutline } from '@vicons/ionicons5'
 import { NCard, NTag, NDivider, NNumberAnimation, NSpace, NText } from 'naive-ui'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { AuthApi } from '../../shared/api/auth'
