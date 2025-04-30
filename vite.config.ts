@@ -15,7 +15,48 @@ export default defineConfig({
       injectRegister: 'auto',
       
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+        globPatterns: ['**/*.{js,css,html,png,svg,ico,webp}'],
+        runtimeCaching: [{
+          urlPattern: ({ url }) => 
+            url.hostname === 'resources.mefrp.com'
+            && !url.pathname.startsWith('/api'),
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'mefrp-resources',
+            expiration: {
+              maxEntries: 256,
+            },
+          },
+        }],
+      },
+      manifest: {
+        id: 'com.mefrp.v5',
+        name: 'ME Frp',
+        short_name: 'ME Frp',
+        description: 'ME Frp 幻缘映射 - 提供免费内网穿透、端口映射服务，支持 Minecraft、泰拉瑞亚联机，远程桌面，开发调试，建站等。高速稳定，半公益性质。',
+        theme_color: '#42b883',
+        background_color: '#42b883',
+        display: 'standalone',
+        icons: [
+          {
+            src: 'favicon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
+          },
+        ],
+        screenshots: [{
+          src: '/pwa/fullscreen-wide.png',
+          sizes: '2726x1544',
+          form_factor: 'wide',
+          label: 'Application Fullscreen (Wide)',
+          type: 'image/png',
+        }, {
+          src: '/pwa/fullscreen-narrow.png',
+          sizes: '747x1331',
+          form_factor: 'narrow',
+          label: 'Application Fullscreen (Narrow)',
+          type: 'image/png',
+        }]
       },
       includeAssets: ['favicon.ico', 'robots.txt', 'sitemap.xml', 'docs/**/*'],
       devOptions: {
