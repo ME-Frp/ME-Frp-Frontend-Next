@@ -4,11 +4,26 @@ import { resolve } from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      injectRegister: 'auto',
+      
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      },
+      includeAssets: ['favicon.ico', 'robots.txt', 'sitemap.xml', 'docs/**/*'],
+      devOptions: {
+        enabled: true,
+        type: 'module',
+        navigateFallback: 'index.html',
+      },
+    }),
     AutoImport({
       imports: [
         'vue',
