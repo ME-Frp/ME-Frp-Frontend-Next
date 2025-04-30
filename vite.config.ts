@@ -60,7 +60,7 @@ export default defineConfig({
       },
       includeAssets: ['favicon.ico', 'robots.txt', 'sitemap.xml', 'docs/**/*'],
       devOptions: {
-        enabled: true,
+        enabled: false,
         type: 'module',
         navigateFallback: 'index.html',
       },
