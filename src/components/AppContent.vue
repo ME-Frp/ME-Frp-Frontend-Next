@@ -1,11 +1,13 @@
 <template>
-  <HomeMenu v-if="!isDashboard && !isDocs" />
-  <RouterView v-slot="{ Component }">
+  <HomeMenu v-if="shouldShow" />
+  <RouterView v-slot="{ Component }" @vue:before-update="shouldShowFooter = false" @vue:updated="shouldShowFooter = true">
     <transition name="fade" mode="out-in" appear>
       <component :is="Component" />
     </transition>
   </RouterView>
-  <HomeFooter v-if="!isDashboard && !isDocs" />
+
+  <HomeFooter v-show="shouldShowFooter" v-if="shouldShow" />
+
   <NGlobalStyle />
 </template>
 
@@ -21,8 +23,12 @@ import { Window } from '../types'
 declare const window: Window
 
 const route = useRoute()
-const isDashboard = computed(() => route.path.startsWith('/dashboard'))
-const isDocs = computed(() => route.path.startsWith('/docs'))
+
+const shouldShowFooter = ref(false)
+
+const shouldShow = computed(() => {
+  return !route.path.startsWith('/dashboard') && !route.path.startsWith('/docs')
+})
 
 // 初始化全局UI组件
 onMounted(() => {
