@@ -57,15 +57,18 @@
       <NDivider />
 
       <div class="node-grid">
-        <NCard v-for="node in nodes" :key="node.nodeId" class="node-card" :class="{ offline: !node.isOnline }">
+        <NCard v-for="node in sortedNodes" :key="node.nodeId" class="node-card" :class="{ offline: !node.isOnline }">
           <div class="node-header">
             <div class="node-title">
-              <NTag type="info" size="small" style="margin-right: 8px"># {{ node.nodeId }}</NTag>
+              <NTag :bordered="false" type="info" size="small" style="margin-right: 8px"># {{ node.nodeId }}</NTag>
               {{ node.name }}
             </div>
-            <NTag :type="node.isOnline ? 'success' : 'error'" size="small">
-              {{ node.isOnline ? '在线' : '离线' }}
-            </NTag>
+            <NSpace>
+              <NTag :bordered="false" type="info" size="small">{{ node.version }}</NTag>
+              <NTag :bordered="false" :type="node.isOnline ? 'success' : 'error'" size="small">
+                {{ node.isOnline ? '在线' : '离线' }}
+              </NTag>
+            </NSpace>
           </div>
 
           <div class="node-stats">
@@ -73,6 +76,12 @@
               <div class="stat-label">在线隧道</div>
               <div class="stat-value">
                 <NNumberAnimation :from="0" :to="node.onlineProxy" />
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">当前连接</div>
+              <div class="stat-value">
+                <NNumberAnimation :from="0" :to="node.curConns" />
               </div>
             </div>
             <div class="stat-item">
@@ -84,6 +93,12 @@
               <div class="stat-value">{{ formatTraffic(node.totalTrafficOut) }}</div>
             </div>
           </div>
+
+          <div class="node-footer">
+            <NText depth="3">
+              {{ node.isOnline ? `已上线 ${formatUptime(node.uptime)}` : '节点离线' }}
+            </NText>
+          </div>
         </NCard>
       </div>
     </NCard>
@@ -91,12 +106,17 @@
 </template>
 
 <script setup lang="ts">
-import { NCard, NTag, NDivider, NNumberAnimation } from 'naive-ui'
+import { NCard, NTag, NDivider, NNumberAnimation, NSpace, NText } from 'naive-ui'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { AuthApi } from '../../shared/api/auth'
 import type { NodeUsage } from '../../types'
 
 const nodes = ref<NodeUsage[]>([])
+
+// 排序后的节点列表（按节点ID升序）
+const sortedNodes = computed(() => {
+  return [...nodes.value].sort((a, b) => a.nodeId - b.nodeId)
+})
 
 // 计算总览数据
 const totalOnlineClient = computed(() => nodes.value.reduce((sum, node) => sum + node.onlineClient, 0))
@@ -127,6 +147,24 @@ const formatTraffic = (bytes: number): string => {
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
+// 格式化在线时长
+const formatUptime = (seconds: number): string => {
+  if (seconds < 60) {
+    return `${seconds}秒`
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60)
+    return `${minutes}分钟`
+  } else if (seconds < 86400) {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    return `${hours}小时${minutes}分钟`
+  } else {
+    const days = Math.floor(seconds / 86400)
+    const hours = Math.floor((seconds % 86400) / 3600)
+    return `${days}天${hours}小时`
+  }
 }
 
 const fetchNodeStatus = async () => {

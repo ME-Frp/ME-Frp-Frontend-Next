@@ -4,7 +4,7 @@
       <NSpace vertical :size="24">
         <NDescriptions label-placement="left" bordered :column="1">
           <NDescriptionsItem label="面板版本">
-            v5.4.1
+            v5.5.0
           </NDescriptionsItem>
           <NDescriptionsItem label="开发者">
             <div class="user-info">
@@ -14,16 +14,16 @@
           </NDescriptionsItem>
           <NDescriptionsItem label="技术栈">
             <NSpace>
-              <NTag type="success" style="cursor: pointer" @click="openUrl('https://vuejs.org')">
+              <NTag :bordered="false" type="success" style="cursor: pointer" @click="openUrl('https://vuejs.org')">
                 Vue 3
               </NTag>
-              <NTag type="info" style="cursor: pointer" @click="openUrl('https://www.typescriptlang.org')">
+              <NTag :bordered="false" type="info" style="cursor: pointer" @click="openUrl('https://www.typescriptlang.org')">
                 TypeScript
               </NTag>
-              <NTag type="warning" style="cursor: pointer" @click="openUrl('https://www.naiveui.com')">
+              <NTag :bordered="false" type="warning" style="cursor: pointer" @click="openUrl('https://www.naiveui.com')">
                 Naive UI
               </NTag>
-              <NTag type="error" style="cursor: pointer" @click="openUrl('https://vitejs.dev')">
+              <NTag :bordered="false" type="error" style="cursor: pointer" @click="openUrl('https://vitejs.dev')">
                 Vite
               </NTag>
             </NSpace>

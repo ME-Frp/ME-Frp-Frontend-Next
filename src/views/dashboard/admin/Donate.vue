@@ -3,64 +3,28 @@
     <NCard title="节点捐赠管理" class="manage-card">
       <NTabs type="line" animated>
         <NTabPane name="pending" tab="待审核申请">
-          <NDataTable
-            :columns="donateColumns"
-            :data="pendingDonates"
-            :loading="pendingLoading"
-            :pagination="pagination"
-            :bordered="false"
-            striped
-          />
+          <NDataTable :columns="donateColumns" :data="pendingDonates" :loading="pendingLoading" :pagination="pagination"
+            :bordered="false" striped />
         </NTabPane>
         <NTabPane name="all" tab="所有捐赠申请">
-          <NDataTable
-            :columns="donateColumns"
-            :data="allDonates"
-            :loading="allLoading"
-            :pagination="allPagination"
-            :bordered="false"
-            striped
-          />
+          <NDataTable :columns="donateColumns" :data="allDonates" :loading="allLoading" :pagination="allPagination"
+            :bordered="false" striped />
         </NTabPane>
         <NTabPane name="pendingDelete" tab="待审核删除申请">
-          <NDataTable
-            :columns="deleteColumns"
-            :data="pendingDeleteRequests"
-            :loading="pendingDeleteLoading"
-            :pagination="pendingDeletePagination"
-            :bordered="false"
-            striped
-          />
+          <NDataTable :columns="deleteColumns" :data="pendingDeleteRequests" :loading="pendingDeleteLoading"
+            :pagination="pendingDeletePagination" :bordered="false" striped />
         </NTabPane>
         <NTabPane name="allDelete" tab="所有删除申请">
-          <NDataTable
-            :columns="deleteColumns"
-            :data="allDeleteRequests"
-            :loading="allDeleteLoading"
-            :pagination="allDeletePagination"
-            :bordered="false"
-            striped
-          />
+          <NDataTable :columns="deleteColumns" :data="allDeleteRequests" :loading="allDeleteLoading"
+            :pagination="allDeletePagination" :bordered="false" striped />
         </NTabPane>
         <NTabPane name="pendingEdit" tab="待审核编辑申请">
-          <NDataTable
-            :columns="editColumns"
-            :data="pendingEditRequests"
-            :loading="pendingEditLoading"
-            :pagination="pendingEditPagination"
-            :bordered="false"
-            striped
-          />
+          <NDataTable :columns="editColumns" :data="pendingEditRequests" :loading="pendingEditLoading"
+            :pagination="pendingEditPagination" :bordered="false" striped />
         </NTabPane>
         <NTabPane name="allEdit" tab="所有编辑申请">
-          <NDataTable
-            :columns="editColumns"
-            :data="allEditRequests"
-            :loading="allEditLoading"
-            :pagination="allEditPagination"
-            :bordered="false"
-            striped
-          />
+          <NDataTable :columns="editColumns" :data="allEditRequests" :loading="allEditLoading"
+            :pagination="allEditPagination" :bordered="false" striped />
         </NTabPane>
       </NTabs>
     </NCard>
@@ -86,6 +50,14 @@
             <span class="value">{{ currentDonate.nodeName }}</span>
           </div>
           <div class="modal-info-item">
+            <span class="label">地区：</span>
+            <span class="value">
+              <NSpace>
+                <NTag :bordered="false" type="info" size="small">{{ getRegionName(currentDonate.region) || '未设置' }}</NTag>
+              </NSpace>
+            </span>
+          </div>
+          <div class="modal-info-item">
             <span class="label">主机名/IP：</span>
             <span class="value">{{ currentDonate.hostname }}</span>
           </div>
@@ -94,9 +66,9 @@
             <span class="value">{{ currentDonate.description }}</span>
           </div>
         </div>
-        
+
         <NDivider style="margin: 16px 0" />
-        
+
         <div class="modal-section">
           <div class="section-title">配置信息</div>
           <div class="modal-info-item">
@@ -116,7 +88,7 @@
             <span class="value">
               <NSpace>
                 <template v-if="currentDonate.allowGroup">
-                  <NTag v-for="group in currentDonate.allowGroup.split(';')" :key="group" type="info" size="small">
+                  <NTag :bordered="false" v-for="group in currentDonate.allowGroup.split(';')" :key="group" type="info" size="small">
                     {{ getGroupName(group) }}
                   </NTag>
                 </template>
@@ -133,7 +105,7 @@
             <span class="value">
               <NSpace>
                 <template v-if="currentDonate.allowType">
-                  <NTag v-for="type in currentDonate.allowType.split(';')" :key="type" type="success" size="small">
+                  <NTag :bordered="false" v-for="type in currentDonate.allowType.split(';')" :key="type" type="success" size="small">
                     {{ type.toUpperCase() }}
                   </NTag>
                 </template>
@@ -142,9 +114,9 @@
             </span>
           </div>
         </div>
-        
+
         <NDivider style="margin: 16px 0" />
-        
+
         <div class="modal-section">
           <div class="section-title">申请状态</div>
           <div class="modal-info-item">
@@ -153,12 +125,15 @@
           </div>
           <div class="modal-info-item" v-if="currentDonate.status !== 0">
             <span class="label">审核时间：</span>
-            <span class="value">{{ currentDonate.reviewTime ? new Date(currentDonate.reviewTime * 1000).toLocaleString() : '-' }}</span>
+            <span class="value">{{ currentDonate.reviewTime ? new Date(currentDonate.reviewTime * 1000).toLocaleString()
+              : '-'
+              }}</span>
           </div>
           <div class="modal-info-item">
             <span class="label">状态：</span>
             <span class="value">
-              <NTag :type="currentDonate.status === 0 ? 'warning' : (currentDonate.status === 1 ? 'success' : 'error')" size="small">
+              <NTag :bordered="false" :type="currentDonate.status === 0 ? 'warning' : (currentDonate.status === 1 ? 'success' : 'error')"
+                size="small">
                 {{ currentDonate.status === 0 ? '待审核' : (currentDonate.status === 1 ? '已通过' : '已拒绝') }}
               </NTag>
             </span>
@@ -193,13 +168,13 @@
           <div class="modal-info-item">
             <span class="label">节点ID：</span>
             <span class="value">
-              <NTag type="info" size="small">{{ currentDeleteRequest.nodeId }}</NTag>
+              <NTag :bordered="false" type="info" size="small">{{ currentDeleteRequest.nodeId }}</NTag>
             </span>
           </div>
         </div>
-        
+
         <NDivider style="margin: 16px 0" />
-        
+
         <div class="modal-section">
           <div class="section-title">删除信息</div>
           <div class="modal-info-item">
@@ -207,9 +182,9 @@
             <span class="value">{{ currentDeleteRequest.reason }}</span>
           </div>
         </div>
-        
+
         <NDivider style="margin: 16px 0" />
-        
+
         <div class="modal-section">
           <div class="section-title">申请状态</div>
           <div class="modal-info-item">
@@ -218,12 +193,15 @@
           </div>
           <div class="modal-info-item" v-if="currentDeleteRequest.status !== 0">
             <span class="label">审核时间：</span>
-            <span class="value">{{ currentDeleteRequest.reviewTime ? new Date(currentDeleteRequest.reviewTime * 1000).toLocaleString() : '-' }}</span>
+            <span class="value">{{ currentDeleteRequest.reviewTime ? new Date(currentDeleteRequest.reviewTime *
+              1000).toLocaleString() : '-' }}</span>
           </div>
           <div class="modal-info-item">
             <span class="label">状态：</span>
             <span class="value">
-              <NTag :type="currentDeleteRequest.status === 0 ? 'warning' : (currentDeleteRequest.status === 1 ? 'success' : 'error')" size="small">
+              <NTag
+                :type="currentDeleteRequest.status === 0 ? 'warning' : (currentDeleteRequest.status === 1 ? 'success' : 'error')"
+                size="small">
                 {{ currentDeleteRequest.status === 0 ? '待审核' : (currentDeleteRequest.status === 1 ? '已通过' : '已拒绝') }}
               </NTag>
             </span>
@@ -260,6 +238,14 @@
             <span class="value">{{ currentEditRequest.username }}</span>
           </div>
           <div class="modal-info-item">
+            <span class="label">地区：</span>
+            <span class="value">
+              <NSpace>
+                <NTag :bordered="false" type="info" size="small">{{ getRegionName(currentEditRequest.region) || '未设置' }}</NTag>
+              </NSpace>
+            </span>
+          </div>
+          <div class="modal-info-item">
             <span class="label">申请原因：</span>
             <span class="value">{{ currentEditRequest.reason }}</span>
           </div>
@@ -269,12 +255,15 @@
           </div>
           <div class="modal-info-item">
             <span class="label">审核时间：</span>
-            <span class="value">{{ currentEditRequest.reviewTime ? new Date(currentEditRequest.reviewTime * 1000).toLocaleString() : '-' }}</span>
+            <span class="value">{{ currentEditRequest.reviewTime ? new Date(currentEditRequest.reviewTime *
+              1000).toLocaleString() : '-' }}</span>
           </div>
           <div class="modal-info-item">
             <span class="label">状态：</span>
             <span class="value">
-              <NTag :type="currentEditRequest.status === 0 ? 'warning' : (currentEditRequest.status === 1 ? 'success' : 'error')" size="small">
+              <NTag
+                :type="currentEditRequest.status === 0 ? 'warning' : (currentEditRequest.status === 1 ? 'success' : 'error')"
+                size="small">
                 {{ currentEditRequest.status === 0 ? '待审核' : (currentEditRequest.status === 1 ? '已通过' : '已拒绝') }}
               </NTag>
             </span>
@@ -284,14 +273,22 @@
             <span class="value">{{ currentEditRequest.rejectReason || '-' }}</span>
           </div>
         </div>
-        
+
         <NDivider style="margin: 16px 0" />
-        
+
         <div class="modal-section">
           <div class="section-title">编辑信息</div>
           <div class="modal-info-item">
             <span class="label">节点名称：</span>
             <span class="value">{{ currentEditRequest.nodeName }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="label">地区：</span>
+            <span class="value">
+              <NSpace>
+                <NTag :bordered="false" type="info" size="small">{{ getRegionName(currentEditRequest.region) || '未设置' }}</NTag>
+              </NSpace>
+            </span>
           </div>
           <div class="modal-info-item">
             <span class="label">主机名/IP：</span>
@@ -315,7 +312,16 @@
           </div>
           <div class="modal-info-item">
             <span class="label">允许用户组：</span>
-            <span class="value">{{ currentEditRequest.allowGroup }}</span>
+            <span class="value">
+              <NSpace>
+                <template v-if="currentEditRequest.allowGroup">
+                  <NTag :bordered="false" v-for="group in currentEditRequest.allowGroup.split(';')" :key="group" type="info" size="small">
+                    {{ getGroupName(group) }}
+                  </NTag>
+                </template>
+                <template v-else>-</template>
+              </NSpace>
+            </span>
           </div>
           <div class="modal-info-item">
             <span class="label">允许端口范围：</span>
@@ -323,17 +329,27 @@
           </div>
           <div class="modal-info-item">
             <span class="label">允许隧道类型：</span>
-            <span class="value">{{ currentEditRequest.allowType }}</span>
+            <span class="value">
+              <NSpace>
+                <template v-if="currentDonate.allowType">
+                  <NTag :bordered="false" v-for="type in currentDonate.allowType.split(';')" :key="type" type="success" size="small">
+                    {{ type.toUpperCase() }}
+                  </NTag>
+                </template>
+                <template v-else>-</template>
+              </NSpace>
+            </span>
           </div>
         </div>
-        
+
         <div v-if="currentEditRequest.status === 0" class="modal-section" style="margin-top: 16px">
           <div class="section-title">审核操作</div>
           <NSpace vertical>
             <NButton type="primary" @click="handleApproveEdit(currentEditRequest.requestId)">通过申请</NButton>
             <div>
               <NInput v-model:value="rejectEditReason" type="textarea" placeholder="请输入拒绝原因" />
-              <NButton type="error" style="margin-top: 8px" @click="handleRejectEdit(currentEditRequest.requestId)">拒绝申请</NButton>
+              <NButton type="error" style="margin-top: 8px" @click="handleRejectEdit(currentEditRequest.requestId)">拒绝申请
+              </NButton>
             </div>
           </NSpace>
         </div>
@@ -347,25 +363,25 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted, h } from 'vue'
-import { 
-  useMessage, 
-  useDialog, 
-  NButton, 
-  NSpace, 
-  NInput, 
-  NCard, 
-  NTabs, 
-  NTabPane, 
-  NDataTable, 
-  NModal, 
-  PaginationProps, 
-  NTag, 
-  NDivider 
+import {
+  useMessage,
+  useDialog,
+  NButton,
+  NSpace,
+  NInput,
+  NCard,
+  NTabs,
+  NTabPane,
+  NDataTable,
+  NModal,
+  PaginationProps,
+  NTag,
+  NDivider
 } from 'naive-ui'
-import { 
-  getAllNodeDonates, 
-  getPendingNodeDonates, 
-  approveNodeDonate, 
+import {
+  getAllNodeDonates,
+  getPendingNodeDonates,
+  approveNodeDonate,
   rejectNodeDonate,
   getAllNodeDeleteRequests,
   getPendingNodeDeleteRequests,
@@ -719,7 +735,7 @@ const editColumns = [
     render(row: NodeEditRequest) {
       let type: 'default' | 'success' | 'error' | 'warning' | 'info' | 'primary' = 'default'
       let text = '未知'
-      
+
       switch (row.status) {
         case 0:
           type = 'warning'
@@ -734,7 +750,7 @@ const editColumns = [
           text = '已拒绝'
           break
       }
-      
+
       return h(NTag, { type, size: 'small' }, { default: () => text })
     }
   },
@@ -766,7 +782,7 @@ const fetchGroups = async () => {
     if (res.data.code === 200) {
       const groups = res.data.data.groups
       groupOptions.value = groups.map(group => ({
-        label: `${group.friendlyName} (${group.name})`,
+        label: group.friendlyName,
         value: group.name
       }))
     } else {
@@ -825,9 +841,9 @@ const handleReject = (row: NodeDonate) => {
         message.error('请输入拒绝原因')
         return false
       }
-      
+
       try {
-        const res = await rejectNodeDonate({ 
+        const res = await rejectNodeDonate({
           donateId: row.donateId,
           reason: rejectReasonRef.value
         })
@@ -900,9 +916,9 @@ const handleRejectDelete = (row: NodeDeleteRequest) => {
         message.error('请输入拒绝原因')
         return false
       }
-      
+
       try {
-        const res = await rejectNodeDeleteRequest({ 
+        const res = await rejectNodeDeleteRequest({
           requestId: row.requestId,
           reason: rejectReasonRef.value
         })
@@ -1070,11 +1086,11 @@ const handleRejectEdit = async (requestId: number) => {
     message.warning('请输入拒绝原因')
     return
   }
-  
+
   try {
-    const res = await rejectNodeEditRequest({ 
-      requestId, 
-      reason: rejectEditReason.value 
+    const res = await rejectNodeEditRequest({
+      requestId,
+      reason: rejectEditReason.value
     })
     if (res.data.code === 200) {
       message.success('已拒绝节点编辑申请')
@@ -1089,6 +1105,16 @@ const handleRejectEdit = async (requestId: number) => {
     message.error('操作失败')
     console.error(error)
   }
+}
+
+// 获取地区显示名称
+const getRegionName = (region: string) => {
+  const regionMap: Record<string, string> = {
+    'cn': '中国大陆',
+    'cnos': '中国香港/澳门/台湾地区',
+    'oversea': '海外'
+  }
+  return regionMap[region] || region
 }
 
 onMounted(() => {
@@ -1125,7 +1151,7 @@ onMounted(() => {
   display: flex;
   margin-bottom: 14px;
   line-height: 1.5;
-  
+
   .label {
     width: 140px;
     font-weight: 500;
@@ -1133,7 +1159,7 @@ onMounted(() => {
     text-align: right;
     padding-right: 16px;
   }
-  
+
   .value {
     flex: 1;
     word-break: break-all;
@@ -1162,7 +1188,7 @@ onMounted(() => {
     color: var(--n-title-text-color);
     position: relative;
     padding-left: 12px;
-    
+
     &::before {
       content: '';
       position: absolute;
@@ -1200,7 +1226,7 @@ onMounted(() => {
     background-color: var(--n-color-modal);
     border-top: 1px solid var(--n-border-color);
   }
-  
+
   .n-divider {
     margin: 16px 0;
   }
@@ -1215,4 +1241,4 @@ onMounted(() => {
 :deep(.n-tag) {
   padding: 0 8px;
 }
-</style> 
+</style>

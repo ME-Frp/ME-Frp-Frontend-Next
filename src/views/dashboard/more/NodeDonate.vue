@@ -38,7 +38,21 @@
             <NFormItem label="节点名称" path="nodeName">
               <NInput v-model:value="formValue.nodeName" placeholder="请输入节点名称" />
               <template #feedback>
-                <div class="form-tip">节点名称应遵循 "国家/地区 序号①②③④⑤⑥⑦⑧⑨⑩ 带宽" 的格式, 例如: "中国/北京 ① 100Mbps"</div>
+                <div class="form-tip">节点名称应遵循 "地区 序号①②③④⑤⑥⑦⑧⑨⑩ 带宽" 的格式, 例如: "北京 ① 100Mbps"</div>
+              </template>
+            </NFormItem>
+
+            <NFormItem label="节点带宽" path="bandwidth">
+              <NInput v-model:value="formValue.bandwidth" placeholder="请输入节点带宽" />
+              <template #feedback>
+                <div class="form-tip">请输入节点的带宽限制, 如 100Mbps。</div>
+              </template>
+            </NFormItem>
+
+            <NFormItem label="节点地区" path="region">
+              <NSelect v-model:value="formValue.region" :options="regionOptions" placeholder="请选择节点地区" />
+              <template #feedback>
+                <div class="form-tip">选择节点所在地区。</div>
               </template>
             </NFormItem>
 
@@ -103,7 +117,7 @@
             <NFormItem label="允许的用户组" path="allowGroup">
               <NButtonGroup>
                 <NButton v-for="group in groupOptions" :key="group.value"
-                  :type="formValue.allowGroup.includes(group.value) ? 'primary' : 'default'"
+                  :type="formValue.allowGroup.includes(group.value.toString()) ? 'primary' : 'default'"
                   :disabled="group.value === 'admin' || group.value === 'sponsor'" @click="toggleGroup(group.value)">
                   {{ group.label }}
                 </NButton>
@@ -232,6 +246,20 @@
               </template>
             </NFormItem>
 
+            <NFormItem label="节点带宽" path="bandwidth">
+              <NInput v-model:value="editFormValue.bandwidth" placeholder="请输入节点带宽" />
+              <template #feedback>
+                <div class="form-tip">请输入节点的带宽限制, 如 100Mbps。请严格遵守大小写, 如果 1000Mbps 请输入 1Gbps。</div>
+              </template>
+            </NFormItem>
+
+            <NFormItem label="节点地区" path="region">
+              <NSelect v-model:value="editFormValue.region" :options="regionOptions" placeholder="请选择节点地区" />
+              <template #feedback>
+                <div class="form-tip">选择节点所在地区。</div>
+              </template>
+            </NFormItem>
+
             <NFormItem label="主机名/IP" path="hostname">
               <NInput v-model:value="editFormValue.hostname" placeholder="请输入主机名或IP地址" />
               <template #feedback>
@@ -284,7 +312,7 @@
             <NFormItem label="允许的用户组" path="allowGroup">
               <NButtonGroup>
                 <NButton v-for="group in groupOptions" :key="group.value"
-                  :type="editFormValue.allowGroup.includes(group.value) ? 'primary' : 'default'"
+                  :type="editFormValue.allowGroup.includes(group.value.toString()) ? 'primary' : 'default'"
                   :disabled="group.value === 'admin' || group.value === 'sponsor'"
                   @click="toggleEditGroup(group.value)">
                   {{ group.label }}
@@ -513,6 +541,10 @@
             <span class="value">{{ currentDonate.nodeName }}</span>
           </div>
           <div class="modal-info-item">
+            <span class="label">节点地区：</span>
+            <span class="value">{{ getRegionName(currentDonate.region) }}</span>
+          </div>
+          <div class="modal-info-item">
             <span class="label">主机名/IP：</span>
             <span class="value">{{ currentDonate.hostname }}</span>
           </div>
@@ -543,7 +575,7 @@
             <span class="value">
               <NSpace>
                 <template v-if="currentDonate.allowGroup">
-                  <NTag v-for="group in currentDonate.allowGroup.split(';')" :key="group" type="info" size="small">
+                  <NTag :bordered="false" v-for="group in currentDonate.allowGroup.split(';')" :key="group" type="info" size="small">
                     {{ getGroupName(group) }}
                   </NTag>
                 </template>
@@ -560,7 +592,7 @@
             <span class="value">
               <NSpace>
                 <template v-if="currentDonate.allowType">
-                  <NTag v-for="type in currentDonate.allowType.split(';')" :key="type" type="success" size="small">
+                  <NTag :bordered="false" v-for="type in currentDonate.allowType.split(';')" :key="type" type="success" size="small">
                     {{ type.toUpperCase() }}
                   </NTag>
                 </template>
@@ -587,7 +619,7 @@
           <div class="modal-info-item">
             <span class="label">状态：</span>
             <span class="value">
-              <NTag :type="currentDonate.status === 0 ? 'warning' : (currentDonate.status === 1 ? 'success' : 'error')"
+              <NTag :bordered="false" :type="currentDonate.status === 0 ? 'warning' : (currentDonate.status === 1 ? 'success' : 'error')"
                 size="small">
                 {{ currentDonate.status === 0 ? '待审核' : (currentDonate.status === 1 ? '已通过' : '已拒绝') }}
               </NTag>
@@ -623,7 +655,7 @@
           <div class="modal-info-item">
             <span class="label">节点ID：</span>
             <span class="value">
-              <NTag type="info" size="small">{{ currentDeleteRequest.nodeId }}</NTag>
+              <NTag :bordered="false" type="info" size="small">{{ currentDeleteRequest.nodeId }}</NTag>
             </span>
           </div>
         </div>
@@ -654,7 +686,7 @@
           <div class="modal-info-item">
             <span class="label">状态：</span>
             <span class="value">
-              <NTag :type="getStatusType(currentDeleteRequest.status)" size="small">
+              <NTag :bordered="false" :type="getStatusType(currentDeleteRequest.status)" size="small">
                 {{ getStatusText(currentDeleteRequest.status) }}
               </NTag>
             </span>
@@ -736,30 +768,34 @@ const scriptFormValue = ref({
 })
 const formValue = ref({
   nodeName: '',
+  region: 'cn',
   hostname: '',
   description: '',
   servicePort: 2333,
   adminPort: 2334,
   adminPass: '',
-  allowGroup: [] as (string | number)[],
+  allowGroup: ['admin', 'sponsor'],
   allowPort: '10000-60000',
-  allowType: []
+  allowType: [],
+  bandwidth: ''
 })
 const deleteFormValue = ref({
   nodeId: null as number | null,
   reason: ''
 })
 const editFormValue = ref({
-  nodeId: null as number | null,
+  nodeId: null,
   nodeName: '',
+  region: 'cn',
   hostname: '',
   description: '',
   servicePort: 2333,
   adminPort: 2334,
   adminPass: '',
-  allowGroup: [] as (string | number)[],
+  allowGroup: ['admin', 'sponsor'],
   allowPort: '10000-60000',
   allowType: [],
+  bandwidth: '',
   reason: ''
 })
 const scriptInfo = ref<GetNodeInstallScriptResponse | null>(null)
@@ -851,11 +887,20 @@ const typeOptions = [
 
 // 表单验证规则
 const rules = {
-  nodeName: {
-    required: true,
-    message: '请输入节点名称',
-    trigger: 'blur'
-  },
+  nodeName: [
+    {
+      required: true,
+      message: '请输入节点名称',
+      trigger: ['blur', 'change']
+    }
+  ],
+  region: [
+    {
+      required: true,
+      message: '请选择节点地区',
+      trigger: ['blur', 'change']
+    }
+  ],
   hostname: {
     required: true,
     message: '请输入主机名或IP地址',
@@ -924,6 +969,13 @@ const editRules = {
     {
       required: true,
       message: '请输入节点名称',
+      trigger: ['blur', 'change']
+    }
+  ],
+  region: [
+    {
+      required: true,
+      message: '请选择节点地区',
       trigger: ['blur', 'change']
     }
   ],
@@ -1228,6 +1280,8 @@ const showEditDetail = (row: NodeEditRequest) => {
   editFormValue.value = {
     nodeId: row.nodeId,
     nodeName: row.nodeName,
+    region: row.region,
+    bandwidth: row.bandwidth,
     hostname: row.hostname,
     description: row.description,
     servicePort: row.servicePort,
@@ -1301,6 +1355,7 @@ const handleSubmit = () => {
         // 重置表单, 但保留管理员组选中状态
         formValue.value = {
           nodeName: '',
+          region: 'cn',
           hostname: '',
           description: '',
           servicePort: 2333,
@@ -1308,7 +1363,8 @@ const handleSubmit = () => {
           adminPass: '',
           allowGroup: ['admin', 'sponsor'],
           allowPort: '10000-60000',
-          allowType: []
+          allowType: [],
+          bandwidth: '',
         }
         // 刷新列表
         fetchDonateList()
@@ -1570,6 +1626,8 @@ const handleEditSubmit = () => {
         editFormValue.value = {
           nodeId: null,
           nodeName: '',
+          region: 'cn',
+          bandwidth: '',
           hostname: '',
           description: '',
           servicePort: 2333,
@@ -1641,6 +1699,8 @@ const handleNodeSelect = async (nodeId: number | null) => {
     editFormValue.value = {
       nodeId: null,
       nodeName: '',
+      region: 'cn',
+      bandwidth: '',
       hostname: '',
       description: '',
       servicePort: 2333,
@@ -1661,6 +1721,8 @@ const handleNodeSelect = async (nodeId: number | null) => {
     editFormValue.value = {
       nodeId: selectedNode.nodeId,
       nodeName: selectedNode.nodeName,
+      region: selectedNode.region,
+      bandwidth: selectedNode.bandwidth,
       hostname: selectedNode.hostname,
       description: selectedNode.description,
       servicePort: selectedNode.servicePort,
@@ -1706,14 +1768,14 @@ const toggleGroup = (value: string | number) => {
 
   if (value === 'sponsor') {
     if (!formValue.value.allowGroup.includes(value)) {
-      formValue.value.allowGroup.push(value)
+      formValue.value.allowGroup.push(value.toString())
     }
     return
   }
 
-  const index = formValue.value.allowGroup.indexOf(value)
+  const index = formValue.value.allowGroup.indexOf(value.toString())
   if (index === -1) {
-    formValue.value.allowGroup.push(value)
+    formValue.value.allowGroup.push(value.toString())
   } else {
     formValue.value.allowGroup.splice(index, 1)
   }
@@ -1736,9 +1798,9 @@ const toggleEditGroup = (value: string | number) => {
     return
   }
 
-  const index = editFormValue.value.allowGroup.indexOf(value)
+  const index = editFormValue.value.allowGroup.indexOf(value.toString())
   if (index === -1) {
-    editFormValue.value.allowGroup.push(value)
+    editFormValue.value.allowGroup.push(value.toString())
   } else {
     editFormValue.value.allowGroup.splice(index, 1)
   }
@@ -1776,7 +1838,7 @@ const handleGenerateScript = async () => {
     }
     
     const res = await getNodeInstallScript({
-      nodeId: String(scriptFormValue.value.nodeId), // 转换为字符串类型
+      nodeId: (scriptFormValue.value.nodeId as number).toString(),
       system: scriptFormValue.value.system,
       arch: scriptFormValue.value.arch
     })
@@ -1985,6 +2047,23 @@ onMounted(() => {
     }
   }, 500)
 })
+
+// 在 script setup 部分添加 regionOptions
+const regionOptions = [
+  { label: '中国大陆', value: 'cn' },
+  { label: '中国香港/澳门/台湾地区', value: 'cnos' },
+  { label: '海外', value: 'oversea' }
+]
+
+// 获取地区显示名称
+const getRegionName = (region: string) => {
+  const regionMap: Record<string, string> = {
+    'cn': '中国大陆',
+    'cnos': '中国香港/澳门/台湾地区',
+    'oversea': '海外'
+  }
+  return regionMap[region] || region
+}
 </script>
 
 <style lang="scss" scoped>

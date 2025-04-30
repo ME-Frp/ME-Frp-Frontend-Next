@@ -58,13 +58,13 @@
             添加域名
           </NButton>
           <NSpace vertical v-if="icpDomains.length">
-            <NCard v-for="domain in icpDomains" :key="domain.domain" size="small" class="domaiNCard">
+            <NCard v-for="domain in icpDomains" :key="domain.domain" size="small" class="domainCard">
               <NSpace justify="space-between" align="center" style="width: 100%; margin: 8px;">
                 <NSpace vertical size="small">
                   <NText strong>{{ domain.domain }}</NText>
                   <NSpace size="small">
-                    <NTag size="small" type="success">{{ domain.icpId }}</NTag>
-                    <NTag size="small" type="info">
+                    <NTag :bordered="false" size="small" type="success">{{ domain.icpId }}</NTag>
+                    <NTag :bordered="false" size="small" type="info">
                       {{ domain.unitName }} - {{ domain.natureName }}
                     </NTag>
                   </NSpace>
@@ -101,7 +101,7 @@
         </div>
         <div class="security-value">
           <NSpace align="center">
-            <NTag :type="realnameTime ? 'success' : 'warning'">
+            <NTag :bordered="false" :type="realnameTime ? 'success' : 'warning'">
               {{ realnameTime ? `已实名认证 (${formatTime(realnameTime)})` : '未实名认证' }}
             </NTag>
             <NButton v-if="!realnameTime" type="primary" secondary @click="showRealnameModal">
@@ -769,33 +769,4 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 @use '../../assets/styles/dashboard/profile.scss';
-
-.domaiNCard {
-  width: 100%;
-
-  :deep(.NCard__content) {
-    padding: 8px 12px;
-  }
-
-  &:hover {
-    background-color: var(--n-color-hover);
-  }
-}
-
-.form-tips {
-  font-size: 12px;
-  color: var(--n-text-color-3);
-  margin-top: 8px;
-  line-height: 1.5;
-}
-
-.traffic-tip {
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--n-color-info-light);
-  padding: 6px 10px;
-  border-radius: 4px;
-}
 </style>

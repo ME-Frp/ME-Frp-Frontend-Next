@@ -51,13 +51,13 @@
                 {{ proxy.proxyName }}
               </h3>
               <div class="status-tags">
-                <NTag :type="proxy.isOnline ? 'success' : 'error'" size="small">
+                <NTag :bordered="false" :type="proxy.isOnline ? 'success' : 'error'" size="small">
                   {{ proxy.isOnline ? '在线' : '离线' }}
                 </NTag>
-                <NTag v-if="proxy.isBanned" type="error" size="small" style="margin-left: 4px">
+                <NTag :bordered="false" v-if="proxy.isBanned" type="error" size="small" style="margin-left: 4px">
                   已封禁
                 </NTag>
-                <NTag v-if="proxy.isDisabled" type="warning" size="small" style="margin-left: 4px">
+                <NTag :bordered="false" v-if="proxy.isDisabled" type="warning" size="small" style="margin-left: 4px">
                   已禁用
                 </NTag>
               </div>
@@ -66,7 +66,7 @@
               <div class="info-item">
                 <span class="label">ID:</span>
                 <span class="value">
-                  <NTag type="info" size="small"># {{ proxy.proxyId }}</NTag>
+                  <NTag :bordered="false" type="info" size="small"># {{ proxy.proxyId }}</NTag>
                 </span>
               </div>
               <div class="info-item">
@@ -80,7 +80,7 @@
                 <span class="value">
                   <div v-if="proxy.proxyType === 'http' || proxy.proxyType === 'https'" class="remote-port">
                     <div v-for="domain in JSON.parse(proxy.domain || '[]')" :key="domain" class="domain">
-                      <NTag type="info" size="small" style="cursor: pointer"
+                      <NTag :bordered="false" type="info" size="small" style="cursor: pointer"
                         @click="() => openUrl(proxy.proxyType, domain)">
                         {{ domain }}
                       </NTag>
@@ -158,10 +158,10 @@
         <div class="proxy-detail-left">
           <div class="modal-info-item">
             <span class="label">状态：</span>
-            <NTag :type="selectedProxy.isOnline ? 'success' : 'error'" size="small">
+            <NTag :bordered="false" :type="selectedProxy.isOnline ? 'success' : 'error'" size="small">
               {{ selectedProxy.isOnline ? '在线' : '离线' }}
             </NTag>
-            <NTag v-if="selectedProxy.isBanned" type="error" size="small" style="margin-left: 8px">
+            <NTag :bordered="false" v-if="selectedProxy.isBanned" type="error" size="small" style="margin-left: 8px">
               已封禁
             </NTag>
           </div>
@@ -189,7 +189,7 @@
             <div class="modal-info-item">
               <span class="label">绑定域名：</span>
               <span class="value">
-                <NTag size="small" v-for="domain in JSON.parse(selectedProxy.domain || '[]')" :key="domain" type="info"
+                <NTag :bordered="false" size="small" v-for="domain in JSON.parse(selectedProxy.domain || '[]')" :key="domain" type="info"
                   style="cursor: pointer; margin-right: 8px" @click="() => openUrl(selectedProxy.proxyType, domain)">
                   {{ domain }}
                 </NTag>

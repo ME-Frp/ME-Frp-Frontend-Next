@@ -1,5 +1,5 @@
 <template>
-  <div class="content-grid">
+  <div class="content-grid" ref="contentGridRef">
     <!-- 实名认证提示弹窗 -->
     <NModal v-model:show="showRealnameModal" preset="dialog" title="未实名认证提示" :show-icon="false" style="width: 400px;">
       <div>
@@ -14,177 +14,270 @@
         <NButton size="small" type="primary" @click="goToRealname">立即前往</NButton>
       </template>
     </NModal>
-    <!-- 修改步骤指示器区域 -->
-    <div class="steps-container" v-if="isMobile" style="user-select: none">
-      <NButton secondary round v-if="currentStep === 2" @click="currentStep = 1" size="medium">
-        返回
-        <template #icon>
-          <NIcon>
-            <ArrowBackOutline />
-          </NIcon>
-        </template>
-      </NButton>
-      <NSteps :current="currentStep" class="mobile-steps">
-        <NStep title="选择节点" />
-        <NStep title="隧道配置" />
-      </NSteps>
-    </div>
-    <!-- 修改节点卡片的显示逻辑 -->
-    <NCard v-if="!isMobile || currentStep === 1" title="选择节点" class="node-card">
-      <NSpace vertical>
-        <NGrid x-gap="12" y-gap="12" cols="1" style="padding-top: 14px;">
-          <NGridItem v-for="node in nodeOptions" :key="node.value">
-            <NCard hoverable @click="handleNodeChange(node.value)"
-              :class="{ 'selected-node': formValue.nodeId === node.value }" class="node-item">
-              <NSpace vertical>
-                <div class="node-header">
-                  <NSpace align="center" justify="space-between">
-                    <NSpace align="center">
-                      <NSpace :size="4">
-                        <NTag type="info" size="small"># {{ node.id }}</NTag>
-                        <NTag :type="node.isOnline ? 'success' : 'error'" size="small">
+
+    <!-- 选择节点页面 -->
+    <Transition name="fade-in" mode="out-in">
+      <div v-if="currentStep === 1" class="step-page">
+        <NCard title="选择节点" class="node-card">
+          <template #header-extra>
+            <div class="filter-container">
+              <div class="filter-row">
+                <NCheckbox v-model:checked="filterWeb" size="small">
+                  仅显示可建站节点
+                </NCheckbox>
+                <NCheckbox v-model:checked="filterHighBandwidth" size="small">
+                  仅显示允许大流量节点
+                </NCheckbox>
+              </div>
+              <div class="search-row">
+                <NInput
+                  v-model:value="searchKeyword"
+                  placeholder="搜索…"
+                  clearable
+                  size="small"
+                />
+              </div>
+            </div>
+          </template>
+          <NCollapse v-model:value="activeCollapse" accordion :default-expanded-names="[userGroup === 'noRealname' ? 'oversea' : 'cn']">
+            <NCollapseItem v-if="userGroup !== 'noRealname' && hasNodesInRegion('cn')" title="中国大陆" name="cn">
+              <div class="n-grid">
+                <NCard v-for="node in filteredNodeOptions.filter(n => n.region === 'cn')" :key="node.value"
+                  :class="{ 'selected-node': formValue.nodeId === node.value }" hoverable @click="handleNodeChange(node.value)">
+                  <NSpace vertical>
+                    <NSpace align="center" justify="space-between">
+                      <NSpace align="center">
+                        <NTag :bordered="false" type="info" size="small"># {{ node.id }}</NTag>
+                        <!-- <NTag :bordered="false" :type="node.isOnline ? 'success' : 'error'" size="small">
                           {{ node.isOnline ? '在线' : '离线' }}
-                        </NTag>
+                        </NTag> -->
+                        <NText>{{ node.name }}</NText>
                       </NSpace>
-                      <NText>{{ node.name }}</NText>
+                    </NSpace>
+                    <NText depth="3">{{ node.description }}</NText>
+                    <NSpace>
+                      <template v-for="protocol in node.allowedProtocols" :key="protocol">
+                        <NTag v-if="!(protocol === 'https' && node.allowedProtocols.includes('http'))" :bordered="false" size="small" type="success">
+                          {{ protocol === 'http' && node.allowedProtocols.includes('https') ? 'HTTP(S)' : protocol.toUpperCase() }}
+                        </NTag>
+                      </template>
+                      <NTag :bordered="false" type="warning" size="small">
+                        {{ node.bandwidth || '未知' }}
+                      </NTag>
                     </NSpace>
                   </NSpace>
-                </div>
-                <NText depth="3" style="font-size: 13px;">{{ node.description }}</NText>
-                <NSpace vertical size="small">
-                  <!-- <div class="info-item">
-                    <span class="label">用户组:</span>
+                </NCard>
+              </div>
+            </NCollapseItem>
+            <NCollapseItem v-if="hasNodesInRegion('cnos')" title="中国香港/澳门/台湾地区" name="cnos">
+              <div class="n-grid">
+                <NCard v-for="node in filteredNodeOptions.filter(n => n.region === 'cnos')" :key="node.value"
+                  :class="{ 'selected-node': formValue.nodeId === node.value }" hoverable @click="handleNodeChange(node.value)">
+                  <NSpace vertical>
+                    <NSpace align="center" justify="space-between">
+                      <NSpace align="center">
+                        <NTag :bordered="false" type="info" size="small"># {{ node.id }}</NTag>
+                        <!-- <NTag :bordered="false" :type="node.isOnline ? 'success' : 'error'" size="small">
+                          {{ node.isOnline ? '在线' : '离线' }}
+                        </NTag> -->
+                        <NText>{{ node.name }}</NText>
+                      </NSpace>
+                    </NSpace>
+                    <NText depth="3">{{ node.description }}</NText>
                     <NSpace>
-                      <NTag v-for="group in node.allowGroups" :key="group.name" size="small" type="info">
-                        {{ group.friendlyName }}
+                      <template v-for="protocol in node.allowedProtocols" :key="protocol">
+                        <NTag v-if="!(protocol === 'https' && node.allowedProtocols.includes('http'))" :bordered="false" size="small" type="success">
+                          {{ protocol === 'http' && node.allowedProtocols.includes('https') ? 'HTTP(S)' : protocol.toUpperCase() }}
+                        </NTag>
+                      </template>
+                      <NTag :bordered="false" type="warning" size="small">
+                        {{ node.bandwidth || '未知' }}
                       </NTag>
                     </NSpace>
-                  </div> -->
-                  <div class="info-item">
-                    <span class="label">支持协议:</span>
+                  </NSpace>
+                </NCard>
+              </div>
+            </NCollapseItem>
+            <NCollapseItem v-if="hasNodesInRegion('oversea')" title="海外" name="oversea">
+              <div class="n-grid">
+                <NCard v-for="node in filteredNodeOptions.filter(n => n.region === 'oversea')" :key="node.value"
+                  :class="{ 'selected-node': formValue.nodeId === node.value }" hoverable @click="handleNodeChange(node.value)">
+                  <NSpace vertical>
+                    <NSpace align="center" justify="space-between">
+                      <NSpace align="center">
+                        <NTag :bordered="false" type="info" size="small"># {{ node.id }}</NTag>
+                        <!-- <NTag :bordered="false" :type="node.isOnline ? 'success' : 'error'" size="small">
+                          {{ node.isOnline ? '在线' : '离线' }}
+                        </NTag> -->
+                        <NText>{{ node.name }}</NText>
+                      </NSpace>
+                    </NSpace>
+                    <NText depth="3">{{ node.description }}</NText>
                     <NSpace>
-                      <NTag v-for="protocol in node.allowedProtocols" :key="protocol" size="small" type="success">
-                        {{ protocol.toUpperCase() }}
+                      <template v-for="protocol in node.allowedProtocols" :key="protocol">
+                        <NTag v-if="!(protocol === 'https' && node.allowedProtocols.includes('http'))" :bordered="false" size="small" type="success">
+                          {{ protocol === 'http' && node.allowedProtocols.includes('https') ? 'HTTP(S)' : protocol.toUpperCase() }}
+                        </NTag>
+                      </template>
+                      <NTag :bordered="false" type="warning" size="small">
+                        {{ node.bandwidth || '未知' }}
                       </NTag>
                     </NSpace>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">端口范围:</span>
-                    <NTag type="warning" size="small">
-                      {{ node.portRange.min }} - {{ node.portRange.max }}
-                    </NTag>
-                  </div>
-                </NSpace>
+                  </NSpace>
+                </NCard>
+              </div>
+            </NCollapseItem>
+          </NCollapse>
+        </NCard>
+      </div>
+    </Transition>
+
+    <!-- 隧道配置页面 -->
+    <Transition name="fade-in" mode="out-in">
+      <div v-if="currentStep === 2" class="step-page">
+        <!-- 当前节点信息卡片 -->
+        <NCard class="selected-node-info" style="margin-bottom: 20px;">
+          <NSpace vertical>
+            <NSpace align="center" justify="space-between">
+              <NSpace align="center">
+                <NTag :bordered="false" type="info" size="small"># {{ selectedNode?.id }}</NTag>
+                <!-- <NTag :bordered="false" :type="nodeOptions.find(n => n.value === formValue.nodeId)?.isOnline ? 'success' : 'error'" size="small">
+                  {{ nodeOptions.find(n => n.value === formValue.nodeId)?.isOnline ? '在线' : '离线' }}
+                </NTag> -->
+                <NText>{{ selectedNode?.name }}</NText>
               </NSpace>
-            </NCard>
-          </NGridItem>
-        </NGrid>
-      </NSpace>
-    </NCard>
-
-    <!-- 修改配置卡片的显示逻辑 -->
-    <NCard v-if="!isMobile || currentStep === 2" title="隧道配置" class="config-card" style="user-select: none">
-      <!-- 基础配置 -->
-      <NForm ref="formRef" :model="formValue" :rules="rules" label-placement="left" label-width="120"
-        require-mark-placement="right-hanging">
-        <NFormItem label="隧道名称" path="name">
-          <NInput v-model:value="formValue.name" placeholder="请输入隧道名称" :disabled="!canEditConfig" />
-        </NFormItem>
-
-        <NFormItem label="本地地址" path="localAddr">
-          <NInput v-model:value="formValue.localAddr" placeholder="请输入本地地址" :disabled="!canEditConfig" />
-        </NFormItem>
-
-        <NFormItem label="本地端口" path="localPort">
-          <NInputNumber v-model:value="formValue.localPort" :min="1" :max="65535" placeholder="请输入本地端口"
-            :disabled="!canEditConfig" />
-        </NFormItem>
-
-        <NFormItem label="协议类型" path="type">
-          <NSelect v-model:value="formValue.type" :options="allowedProxyTypeOptions" placeholder="请选择协议类型"
-            :disabled="!canEditConfig" />
-        </NFormItem>
-
-        <NFormItem v-if="formValue.type === 'http' || formValue.type === 'https'" label="绑定域名" path="domain">
-          <NDynamicTags v-model:value="domainTags" :render-tag="renderDomainTag" :disabled="!canEditConfig" />
-        </NFormItem>
-
-        <NFormItem v-else label="远程端口" path="remotePort">
-          <NSpace align="center">
-            <NInputNumber v-model:value="formValue.remotePort" :min="selectedNode?.portRange?.min || 1"
-              :max="selectedNode?.portRange?.max || 65535" placeholder="请输入远程端口" :disabled="!canEditConfig" />
-            <NButton size="medium" :loading="gettingFreePort" :disabled="!canEditConfig" @click="handleGetFreePort">
-              获取空闲端口
-            </NButton>
+              <NSpace>
+                <NButton size="small" @click="currentStep = 1">
+                  <template #icon>
+                    <NIcon>
+                      <ArrowBackOutline />
+                    </NIcon>
+                  </template>
+                  更换节点
+                </NButton>
+                <NButton size="small" type="primary" :loading="loading" @click="handleCreate" :disabled="!canEditConfig">
+                  <template #icon>
+                    <NIcon>
+                      <CloudUploadOutline />
+                    </NIcon>
+                  </template>
+                  创建隧道
+                </NButton>
+              </NSpace>
+            </NSpace>
+            <NText depth="3">{{ selectedNode?.description }}</NText>
+            <NSpace>
+              <template v-for="protocol in selectedNode?.allowedProtocols" :key="protocol">
+                <NTag v-if="!(protocol === 'https' && selectedNode?.allowedProtocols.includes('http'))" :bordered="false" size="small" type="success">
+                  {{ protocol === 'http' && selectedNode?.allowedProtocols.includes('https') ? 'HTTP(S)' : protocol.toUpperCase() }}
+                </NTag>
+              </template>
+              <NTag :bordered="false" type="warning" size="small">
+                {{ nodeOptions.find(n => n.value === formValue.nodeId)?.bandwidth || '未知' }}
+              </NTag>
+              <NTag :bordered="false" type="warning" size="small">
+                远程端口范围: {{ selectedNode?.portRange ? `${selectedNode.portRange.min} - ${selectedNode.portRange.max}` : '未知' }}
+              </NTag>
+            </NSpace>
           </NSpace>
-        </NFormItem>
+        </NCard>
 
-        <NDivider>高级配置</NDivider>
-        <NText depth="3" style="padding-bottom: 15px; display: block;">
-          提示：仅推荐技术用户使用, 一般用户请勿随意填写。请确保您的配置正确, 否则隧道可能无法启动。
-        </NText>
+        <NCard title="隧道配置" class="config-card">
+          <NForm ref="formRef" :model="formValue" :rules="rules" label-placement="left" label-width="120"
+            require-mark-placement="right-hanging">
+            <NFormItem label="隧道名称" path="name">
+              <NInput v-model:value="formValue.name" placeholder="请输入隧道名称" :disabled="!canEditConfig" />
+            </NFormItem>
 
-        <NFormItem label="访问密钥" path="accessKey">
-          <NInput v-model:value="formValue.accessKey" placeholder="访问密钥已不再支持" :disabled="true" />
-        </NFormItem>
+            <NFormItem label="本地地址" path="localAddr">
+              <NInput v-model:value="formValue.localAddr" placeholder="请输入本地地址" :disabled="!canEditConfig" />
+            </NFormItem>
 
-        <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">
-          <NInput v-model:value="formValue.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值"
-            :disabled="!canEditConfig" />
-        </NFormItem>
+            <NFormItem label="本地端口" path="localPort">
+              <NInputNumber v-model:value="formValue.localPort" :min="1" :max="65535" placeholder="请输入本地端口"
+                :disabled="!canEditConfig" />
+            </NFormItem>
 
-        <NFormItem label="X-From-Where" path="headerXFromWhere">
-          <NInput v-model:value="formValue.headerXFromWhere" placeholder="请输入 X-From-Where 请求头值"
-            :disabled="!canEditConfig" />
-        </NFormItem>
+            <NFormItem label="协议类型" path="type">
+              <NSelect v-model:value="formValue.type" :options="allowedProxyTypeOptions" placeholder="请选择协议类型"
+                :disabled="!canEditConfig" />
+            </NFormItem>
 
-        <NFormItem label="Proxy Protocol" path="proxyProtocolVersion">
-          <NSelect v-model:value="formValue.proxyProtocolVersion" :options="[
-            { label: '不启用', value: '' },
-            { label: 'v1', value: 'v1' },
-            { label: 'v2', value: 'v2' }
-          ]" placeholder="Proxy Protocol Version" :disabled="!canEditConfig" />
-        </NFormItem>
+            <NFormItem v-if="formValue.type === 'http' || formValue.type === 'https'" label="绑定域名" path="domain">
+              <NDynamicTags v-model:value="domainTags" :render-tag="renderDomainTag" :disabled="!canEditConfig" />
+            </NFormItem>
 
-        <NFormItem label="其他选项">
-          <div style="display: flex; gap: 16px;">
-            <NSwitch v-model:value="formValue.useEncryption" :rail-style="switchButtonRailStyle" :disabled="!canEditConfig">
-              <template #checked>启用加密</template>
-              <template #unchecked>禁用加密</template>
-            </NSwitch>
-            <NSwitch v-model:value="formValue.useCompression" :rail-style="switchButtonRailStyle" :disabled="!canEditConfig">
-              <template #checked>启用压缩</template>
-              <template #unchecked>禁用压缩</template>
-            </NSwitch>
-          </div>
-        </NFormItem>
-      </NForm>
+            <NFormItem v-else label="远程端口" path="remotePort">
+              <NSpace align="center">
+                <NInputNumber v-model:value="formValue.remotePort" :min="selectedNode?.portRange?.min || 1"
+                  :max="selectedNode?.portRange?.max || 65535" placeholder="请输入远程端口" :disabled="!canEditConfig" />
+                <NButton size="medium" :loading="gettingFreePort" :disabled="!canEditConfig" @click="handleGetFreePort">
+                  获取空闲端口
+                </NButton>
+              </NSpace>
+            </NFormItem>
 
-      <!-- 修改提交按钮区域 -->
-      <div class="submit-section">
-        <NSpace justify="end">
-          <NButton v-if="isMobile && currentStep === 1" type="primary" :disabled="!formValue.nodeId"
-            @click="currentStep = 2">
+            <NDivider>高级配置</NDivider>
+            <NText depth="3" style="padding-bottom: 15px; display: block;">
+              提示：仅推荐技术用户使用, 一般用户请勿随意填写。请确保您的配置正确, 否则隧道可能无法启动。
+            </NText>
+
+            <NFormItem label="访问密钥" path="accessKey">
+              <NInput v-model:value="formValue.accessKey" placeholder="访问密钥已不再支持" :disabled="true" />
+            </NFormItem>
+
+            <NFormItem label="Host Header Rewrite" path="hostHeaderRewrite">
+              <NInput v-model:value="formValue.hostHeaderRewrite" placeholder="请输入 Host 请求头重写值"
+                :disabled="!canEditConfig" />
+            </NFormItem>
+
+            <NFormItem label="X-From-Where" path="headerXFromWhere">
+              <NInput v-model:value="formValue.headerXFromWhere" placeholder="请输入 X-From-Where 请求头值"
+                :disabled="!canEditConfig" />
+            </NFormItem>
+
+            <NFormItem label="Proxy Protocol" path="proxyProtocolVersion">
+              <NSelect v-model:value="formValue.proxyProtocolVersion" :options="[
+                { label: '不启用', value: '' },
+                { label: 'v1', value: 'v1' },
+                { label: 'v2', value: 'v2' }
+              ]" placeholder="Proxy Protocol Version" :disabled="!canEditConfig" />
+            </NFormItem>
+
+            <NFormItem label="其他选项">
+              <div style="display: flex; gap: 16px;">
+                <NSwitch v-model:value="formValue.useEncryption" :rail-style="switchButtonRailStyle" :disabled="!canEditConfig">
+                  <template #checked>启用加密</template>
+                  <template #unchecked>禁用加密</template>
+                </NSwitch>
+                <NSwitch v-model:value="formValue.useCompression" :rail-style="switchButtonRailStyle" :disabled="!canEditConfig">
+                  <template #checked>启用压缩</template>
+                  <template #unchecked>禁用压缩</template>
+                </NSwitch>
+              </div>
+            </NFormItem>
+          </NForm>
+        </NCard>
+      </div>
+    </Transition>
+
+    <!-- 底部操作栏 -->
+    <Transition name="fade-in">
+      <div class="bottom-action-bar" :class="{ show: formValue.nodeId }" v-if="currentStep === 1">
+        <NSpace justify="space-between" align="center">
+          <div></div>
+          <NButton type="primary" @click="currentStep = 2">
             下一步
-          </NButton>
-          <NButton v-if="!isMobile || currentStep === 2" type="primary" :loading="loading" @click="handleCreate"
-            :disabled="!canEditConfig">
-            <template #icon>
-              <NIcon>
-                <CloudUploadOutline />
-              </NIcon>
-            </template>
-            创建隧道
           </NButton>
         </NSpace>
       </div>
-    </NCard>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, h, computed, onMounted, onUnmounted, watch } from 'vue'
-import { NCard, NForm, NFormItem, NInput, NInputNumber, NSelect, NButton, NIcon, useMessage, type FormRules, type FormInst, NDivider, NSwitch, NTag, NSpace, NText, NGrid, NGridItem, NDynamicTags, NSteps, NStep, NModal } from 'naive-ui'
+import { ref, h, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { NCard, NForm, NFormItem, NInput, NInputNumber, NSelect, NButton, NIcon, useMessage, type FormRules, type FormInst, NDivider, NSwitch, NTag, NSpace, NText, NDynamicTags, NModal, NCollapse, NCollapseItem, NCheckbox } from 'naive-ui'
 import { CloudUploadOutline, ArrowBackOutline } from '@vicons/ionicons5'
 import { AuthApi } from '../../shared/api/auth'
 import type { CreateProxyArgs } from '../../types'
@@ -196,6 +289,7 @@ const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const loading = ref(false)
 const userGroup = localStorage.getItem('group')
+const activeCollapse = ref<string>(userGroup === 'noRealname' ? 'oversea' : 'cn')
 
 const formValue = ref({
   nodeId: null as number | null,
@@ -237,7 +331,10 @@ const nodeOptions = ref<{
   portRange: {
     min: number;
     max: number
-  }
+  };
+  region: 'cn' | 'cnos' | 'oversea';
+  bandwidth?: string;
+  userBandwidth?: string;
 }[]>([])
 
 const rules: FormRules = {
@@ -345,7 +442,10 @@ const fetchNodes = async () => {
           portRange: {
             min: minPort,
             max: maxPort
-          }
+          },
+          region: node.region,
+          bandwidth: node.bandwidth,
+          userBandwidth: node.userBandwidth
         }
       })
     }
@@ -358,6 +458,7 @@ const selectedNode = ref<{
   id: number;
   name: string;
   hostname: string;
+  description: string;
   allowedProtocols: string[];
   allowGroups: { name: string; friendlyName: string }[];
   portRange: {
@@ -374,6 +475,7 @@ const handleNodeChange = (value: number | null) => {
         id: node.id,
         name: node.name,
         hostname: node.hostname,
+        description: node.description,
         allowedProtocols: node.allowedProtocols,
         allowGroups: node.allowGroups,
         portRange: node.portRange
@@ -381,11 +483,6 @@ const handleNodeChange = (value: number | null) => {
       formValue.value.nodeId = value
       formValue.value.type = selectedNode.value?.allowedProtocols[0] || null
       formValue.value.remotePort = null
-
-      // 在移动端选择节点后自动进入下一步
-      if (isMobile.value) {
-        currentStep.value = 2
-      }
     }
   } else {
     selectedNode.value = null
@@ -536,6 +633,20 @@ onUnmounted(() => {
   }
 })
 const currentStep = ref<number>(1)
+const contentGridRef = ref<HTMLElement | null>(null)
+
+// 监听步骤变化
+watch(currentStep, (newStep) => {
+  if (newStep === 2) {
+    // 使用 nextTick 确保在 DOM 更新后执行滚动
+    nextTick(() => {
+      contentGridRef.value?.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    })
+  }
+})
 
 const gettingFreePort = ref(false)
 
@@ -558,6 +669,46 @@ const handleGetFreePort = async () => {
   } finally {
     gettingFreePort.value = false
   }
+}
+
+const filterWeb = ref(false)
+const filterHighBandwidth = ref(false)
+const searchKeyword = ref('')
+
+// 过滤节点选项
+const filteredNodeOptions = computed(() => {
+  return nodeOptions.value.filter(node => {
+    // 搜索关键词过滤
+    if (searchKeyword.value && !node.name.toLowerCase().includes(searchKeyword.value.toLowerCase())) {
+      return false
+    }
+    
+    // 建站支持过滤
+    if (filterWeb.value && !node.allowedProtocols.some(p => ['http', 'https'].includes(p))) {
+      return false
+    }
+    
+    // 允许大流量节点过滤
+    if (filterHighBandwidth.value) {
+      const bandwidth = node.bandwidth?.toLowerCase() || ''
+      if (bandwidth.includes('gbps')) {
+        const gbps = parseFloat(bandwidth.replace('gbps', ''))
+        if (gbps < 0.07) return false // 小于 70Mbps
+      } else if (bandwidth.includes('mbps')) {
+        const mbps = parseFloat(bandwidth.replace('mbps', ''))
+        if (mbps < 70) return false // 小于 70Mbps
+      } else {
+        return false // 未知带宽
+      }
+    }
+    
+    return true
+  })
+})
+
+// 检查区域是否有节点
+const hasNodesInRegion = (region: string) => {
+  return filteredNodeOptions.value.some(node => node.region === region)
 }
 </script>
 

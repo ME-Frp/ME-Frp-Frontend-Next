@@ -30,6 +30,9 @@
           <NFormItem label="节点名称" path="name">
             <NInput v-model:value="formModel.name" placeholder="请输入节点名称" />
           </NFormItem>
+          <NFormItem label="节点地区" path="region">
+            <NSelect v-model:value="formModel.region" :options="regionOptions" placeholder="请选择节点地区" />
+          </NFormItem>
           <NFormItem label="主机名" path="hostname">
             <NInput v-model:value="formModel.hostname" placeholder="请输入主机名" />
           </NFormItem>
@@ -46,7 +49,7 @@
             <NInputNumber v-model:value="formModel.adminPort" placeholder="请输入管理端口" />
           </NFormItem>
           <NFormItem label="管理密码" path="adminPass">
-            <NInput v-model:value="formModel.adminPass" type="password" show-password-on="click"
+            <NInput v-model:value="formModel.adminPass" show-password-on="click"
               placeholder="请输入管理密码" />
           </NFormItem>
           <NFormItem label="允许用户组" path="allowGroup">
@@ -87,6 +90,12 @@
               <NFormItem label="节点名称" path="name">
                 <NInput v-model:value="formModel.name" placeholder="请输入节点名称" />
               </NFormItem>
+              <NFormItem label="节点带宽" path="bandwidth">
+                <NInput v-model:value="formModel.bandwidth" placeholder="请输入节点带宽" />
+              </NFormItem>
+              <NFormItem label="节点地区" path="region">
+                <NSelect v-model:value="formModel.region" :options="regionOptions" placeholder="请选择节点地区" />
+              </NFormItem>
               <NFormItem label="主机名" path="hostname">
                 <NInput v-model:value="formModel.hostname" placeholder="请输入主机名" />
               </NFormItem>
@@ -103,7 +112,7 @@
                 <NInputNumber v-model:value="formModel.adminPort" placeholder="请输入管理端口" />
               </NFormItem>
               <NFormItem label="管理密码" path="adminPass">
-                <NInput v-model:value="formModel.adminPass" type="password" show-password-on="click"
+                <NInput v-model:value="formModel.adminPass" show-password-on="click"
                   placeholder="请输入管理密码" />
               </NFormItem>
               <NFormItem label="允许用户组" path="allowGroup">
@@ -285,8 +294,16 @@ const protocolOptions = [
   { label: 'HTTPS', value: 'https' }
 ]
 
+const regionOptions = [
+  { label: '中国大陆', value: 'cn' },
+  { label: '中国香港/澳门/台湾地区', value: 'cnos' },
+  { label: '海外', value: 'oversea' }
+]
+
 const formModel = ref({
   name: '',
+  region: 'cn',
+  bandwidth: '100Mbps',
   hostname: '',
   description: '',
   token: '',
@@ -327,6 +344,11 @@ const rules: FormRules = {
   name: {
     required: true,
     message: '请输入节点名称',
+    trigger: ['blur', 'input']
+  },
+  region: {
+    required: true,
+    message: '请选择节点地区',
     trigger: ['blur', 'input']
   },
   hostname: {
@@ -467,6 +489,13 @@ const columns: DataTableColumns = [
     }
   },
   {
+    title: '带宽',
+    key: 'bandwidth',
+    render(row) {
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.bandwidth)
+    }
+  },
+  {
     title: '主机名',
     key: 'hostname',
     render(row) {
@@ -600,6 +629,8 @@ const handleEdit = (row: Node) => {
   editingNode.value = row
   formModel.value = {
     name: row.name,
+    region: row.region,
+    bandwidth: row.bandwidth,
     hostname: row.hostname,
     description: row.description,
     token: row.token,
@@ -632,6 +663,8 @@ const handleEditSubmit = () => {
         const config: UpdateNodeArgs = {
           nodeId: editingNode.value.nodeId,
           name: formModel.value.name,
+          region: formModel.value.region,
+          bandwidth: editingNode.value.bandwidth,
           hostname: formModel.value.hostname,
           description: formModel.value.description,
           token: formModel.value.token,
@@ -649,6 +682,7 @@ const handleEditSubmit = () => {
         editingNode.value = null
         Object.assign(formModel.value, {
           name: '',
+          region: 'cn',
           hostname: '',
           description: '',
           token: '',
@@ -689,6 +723,7 @@ const handleAddNode = () => {
         formRef.value?.restoreValidation()
         Object.assign(formModel.value, {
           name: '',
+          region: 'cn',
           hostname: '',
           description: '',
           token: '',
@@ -765,28 +800,24 @@ const dropdownOptions = (row: Node): DropdownOption[] => [
   {
     label: '编辑',
     key: 'edit',
-    disabled: false,
     type: 'primary',
     icon: () => h(NIcon, null, { default: () => h(CreateOutline) })
   },
   {
     label: '管理面板',
     key: 'dashboard',
-    disabled: !(row as any).isOnline,
     type: 'info',
     icon: () => h(NIcon, null, { default: () => h(AppsOutline) })
   },
   {
     label: row.isDisabled ? '启用' : '禁用',
     key: 'toggle',
-    disabled: false,
     type: row.isDisabled ? 'success' : 'warning',
     icon: () => h(NIcon, null, { default: () => h(PowerOutline) })
   },
   {
     label: '删除',
     key: 'delete',
-    disabled: false,
     type: 'error',
     icon: () => h(NIcon, null, { default: () => h(TrashOutline) })
   }
@@ -1036,10 +1067,6 @@ const copyInstallCommand = () => {
 
 // 打开frps管理面板
 const openDashboard = (node: Node) => {
-  if (!(node as any).isOnline) {
-    message.warning('节点离线，无法访问管理面板')
-    return
-  }
 
   currentDashboardNode.value = node
   showDashboardTipModal.value = true
@@ -1073,13 +1100,10 @@ const copyAdminPassword = () => {
 const confirmOpenDashboard = () => {
   if (!currentDashboardNode.value) return
 
-  // 构建URL
-  const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:'
-  const username = 'admin' // frps的默认用户名是admin
   const password = currentDashboardNode.value.adminPass // 使用节点配置的管理密码
 
   // 构建带有Basic Auth的URL (用户名:密码@主机:端口)
-  const dashboardUrl = `${protocol}//${encodeURIComponent(username)}:${encodeURIComponent(password)}@${currentDashboardNode.value.hostname}:${currentDashboardNode.value.adminPort}`
+  const dashboardUrl = `http://admin:${encodeURIComponent(password)}@${currentDashboardNode.value.hostname}:${currentDashboardNode.value.adminPort}`
 
   console.log(dashboardUrl)
   // 打开新窗口

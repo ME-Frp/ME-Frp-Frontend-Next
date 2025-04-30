@@ -1,27 +1,27 @@
 <template>
-  <NLayoutHeader bordered position="absolute" style="height: 64px; z-index: 999; user-select: none">
+  <NLayoutHeader bordered position="absolute" style="height: 64px; z-index: 999; user-select: none" role="banner">
     <div class="header-content">
       <div class="left">
         <NPopover trigger="click" placement="bottom-start" :show="showMenu" @update:show="showMenu = $event">
           <template #trigger>
-            <NButton text class="menu-trigger">
+            <NButton text class="menu-trigger" aria-label="打开菜单" aria-expanded="showMenu">
               <NIcon size="24">
                 <MenuOutline />
               </NIcon>
             </NButton>
           </template>
-          <div class="mobile-menu">
+          <div class="mobile-menu" role="navigation" aria-label="主导航菜单">
             <NScrollbar style="max-height: 500px">
               <NMenu :options="menuOptions" :value="currentKey" @update:value="handleMenuSelect"
-                :default-expanded-keys="defaultExpandedKeys" />
+                :default-expanded-keys="defaultExpandedKeys" role="menu" />
             </NScrollbar>
           </div>
         </NPopover>
-        <h2 class="logo">ME Frp</h2>
+        <h2 class="logo" role="heading" aria-level="1">ME Frp</h2>
       </div>
       <div class="right">
-        <NDropdown :options="options" @select="handleUserMenuSelect" trigger="hover">
-          <NButton text>
+        <NDropdown :options="options" @select="handleUserMenuSelect" trigger="hover" role="menu" aria-label="用户菜单">
+          <NButton text aria-label="用户菜单">
             <template #icon>
               <NIcon>
                 <PersonCircleOutline />
@@ -35,7 +35,7 @@
   </NLayoutHeader>
 
   <!-- 移动端菜单抽屉 -->
-  <NDrawer v-model:show="showMobileMenu" :width="280" placement="left">
+  <NDrawer v-model:show="showMobileMenu" :width="280" placement="left" role="navigation" aria-label="移动端菜单">
     <NDrawerContent title="菜单">
       <LeftMenu @select="showMobileMenu = false" />
     </NDrawerContent>
@@ -43,13 +43,12 @@
 </template>
 
 <script setup lang="ts">
-import { h, ref, inject, computed, Ref, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { NLayoutHeader, NIcon, NButton, NDropdown, useDialog, useMessage, NSwitch, NPopover, NMenu, MenuOption, NDrawer, NDrawerContent, NScrollbar } from 'naive-ui'
 import { PersonCircleOutline, LogOutOutline, SunnyOutline, MoonOutline, MenuOutline, HomeOutline } from '@vicons/ionicons5'
+import { NSwitch, NIcon } from 'naive-ui'
 import { switchButtonRailStyle } from '../constants/theme'
 import { getMenuOptions, renderIcon, defaultExpandedKeys } from '../shared/menuOptions'
 import LeftMenu from './LeftMenu.vue'
+import type { MenuOption } from 'naive-ui'
 
 const router = useRouter()
 const route = useRoute()
@@ -70,7 +69,8 @@ const { isDarkMode, toggleTheme } = inject('theme') as {
 // 渲染下拉菜单中的主题切换选项
 const renderThemeOption = () => {
   return h('div', {
-    style: 'display: flex; align-items: center; padding: 8px 12px; height: 20px;'
+    style: 'display: flex; align-items: center; padding: 8px 12px; height: 20px;',
+    role: 'menuitem'
   }, [
     h('span', {
       style: 'flex: 1; margin-right: 12px; font-size: 14px;'
@@ -79,10 +79,17 @@ const renderThemeOption = () => {
       value: isDarkMode.value,
       'onUpdate:value': handleThemeChange,
       railStyle: switchButtonRailStyle,
-      size: 'small'
+      size: 'small',
+      'aria-label': '切换深色模式',
+      'aria-checked': isDarkMode.value,
+      role: 'switch'
     }, {
-      checked: () => h(NIcon, null, { default: () => h(MoonOutline) }),
-      unchecked: () => h(NIcon, null, { default: () => h(SunnyOutline) })
+      checked: () => h(NIcon, {
+        'aria-hidden': 'true'
+      }, { default: () => h(MoonOutline) }),
+      unchecked: () => h(NIcon, {
+        'aria-hidden': 'true'
+      }, { default: () => h(SunnyOutline) })
     })
   ])
 }

@@ -15,7 +15,7 @@
         <div class="user-info-item">
           <NText depth="3" style="font-size: 13px;">用户 ID</NText>
           <div class="user-info-value">
-            <NTag type="warning" size="small">
+            <NTag :bordered="false" type="warning" size="small">
               # {{ userInfo.userId }}
             </NTag>
           </div>
@@ -24,7 +24,7 @@
         <div class="user-info-item">
           <NText depth="3" style="font-size: 13px;">实名认证</NText>
           <div class="user-info-value">
-            <NTag :type="userInfo.isRealname ? 'success' : 'default'" size="small">
+            <NTag :bordered="false" :type="userInfo.isRealname ? 'success' : 'default'" size="small">
               {{ userInfo.isRealname ? '已实名' : '未实名' }}
             </NTag>
           </div>
@@ -33,7 +33,7 @@
         <div class="user-info-item">
           <NText depth="3" style="font-size: 13px;">用户组</NText>
           <div class="user-info-value">
-            <NTag type="info" size="small">
+            <NTag :bordered="false" type="info" size="small">
               {{ userInfo.friendlyGroup }}
             </NTag>
           </div>

@@ -22,3 +22,16 @@ export interface Window extends globalThis.Window {
   __tableParsingTested?: boolean
   __manualTableTested?: boolean
 }
+
+export interface NodeUsage {
+  nodeId: number
+  name: string
+  totalTrafficIn: number
+  totalTrafficOut: number
+  onlineClient: number
+  onlineProxy: number
+  isOnline: boolean
+  version: string
+  curConns: number
+  uptime: number
+}

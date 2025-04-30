@@ -5,7 +5,7 @@
                 <n-card title="官方 QQ 群" class="contact-card">
                     <n-space vertical :size="8">
                         <div class="contact-label">
-                            <n-tag type="success" size="small">推荐</n-tag>
+                            <n-tag :bordered="false" type="success" size="small">推荐</n-tag :bordered="false">
                             <span>快速响应</span>
                         </div>
                         <div class="contact-value">
@@ -20,7 +20,7 @@
                 <n-card title="用户支持邮箱" class="contact-card">
                     <n-space vertical :size="8">
                         <div class="contact-label">
-                            <n-tag type="warning" size="small">慢速</n-tag>
+                            <n-tag :bordered="false" type="warning" size="small">慢速</n-tag :bordered="false">
                             <span>24-48 小时回复</span>
                         </div>
                         <div class="contact-value">
@@ -37,7 +37,7 @@
                 <n-card title="企业微信群（用微信加入）" class="contact-card">
                     <n-space vertical :size="8">
                         <div class="contact-label">
-                            <n-tag type="success" size="small">推荐</n-tag>
+                            <n-tag :bordered="false" type="success" size="small">推荐</n-tag :bordered="false">
                             <span>快速响应</span>
                         </div>
                         <div class="contact-value">

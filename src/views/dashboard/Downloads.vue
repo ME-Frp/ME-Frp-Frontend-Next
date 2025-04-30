@@ -32,7 +32,7 @@
                   <NIcon :size="16" style="margin-top: 2px;margin-left:4px;" :component="ChevronDownOutline" />
                 </NButton>
               </NPopselect>
-              <NTag v-if="currentProduct" size="small" type="info" round>v{{ currentProduct.version }}</NTag>
+              <NTag :bordered="false" v-if="currentProduct" size="small" type="info" round>v{{ currentProduct.version }}</NTag>
             </div>
             
             <div v-if="currentProduct" class="product-content">
@@ -363,26 +363,4 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 @use '../../assets/styles/dashboard/downloads.scss' as *;
-
-.docker-info {
-  margin-top: 16px;
-}
-
-.docker-command {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-  background-color: rgba(0, 0, 0, 0.03);
-  padding: 8px 12px;
-  border-radius: 4px;
-  
-  code {
-    flex: 1;
-    font-family: monospace;
-    font-size: 14px;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-}
 </style>

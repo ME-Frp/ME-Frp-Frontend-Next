@@ -115,7 +115,9 @@ export interface NodeDonate {
   username: string
   nodeName: string
   hostname: string
+  bandwidth: string
   description: string
+  region: string
   servicePort: number
   adminPort: number
   adminPass: string
@@ -139,6 +141,7 @@ export interface ApplyNodeDonateArgs {
   allowGroup: string
   allowPort: string
   allowType: string
+  region: string
 }
 
 export interface NodeDeleteRequest {
@@ -164,6 +167,8 @@ export interface NodeEditRequest {
   username: string
   nodeName: string
   hostname: string
+  bandwidth: string
+  region: string
   description: string
   servicePort: number
   adminPort: number
@@ -190,6 +195,7 @@ export interface ApplyNodeEditArgs {
   allowPort: string
   allowType: string
   reason: string
+  region: string
 }
 
 // 获取节点安装脚本的请求参数

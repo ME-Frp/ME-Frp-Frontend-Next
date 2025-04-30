@@ -256,15 +256,9 @@ const routes: RouteRecordRaw[] = [
     path: '/docs',
     name: 'Documentation',
     component: () => import('../views/Docs.vue'),
-    redirect: '/docs/readme',
+    redirect: '/docs/safety',
     meta: { title: '使用文档' },
     children: [
-      {
-        path: 'readme',
-        name: 'docs-readme',
-        component: () => import('../views/DocPage.vue'),
-        meta: { title: 'ME Frp 简介' }
-      },
       {
         path: 'safety',
         name: 'docs-safety',

@@ -19,6 +19,8 @@ export interface FilterUsersArgs {
 export interface Node {
     nodeId: number;
     name: string;
+    region: string;
+    bandwidth: string;
     hostname: string;
     description: string;
     token: string;
@@ -33,6 +35,8 @@ export interface Node {
 
 export interface AddNodeArgs {
     name: string;
+    region: string;
+    bandwidth: string;
     hostname: string;
     description: string;
     token: string;

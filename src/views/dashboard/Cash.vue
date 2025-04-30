@@ -41,11 +41,7 @@
             <div class="features">
               <div class="feature-item">
                 <NIcon><CheckmarkCircle /></NIcon>
-                有效期 30 天
-              </div>
-              <div class="feature-item">
-                <NIcon><CheckmarkCircle /></NIcon>
-                可通过续费延期
+                无限期有效
               </div>
               <div class="feature-item">
                 <NIcon><CheckmarkCircle /></NIcon>
