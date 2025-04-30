@@ -89,8 +89,8 @@
 import { ref, onMounted, watch, nextTick } from 'vue'
 import { NCarousel, NCarouselItem, NImage, NSpin, NEmpty, NButton, NIcon } from 'naive-ui'
 import { LinkOutline } from '@vicons/ionicons5'
-import { AdsApi } from '../shared/api/ads'
-import type { Ad } from '../shared/api/ads'
+import { AdsApi } from '../shared/api/devSpace'
+import type { Ad } from '../shared/api/devSpace'
 
 const props = defineProps<{
   placement: string

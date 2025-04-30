@@ -80,8 +80,8 @@ import {
   useMessage
 } from 'naive-ui'
 import type { DataTableColumns } from 'naive-ui'
-import { AdsApi } from '../../../shared/api/ads'
-import type { Ad } from '../../../shared/api/ads'
+import { AdsApi } from '../../../shared/api/devSpace'
+import type { Ad } from '../../../shared/api/devSpace'
 
 const message = useMessage()
 const loading = ref(false)
