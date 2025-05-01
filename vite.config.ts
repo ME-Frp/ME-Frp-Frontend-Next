@@ -15,6 +15,8 @@ export default defineConfig({
       injectRegister: 'script-defer',
       
       workbox: {
+        clientsClaim: true,
+        skipWaiting: true,
         globPatterns: ['**/*.{js,css,html,png,svg,ico,webp}'],
         runtimeCaching: [{
           urlPattern: ({ url }) => 
