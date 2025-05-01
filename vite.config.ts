@@ -17,7 +17,7 @@ export default defineConfig({
       workbox: {
         clientsClaim: true,
         skipWaiting: true,
-        globPatterns: ['**/*.{js,css,html,png,svg,ico,webp}'],
+        globPatterns: ['**/*.{js,css,html,png,svg,ico,webp,md,txt}'],
         runtimeCaching: [{
           urlPattern: ({ url }) => 
             url.hostname === 'resources.mefrp.com'
@@ -28,6 +28,14 @@ export default defineConfig({
             expiration: {
               maxEntries: 256,
             },
+          },
+        }, {
+          urlPattern: ({ url }) => 
+            url.hostname === 'api.mefrp.com'
+            && url.pathname.startsWith('/api/public/statistics'),
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'mefrp-api-statistics',
           },
         }],
       },
