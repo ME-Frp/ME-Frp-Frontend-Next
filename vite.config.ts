@@ -34,8 +34,8 @@ export default defineConfig({
         name: 'ME Frp',
         short_name: 'ME Frp',
         description: 'ME Frp 幻缘映射 - 提供免费内网穿透、端口映射服务，支持 Minecraft、泰拉瑞亚联机，远程桌面，开发调试，建站等。高速稳定，半公益性质。',
-        theme_color: '#42b883',
-        background_color: '#42b883',
+        theme_color: '#42A5F5',
+        background_color: '#101014',
         display: 'standalone',
         icons: [
           {
