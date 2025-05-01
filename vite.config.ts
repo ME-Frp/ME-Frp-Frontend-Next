@@ -12,7 +12,7 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      injectRegister: 'script-defer',
       
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,ico,webp}'],
