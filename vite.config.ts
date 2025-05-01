@@ -12,11 +12,12 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'script-defer',
-      
+      injectRegister: 'auto',
       workbox: {
+        cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
+        babelPresetEnvTargets: ['chrome >= 90', 'safari >= 18'],
         globPatterns: ['**/*.{js,css,html,png,svg,ico,webp,md,txt}'],
         runtimeCaching: [{
           urlPattern: ({ url }) => 
@@ -33,7 +34,7 @@ export default defineConfig({
           urlPattern: ({ url }) => 
             url.hostname === 'api.mefrp.com'
             && url.pathname.startsWith('/api/public/statistics'),
-          handler: 'NetworkFirst',
+          handler: 'StaleWhileRevalidate',
           options: {
             cacheName: 'mefrp-api-statistics',
           },
@@ -49,7 +50,7 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: 'https://resources.mefrp.com/d/ME-Frp/Local/Others/logo.svg',
+            src: '/favicon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
           },
@@ -68,7 +69,7 @@ export default defineConfig({
           type: 'image/png',
         }]
       },
-      includeAssets: ['favicon.ico', 'robots.txt', 'sitemap.xml', 'docs/**/*'],
+      includeAssets: ['robots.txt', 'sitemap.xml', 'docs/**/*', 'pwa/**/*'],
       devOptions: {
         enabled: false,
         type: 'module',
