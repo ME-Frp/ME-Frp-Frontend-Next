@@ -18,7 +18,8 @@ export default defineConfig({
         clientsClaim: true,
         skipWaiting: true,
         babelPresetEnvTargets: ['chrome >= 90', 'safari >= 18'],
-        globPatterns: ['**/*.{js,css,html,png,svg,ico,webp,md,txt}'],
+        //globPatterns: ['**/*.{js,css,html,png,svg,ico,webp,md,txt}'],
+        globPatterns: [],
         runtimeCaching: [{
           urlPattern: ({ url }) => 
             url.hostname === 'resources.mefrp.com'
