@@ -39,7 +39,7 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: 'favicon.svg',
+            src: 'https://resources.mefrp.com/d/ME-Frp/Local/Others/logo.svg',
             sizes: 'any',
             type: 'image/svg+xml',
           },
