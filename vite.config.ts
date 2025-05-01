@@ -101,7 +101,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html')
       }
-    }
+    },
+    chunkSizeWarningLimit: 1500,
   },
   publicDir: 'public',
   resolve: {
@@ -110,5 +111,5 @@ export default defineConfig({
     }
   },
   // 将 docs 目录中的 Markdown 文件复制到公共目录
-  assetsInclude: ['**/*.md']
+  assetsInclude: ['**/*.md'],
 })
