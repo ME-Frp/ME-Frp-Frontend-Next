@@ -13,9 +13,13 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,ico,webp}'],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
+        babelPresetEnvTargets: ['chrome >= 90', 'safari >= 18'],
+        //globPatterns: ['**/*.{js,css,html,png,svg,ico,webp,md,txt}'],
+        globPatterns: [],
         runtimeCaching: [{
           urlPattern: ({ url }) => 
             url.hostname === 'resources.mefrp.com'
@@ -27,6 +31,14 @@ export default defineConfig({
               maxEntries: 256,
             },
           },
+        }, {
+          urlPattern: ({ url }) => 
+            url.hostname === 'api.mefrp.com'
+            && url.pathname.startsWith('/api/public/statistics'),
+          handler: 'StaleWhileRevalidate',
+          options: {
+            cacheName: 'mefrp-api-statistics',
+          },
         }],
       },
       manifest: {
@@ -34,12 +46,12 @@ export default defineConfig({
         name: 'ME Frp',
         short_name: 'ME Frp',
         description: 'ME Frp 幻缘映射 - 提供免费内网穿透、端口映射服务，支持 Minecraft、泰拉瑞亚联机，远程桌面，开发调试，建站等。高速稳定，半公益性质。',
-        theme_color: '#42b883',
-        background_color: '#42b883',
+        theme_color: '#42A5F5',
+        background_color: '#101014',
         display: 'standalone',
         icons: [
           {
-            src: 'favicon.svg',
+            src: '/favicon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
           },
@@ -58,7 +70,7 @@ export default defineConfig({
           type: 'image/png',
         }]
       },
-      includeAssets: ['favicon.ico', 'robots.txt', 'sitemap.xml', 'docs/**/*'],
+      includeAssets: ['robots.txt', 'sitemap.xml', 'docs/**/*', 'pwa/**/*'],
       devOptions: {
         enabled: false,
         type: 'module',
@@ -101,7 +113,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html')
       }
-    }
+    },
+    chunkSizeWarningLimit: 1500,
   },
   publicDir: 'public',
   resolve: {
@@ -110,5 +123,5 @@ export default defineConfig({
     }
   },
   // 将 docs 目录中的 Markdown 文件复制到公共目录
-  assetsInclude: ['**/*.md']
+  assetsInclude: ['**/*.md'],
 })

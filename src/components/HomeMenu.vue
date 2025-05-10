@@ -21,16 +21,16 @@
             </template>
           </NSwitch>
           <RouterLink to="/privacy">
-            <NButton text>隐私政策</NButton>
+            <NButton :bordered="false">隐私政策</NButton>
           </RouterLink>
           <RouterLink to="/content">
-            <NButton text>内容策略</NButton>
+            <NButton :bordered="false">内容策略</NButton>
           </RouterLink>
           <RouterLink to="/terms">
-            <NButton text>服务条款</NButton>
+            <NButton :bordered="false">服务条款</NButton>
           </RouterLink>
           <RouterLink to="/contact">
-            <NButton text>联系我们</NButton>
+            <NButton :bordered="false">联系我们</NButton>
           </RouterLink>
           <RouterLink to="/dashboard">
             <NButton secondary type="primary">管理面板</NButton>

@@ -8,7 +8,7 @@
             <span>幻缘网络</span>
           </div> -->
           <div class="footer-logo">
-            <img src="https://resources.mefrp.com/d/ME-Frp/Local/Others/logo.svg" alt="幻缘映射" />
+            <img src="/favicon.svg" alt="幻缘映射" />
             <div class="footer-logo-text">
               <span class="logo-title">幻缘映射 MagicEdge Frp</span>
               <span class="logo-subtitle">由 <a href="http://www.menetx.com" target="_blank">幻缘网络</a> 与 <a href="http://www.blbilink.com" target="_blank">阜阳市波比网络科技有限公司</a> 运营</span>
