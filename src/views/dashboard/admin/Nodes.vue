@@ -482,7 +482,7 @@ const columns: DataTableColumns = [
               type: row.isOnline ? 'success' : 'error',
               size: 'small'
             }, { default: () => row.isOnline ? '在线' : '离线' }),
-            h('span', { style: 'margin-right: 4px' }, row.name)
+            h('span', { style: 'margin-right: 4px' }, ' ' + row.name)
           ])
         ]
       })
@@ -502,13 +502,13 @@ const columns: DataTableColumns = [
       return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.hostname)
     }
   },
-  {
-    title: '描述',
-    key: 'description',
-    render(row) {
-      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.description)
-    }
-  },
+  // {
+  //   title: '描述',
+  //   key: 'description',
+  //   render(row) {
+  //     return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.description)
+  //   }
+  // },
   {
     title: '服务端口',
     key: 'servicePort',
@@ -664,7 +664,7 @@ const handleEditSubmit = () => {
           nodeId: editingNode.value.nodeId,
           name: formModel.value.name,
           region: formModel.value.region,
-          bandwidth: editingNode.value.bandwidth,
+          bandwidth: formModel.value.bandwidth,
           hostname: formModel.value.hostname,
           description: formModel.value.description,
           token: formModel.value.token,
@@ -673,7 +673,7 @@ const handleEditSubmit = () => {
           adminPass: formModel.value.adminPass,
           allowGroup: formModel.value.allowGroup.join(';'),
           allowPort: formModel.value.allowPort,
-          allowType: formModel.value.allowType.join(';')
+          allowType: formModel.value.allowType.join(';'),
         }
         await AdminApi.updateNode(config)
         message.success('更新节点成功')
@@ -691,7 +691,8 @@ const handleEditSubmit = () => {
           adminPass: '',
           allowGroup: [],
           allowPort: '',
-          allowType: []
+          allowType: [],
+          bandwidth: ''
         })
         fetchNodes()
       } catch (error: any) {

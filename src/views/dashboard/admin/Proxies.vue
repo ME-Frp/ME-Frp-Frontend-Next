@@ -704,7 +704,7 @@ const handleEditSubmit = () => {
 // 获取节点列表
 const fetchNodes = async () => {
   try {
-    const nodesRes = await AuthApi.getNodes()
+    const nodesRes = await AuthApi.getNodeNames()
     if (nodesRes.data.code === 200) {
       const nodes = nodesRes.data.data
       nodeOptions.value = nodes.map((node: UserNode) => ({

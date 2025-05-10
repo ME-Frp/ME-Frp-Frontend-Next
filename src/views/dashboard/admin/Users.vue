@@ -239,7 +239,7 @@ const columns: DataTableColumns<UserInfo> = [
     title: '用户组',
     key: 'group',
     render(row) {
-      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.friendlyGroup || row.group)
+      return h('div', { style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, row.friendlyGroup)
     }
   },
   {
