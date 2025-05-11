@@ -315,11 +315,11 @@
         </NFormItem>
         <NFormItem label="其他选项">
           <div style="display: flex; gap: 16px;">
-            <NSwitch v-model:value="editForm.useEncryption" :rail-style="switchButtonRailStyle">
+            <NSwitch v-model:value="editForm.useEncryption" :rail-style="defaultSwc">
               <template #checked>启用加密</template>
               <template #unchecked>禁用加密</template>
             </NSwitch>
-            <NSwitch v-model:value="editForm.useCompression" :rail-style="switchButtonRailStyle">
+            <NSwitch v-model:value="editForm.useCompression" :rail-style="defaultSwc">
               <template #checked>启用压缩</template>
               <template #unchecked>禁用压缩</template>
             </NSwitch>
@@ -466,7 +466,7 @@ import json from 'highlight.js/lib/languages/json'
 import yaml from 'highlight.js/lib/languages/yaml'
 import { AuthApi } from '../../shared/api/auth'
 import type { Proxy, UserNodeName } from '../../types'
-import { switchButtonRailStyle } from '../../constants/theme'
+import { defaultSwc } from '../../constants/theme'
 import { useRouter } from 'vue-router'
 
 const isIPAddress = (hostname: string) => {

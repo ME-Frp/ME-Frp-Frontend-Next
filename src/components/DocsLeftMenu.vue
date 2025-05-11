@@ -1,8 +1,10 @@
 <template>
-  <div class="menu-container">
-    <NMenu :value="activeKey" :options="menuOptions" :indent="18" :collapsed-width="64" :collapsed-icon-size="22"
-      @update:value="handleMenuClick" />
-  </div>
+  <NConfigProvider :theme-overrides="getExemptedTheme()">
+    <div class="menu-container">
+      <NMenu :value="activeKey" :options="menuOptions" :indent="18" :collapsed-width="64" :collapsed-icon-size="22"
+        @update:value="handleMenuClick" />
+    </div>
+  </NConfigProvider>
 </template>
 
 <script setup lang="ts">
@@ -15,7 +17,7 @@ import {
   BugOutline,
   RocketOutline,
 } from '@vicons/ionicons5'
-
+import { getExemptedTheme } from '../constants/theme'
 
 const emit = defineEmits(['menu-click'])
 const route = useRoute()

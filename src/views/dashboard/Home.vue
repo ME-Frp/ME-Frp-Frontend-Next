@@ -9,7 +9,7 @@
         <NCard title="用户信息" class="info-card">
           <NAlert v-if="userGroup === 'noRealname'" type="warning" title="未实名认证" style="margin-bottom: 16px">
             您的账户尚未完成实名认证, 请尽快完成实名认证。<br>
-            实名认证后, 您将获得更多节点权限, 且双向带宽将提升至 30Mbps。<br>
+            实名认证后, 您将获得更多节点权限, 且双向带宽将提升至 24 Mbps。<br>
             <NButton text type="primary" @click="goToRealname">立即前往</NButton>
           </NAlert>
           <UserInfoGrid ref="userInfoGridRef" />

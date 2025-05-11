@@ -12,6 +12,15 @@
     gap: 8px;
 }
 
+.vip-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    padding: 16px;
+    border-radius: 8px;
+}
+
 .full-width {
     grid-column: 1 / -1;
 }

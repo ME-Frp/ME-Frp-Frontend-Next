@@ -18,10 +18,10 @@
           <NForm ref="securityFormRef" :model="securityForm" :rules="securityRules" label-placement="left"
             label-width="auto" require-mark-placement="right-hanging">
             <NFormItem label="注册开关" path="allowRegister">
-              <NSwitch v-model:value="securityForm.allowRegister" :rail-style="switchButtonRailStyle" />
+              <NSwitch v-model:value="securityForm.allowRegister" :rail-style="defaultSwc" />
             </NFormItem>
             <NFormItem label="签到功能" path="allowSign">
-              <NSwitch v-model:value="securityForm.allowSign" :rail-style="switchButtonRailStyle" />
+              <NSwitch v-model:value="securityForm.allowSign" :rail-style="defaultSwc" />
             </NFormItem>
 
             <NSpace justify="end">
@@ -52,7 +52,7 @@
                 show-password-on="click" />
             </NFormItem>
             <NFormItem label="使用 SSL" path="smtpSSL">
-              <NSwitch v-model:value="emailForm.smtpSSL" :rail-style="switchButtonRailStyle" />
+              <NSwitch v-model:value="emailForm.smtpSSL" :rail-style="defaultSwc" />
             </NFormItem>
             <NSpace justify="end" style="margin-top: 18px">
               <NButton type="primary" @click="handleSaveEmail">保存设置</NButton>
@@ -185,7 +185,7 @@
 import { ref, h } from 'vue'
 import { NCard, NTabs, NTabPane, NForm, NFormItem, NInput, NInputNumber, NSwitch, NSpace, NButton, useMessage, NTag, NDynamicTags, NDivider, NDataTable, NModal } from 'naive-ui'
 import type { FormRules, FormInst, DataTableColumns } from 'naive-ui'
-import { switchButtonRailStyle } from '../../../constants/theme'
+import { defaultSwc } from '../../../constants/theme'
 import { AdminApi } from '../../../shared/api/admin'
 import { AuthApi } from '../../../shared/api/auth'
 import type { DownloadSource, Group } from '../../../types'

@@ -139,8 +139,14 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'cash',
             name: 'more-cash',
-            component: () => import('../views/dashboard/Cash.vue'),
+            component: () => import('../views/dashboard/more/Cash.vue'),
             meta: { title: '增值服务' }
+          },
+          {
+            path: 'cash/check',
+            name: 'more-cash-check',
+            component: () => import('../views/dashboard/more/CashCheck.vue'),
+            meta: { title: '支付结果' }
           },
           // {
           //   path: 'nodes',

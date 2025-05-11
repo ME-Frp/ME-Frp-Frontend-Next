@@ -43,9 +43,9 @@
 </template>
 
 <script setup lang="ts">
-import { PersonCircleOutline, LogOutOutline, SunnyOutline, MoonOutline, MenuOutline, HomeOutline } from '@vicons/ionicons5'
+import { PersonCircleOutline, LogOutOutline, SunnyOutline, MoonOutline, MenuOutline, HomeOutline, ArrowBack } from '@vicons/ionicons5'
 import { NSwitch, NIcon } from 'naive-ui'
-import { switchButtonRailStyle } from '../constants/theme'
+import { defaultSwc } from '../constants/theme'
 import { getMenuOptions, renderIcon, defaultExpandedKeys } from '../shared/menuOptions'
 import LeftMenu from './LeftMenu.vue'
 import type { MenuOption } from 'naive-ui'
@@ -59,6 +59,32 @@ const message = useMessage()
 const username = localStorage.getItem('username')
 const showMobileMenu = ref(false)
 const isMobile = ref(window.innerWidth <= 768)
+const isTempFuckMode = ref(localStorage.getItem('tempFuckMode') === 'true')
+
+const handleRestoreAdmin = () => {
+  try {
+    // 恢复管理员信息
+    const adminGroup = localStorage.getItem('admin_group')
+    const adminUsername = localStorage.getItem('admin_username')
+    const adminToken = localStorage.getItem('admin_token')
+
+    if (adminGroup) localStorage.setItem('group', adminGroup)
+    if (adminUsername) localStorage.setItem('username', adminUsername)
+    if (adminToken) localStorage.setItem('token', adminToken)
+
+    // 清理夺舍相关数据
+    localStorage.removeItem('admin_group')
+    localStorage.removeItem('admin_username')
+    localStorage.removeItem('admin_token')
+    localStorage.removeItem('tempFuckMode')
+
+    message.success('已恢复管理员身份')
+    isTempFuckMode.value = false
+    window.location.reload()
+  } catch (error: any) {
+    message.error(error?.message || '恢复管理员身份失败')
+  }
+}
 
 // 注入主题相关函数
 const { isDarkMode, toggleTheme } = inject('theme') as {
@@ -78,7 +104,7 @@ const renderThemeOption = () => {
     h(NSwitch, {
       value: isDarkMode.value,
       'onUpdate:value': handleThemeChange,
-      railStyle: switchButtonRailStyle,
+      railStyle: defaultSwc,
       size: 'small',
       'aria-label': '切换深色模式',
       'aria-checked': isDarkMode.value,
@@ -125,6 +151,18 @@ const options = [
   }
 ]
 
+// 在夺舍模式下添加回溯选项
+if (isTempFuckMode.value) {
+  options.splice(-1, 0, {
+    type: 'divider',
+    key: 'd3'
+  }, {
+    label: '夺舍回溯',
+    key: 'restore',
+    icon: renderIcon(ArrowBack)
+  })
+}
+
 // 处理主题切换
 const handleThemeChange = () => {
   toggleTheme()
@@ -154,6 +192,17 @@ const handleUserMenuSelect = (key: string) => {
       break
     case 'home':
       router.push('/')
+      break
+    case 'restore':
+      dialog.warning({
+        title: '提示',
+        content: '确定要回溯管理员身份吗？',
+        positiveText: '确定',
+        negativeText: '取消',
+        onPositiveClick: () => {
+          handleRestoreAdmin()
+        }
+      })
       break
   }
 }

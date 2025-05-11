@@ -35,11 +35,14 @@
         <NFormItem label="用户组" path="group">
           <NSelect v-model:value="editForm.group" :options="groupOptions" placeholder="请选择用户组" />
         </NFormItem>
+        <NFormItem v-if="editForm.group === 'vip'" label="VIP 月数" path="vipMonths">
+          <NInputNumber v-model:value="editForm.vipMonths" placeholder="月数 (追加)" :min="1" />
+        </NFormItem>
         <NFormItem label="账户状态" path="status">
           <NSelect v-model:value="editForm.status" :options="statusOptions" placeholder="请选择账户状态" />
         </NFormItem>
         <NFormItem label="实名状态" path="isRealname">
-          <NSwitch v-model:value="editForm.isRealname" :rail-style="switchButtonRailStyle" />
+          <NSwitch v-model:value="editForm.isRealname" :rail-style="defaultSwc" />
         </NFormItem>
         <NFormItem label="流量限制" path="traffic">
           <NSpace align="center">
@@ -89,6 +92,17 @@
         <NButton type="primary" size="small" @click="handleBanSubmit">确认封禁</NButton>
       </NSpace>
     </NModal>
+
+    <!-- 夺舍确认模态框 -->
+    <NModal v-model:show="tempFuckModalVisible" preset="dialog" title="夺舍用户" style="width: 500px;">
+        <p>您正在夺舍用户：<strong>{{ currentUser?.username }}</strong></p>
+        <p>本功能仅为审查而设计。夺舍后，将使用该用户的身份进行操作，请谨慎操作，严禁滥用行为。</p>
+        <p>夺舍期间，您的管理员身份将被临时保存，<strong>可在网页顶栏右上角找到回溯按钮。</strong></p>
+      <NSpace justify="end">
+        <NButton size="small" @click="tempFuckModalVisible = false">取消</NButton>
+        <NButton type="warning" size="small" @click="handleTempFuckSubmit">确认夺舍</NButton>
+      </NSpace>
+    </NModal>
   </div>
 </template>
 
@@ -101,11 +115,13 @@ import { AdminApi } from '../../../shared/api/admin'
 import { AuthApi } from '../../../shared/api/auth'
 import type { UserInfo } from '../../../types/authApi'
 import type { FilterUsersArgs } from '../../../types/adminApi'
-import { switchButtonRailStyle } from '../../../constants/theme'
+import { defaultSwc } from '../../../constants/theme'
 const message = useMessage()
 const loading = ref(false)
 const users = ref<UserInfo[]>([])
 const groupNameMap = ref<Record<string, string>>({})
+const currentUser = ref<UserInfo | null>(null)
+const tempFuckModalVisible = ref(false)
 
 const filters = ref<{
   search: string;
@@ -184,7 +200,8 @@ const editForm = ref({
   traffic: 0,
   outBound: 0,
   inBound: 0,
-  maxProxies: 0
+  maxProxies: 0,
+  vipMonths: undefined
 })
 
 const rules: FormRules = {
@@ -295,6 +312,15 @@ const columns: DataTableColumns<UserInfo> = [
                   : showBanModal(row) // 封禁显示对话框
               },
               { default: () => row.status === 1 ? '解封' : '封禁' }
+            ),
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'warning',
+                onClick: () => handleTempFuckUser(row)
+              },
+              { default: () => '夺舍' }
             )
           ]
         }
@@ -304,6 +330,46 @@ const columns: DataTableColumns<UserInfo> = [
 ]
 
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
+
+const handleTempFuckUser = (user: UserInfo) => {
+  currentUser.value = user
+  tempFuckModalVisible.value = true
+}
+
+const handleTempFuckSubmit = async () => {
+  if (!currentUser.value) return
+
+  try {
+    // 备份当前用户信息
+    const currentGroup = localStorage.getItem('group')
+    const currentUsername = localStorage.getItem('username')
+    const currentToken = localStorage.getItem('token')
+
+    if (currentGroup) localStorage.setItem('admin_group', currentGroup)
+    if (currentUsername) localStorage.setItem('admin_username', currentUsername)
+    if (currentToken) localStorage.setItem('admin_token', currentToken)
+
+    // 获取夺舍用户信息
+    const response = await AdminApi.tempFuckUser(currentUser.value.userId)
+    if (response.data.code === 200) {
+      new Promise((resolve, _) => {
+        localStorage.setItem('group', response.data.data.group)
+        localStorage.setItem('username', response.data.data.username)
+        localStorage.setItem('token', response.data.data.token)
+        localStorage.setItem('tempFuckMode', 'true')
+        resolve(true)
+      }).then(() => {
+        message.success('夺舍成功')
+        tempFuckModalVisible.value = false
+        window.location.reload()
+      })
+    } else {
+      message.error(response.data.message || '夺舍失败')
+    }
+  } catch (error: any) {
+    message.error(error?.message || '夺舍失败')
+  }
+}
 
 const handleSearch = () => {
   if (searchTimeout) {
@@ -332,7 +398,6 @@ const handleStatusFilter = () => {
 
 const banModalVisible = ref(false)
 const banReason = ref('')
-const currentUser = ref<UserInfo | null>(null)
 
 const showBanModal = (user: UserInfo) => {
   // 只有正常状态的用户才能被封禁
@@ -385,7 +450,11 @@ const handleEditSubmit = () => {
         editForm.value.traffic *= 1024
         editForm.value.outBound *= 128
         editForm.value.inBound *= 128
-        await AdminApi.updateUser(editForm.value)
+        const submitData = { ...editForm.value }
+        if (submitData.group !== 'vip') {
+          delete submitData.vipMonths
+        }
+        await AdminApi.updateUser(submitData)
         message.success('更新用户成功')
         showEditModal.value = false
         loadData()
@@ -413,7 +482,8 @@ const handleEdit = async (user: UserInfo) => {
         traffic: userDetail.traffic / 1024,
         outBound: userDetail.outBound / 128,
         inBound: userDetail.inBound / 128,
-        maxProxies: userDetail.maxProxies
+        maxProxies: userDetail.maxProxies,
+        vipMonths: undefined
       }
       showEditModal.value = true
     } else {

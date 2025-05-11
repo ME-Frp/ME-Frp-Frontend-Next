@@ -1,4 +1,5 @@
 <template>
+  <NConfigProvider :theme-overrides="getExemptedTheme()">
   <!-- PC端导航栏 -->
   <NLayoutHeader bordered class="navbar pc-navbar" position="absolute" style="height: 53px; z-index: 999; user-select: none">
     <div class="navbar-content">
@@ -11,7 +12,7 @@
       <!-- 桌面端菜单 -->
       <div class="nav-links">
         <NSpace class="desktop-menu">
-          <NSwitch size="small" :value="isDarkMode" @update:value="toggleTheme" :rail-style="switchButtonRailStyle">
+          <NSwitch size="small" :value="isDarkMode" @update:value="toggleTheme" :rail-style="exemptedSwc">
             <template #checked>
               <NIcon :component="Moon" />
             </template>
@@ -50,7 +51,7 @@
           <h2>ME Frp 幻缘映射 使用文档</h2>
         </RouterLink>
       </div>
-          <NSwitch size="small" :value="isDarkMode" @update:value="toggleTheme" :rail-style="switchButtonRailStyle">
+          <NSwitch size="small" :value="isDarkMode" @update:value="toggleTheme" :rail-style="exemptedSwc">
             <template #checked>
               <NIcon :component="Moon" />
             </template>
@@ -60,12 +61,13 @@
           </NSwitch>
     </div>
   </NLayoutHeader>
+  </NConfigProvider>
 </template>
 
 <script setup lang="ts">
 import { h, inject, Ref, ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import { NLayoutHeader, NButton, NSpace, NSwitch, NIcon, NPopover, NMenu } from 'naive-ui'
+import { NLayoutHeader, NButton, NSpace, NSwitch, NIcon, NPopover, NMenu, NConfigProvider } from 'naive-ui'
 import type { MenuOption } from 'naive-ui'
 import { MenuOutline, Moon, Sunny } from '@vicons/ionicons5'
 import {
@@ -76,7 +78,7 @@ import {
   ShieldCheckmarkOutline,
   DocumentLockOutline,
 } from '@vicons/ionicons5'
-import { switchButtonRailStyle } from '../constants/theme'
+import {getExemptedTheme, exemptedSwc } from '../constants/theme'
 
 
 const showMenu = ref(false)

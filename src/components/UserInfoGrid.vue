@@ -70,6 +70,11 @@
           <NText depth="3" style="font-size: 13px;">出站带宽</NText>
           <div class="user-info-value">{{ userInfo.outBound / 128 }} Mbps</div>
         </div>
+
+        <div class="vip-info-item" v-if="userInfo.group === 'vip'">
+          <NText depth="1" style="font-size: 13px; font-weight: bold">VIP 到期时间</NText>
+          <div class="user-info-value">{{ formatTime(userInfo.vipExpireTime) }}</div>
+        </div>
       </template>
     </div>
 
@@ -86,7 +91,7 @@
         <NText depth="3" style="font-size: 13px;">签到一次可以获得 5~10 GB 的流量</NText>
       </NSpace>
     </div>
-    
+
     <div v-if="!loading && !isProfilePage && userInfo.token" class="token-section">
       <NButton text type="info" @click="copyToken">
         <template #icon>
@@ -102,13 +107,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { NTag, useMessage, NSkeleton, NButton, NIcon, NSpace, NText } from 'naive-ui'
+import { NTag, useMessage, NSkeleton, NButton, NIcon, NSpace, NText, useDialog } from 'naive-ui'
 import { CalendarOutline, KeyOutline } from '@vicons/ionicons5'
 import { type UserInfo } from '../types'
 import { AuthApi } from '../shared/api/auth'
 import { useRoute } from 'vue-router'
 
 const message = useMessage()
+const dialog = useDialog()
 const route = useRoute()
 const loading = ref(true)
 const signLoading = ref(false)
@@ -132,6 +138,7 @@ const userInfo = ref<UserInfo>({
   email: '',
   status: 0,
   todaySigned: false,
+  vipExpireTime: 0,
 })
 
 const formatTime = (timestamp: number) => {
@@ -167,7 +174,12 @@ const handleSign = async () => {
     signLoading.value = true
     const response = await AuthApi.sign()
     if (response.data.code === 200) {
-      message.success(`签到成功, 获得 ${response.data.data.extraTraffic} GB 流量`)
+      dialog.info({
+        title: '签到成功',
+        content: response.data.message,
+        positiveText: '确定',
+        closable: true
+      })
       isSignAvailable.value = false
       // 刷新用户信息以更新流量显示
       await fetchUserInfo()
@@ -193,7 +205,7 @@ const fetchUserInfo = async () => {
       userInfo.value = response.data.data
       isSignAvailable.value = !response.data.data.todaySigned
       localStorage.setItem('group', userInfo.value.group)
-      
+
       // 直接从localStorage获取token
       userInfo.value.token = localStorage.getItem('token') || ''
     } else {
@@ -216,7 +228,7 @@ const copyToken = () => {
     message.warning('无法获取访问密钥')
     return
   }
-  
+
   navigator.clipboard.writeText(userInfo.value.token)
     .then(() => {
       message.success('访问密钥已复制到剪贴板')

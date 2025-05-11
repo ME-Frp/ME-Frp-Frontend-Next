@@ -14,6 +14,7 @@ export interface UserInfo {
   status: number
   todaySigned: boolean
   token?: string
+  vipExpireTime?: number
 }
 
 export interface RealnameInfo {

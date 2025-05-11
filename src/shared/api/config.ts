@@ -67,26 +67,28 @@ baseApi.interceptors.response.use(
         
         if (error.response) {
             // 处理错误响应
-            switch (error.response.status) {
-                case 401:
-                    localStorage.removeItem('token');
-                    window.location.href = '/auth/login';
-                    break;
-                default:
-                    console.error('API Error:', error.response.data);
-                    // 显示错误消息
-                    if (window.$message) {
-                        let errorMessage = '未知错误';
-                        const errorData = error.response.data;
-                        
-                        // 安全地检查错误消息
-                        if (errorData && typeof errorData === 'object' && 'message' in errorData) {
-                            errorMessage = String(errorData.message);
-                        }
-                        
-                        window.$message.error('请求失败：' + errorMessage);
+            // switch (error.response.status) {
+            //     case 401:
+            //         localStorage.removeItem('token')
+            //         localStorage.removeItem('username')
+            //         localStorage.removeItem('group')
+            //         window.location.href = '/auth/login';
+            //         break;
+                // default:
+                console.error('API Error:', error.response.data);
+                // 显示错误消息
+                if (window.$message) {
+                    let errorMessage = '未知错误';
+                    const errorData = error.response.data;
+                    
+                    // 安全地检查错误消息
+                    if (errorData && typeof errorData === 'object' && 'message' in errorData) {
+                        errorMessage = String(errorData.message);
                     }
-            }
+                    
+                    window.$message.error('请求失败：' + errorMessage);
+                }
+            // }
         }
         return Promise.reject(error);
     }

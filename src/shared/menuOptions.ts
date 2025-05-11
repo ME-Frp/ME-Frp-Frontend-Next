@@ -67,7 +67,6 @@ const moreMenuOptions: MenuOption = {
     {
       label: '增值服务',
       key: 'more-cash',
-      disabled: true,
       icon: renderIcon(WalletOutline),
       link: '/dashboard/more/cash',
     },

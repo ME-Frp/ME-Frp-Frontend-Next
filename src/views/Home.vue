@@ -1,4 +1,5 @@
 <template>
+  <NConfigProvider :theme-overrides="getExemptedTheme()">
   <div class="home-container">
     <!-- 主标题区域 -->
     <div class="hero-section">
@@ -110,12 +111,13 @@
       </NButton>
     </div>
   </div>
+  </NConfigProvider>
 </template>
 
 <script setup lang="ts">
 import { ref, markRaw, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { NButton, NIcon, NNumberAnimation } from 'naive-ui'
+import { NButton, NIcon, NNumberAnimation, NConfigProvider } from 'naive-ui'
 import {
   SpeedometerOutline,
   ShieldOutline,
@@ -128,6 +130,7 @@ import {
   WifiOutline
 } from '@vicons/ionicons5'
 import { PublicApi } from '../shared/api/public'
+import { getExemptedTheme } from '../constants/theme'
 
 const router = useRouter()
 

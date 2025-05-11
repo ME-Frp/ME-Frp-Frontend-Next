@@ -1,5 +1,5 @@
 <template>
-  <NConfigProvider :theme="theme" :theme-overrides="themeOverrides">
+  <NConfigProvider :theme="theme" :theme-overrides="getThemeOverrides()">
     <NDialogProvider>
       <NMessageProvider>
         <NNotificationProvider>
@@ -22,7 +22,7 @@ import {
   NLoadingBarProvider,
   darkTheme
 } from 'naive-ui'
-import { themeOverrides } from './constants/theme'
+import { getThemeOverrides } from './constants/theme'
 import AppContent from './components/AppContent.vue'
 
 console.log(`    __  _________   ______         
@@ -39,6 +39,7 @@ const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
 const isDarkMode = ref(prefersDark.matches)
 const theme = computed(() => isDarkMode.value ? darkTheme : null)
 
+
 // 监听系统主题变化
 prefersDark.addEventListener('change', (e) => {
   isDarkMode.value = e.matches
@@ -53,7 +54,7 @@ const toggleTheme = () => {
 provide('theme', {
   isDarkMode,
   theme,
-  toggleTheme
+  toggleTheme,
 })
 </script>
 

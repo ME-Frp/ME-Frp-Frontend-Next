@@ -4,7 +4,7 @@
     <NModal v-model:show="showRealnameModal" preset="dialog" title="未实名认证提示" :show-icon="false" style="width: 400px;">
       <div>
         您的账户尚未完成实名认证, 请尽快完成实名认证。<br>
-        实名认证后, 您将获得更多节点权限, 且双向带宽将提升至 30Mbps。
+        实名认证后, 您将获得更多节点权限, 且双向带宽将提升至 24 Mbps。
       </div>
       <div style="margin-top: 12px; text-align: right;">
         <NText depth="3">{{ countDown }}秒后自动关闭</NText>
@@ -246,11 +246,11 @@
 
             <NFormItem label="其他选项">
               <div style="display: flex; gap: 16px;">
-                <NSwitch v-model:value="formValue.useEncryption" :rail-style="switchButtonRailStyle" :disabled="!canEditConfig">
+                <NSwitch v-model:value="formValue.useEncryption" :rail-style="defaultSwc" :disabled="!canEditConfig">
                   <template #checked>启用加密</template>
                   <template #unchecked>禁用加密</template>
                 </NSwitch>
-                <NSwitch v-model:value="formValue.useCompression" :rail-style="switchButtonRailStyle" :disabled="!canEditConfig">
+                <NSwitch v-model:value="formValue.useCompression" :rail-style="defaultSwc" :disabled="!canEditConfig">
                   <template #checked>启用压缩</template>
                   <template #unchecked>禁用压缩</template>
                 </NSwitch>
@@ -281,7 +281,7 @@ import { NCard, NForm, NFormItem, NInput, NInputNumber, NSelect, NButton, NIcon,
 import { CloudUploadOutline, ArrowBackOutline } from '@vicons/ionicons5'
 import { AuthApi } from '../../shared/api/auth'
 import type { CreateProxyArgs } from '../../types'
-import { switchButtonRailStyle } from '../../constants/theme'
+import { defaultSwc } from '../../constants/theme'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

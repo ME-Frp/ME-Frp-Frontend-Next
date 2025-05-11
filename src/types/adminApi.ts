@@ -77,6 +77,7 @@ export interface UpdateUserArgs {
     outBound?: number;
     inBound?: number;
     maxProxies?: number;
+    vipMonths?: number;
 }
 
 export interface FilterProxiesArgs {

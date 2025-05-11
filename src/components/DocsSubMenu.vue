@@ -1,7 +1,8 @@
 <template>
-  <div class="docs-sub-menu" v-if="isMobile">
-    <div class="sub-menu-container">
-      <div class="left-section">
+  <NConfigProvider :theme-overrides="getExemptedTheme()">
+    <div class="docs-sub-menu" v-if="isMobile">
+      <div class="sub-menu-container">
+        <div class="left-section">
         <NButton quaternary circle class="menu-button" @click="openDrawer">
           <template #icon>
             <NIcon size="20">
@@ -31,14 +32,16 @@
       </NButtonGroup>
     </div>
   </div>
+  </NConfigProvider>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { NButton, NButtonGroup, NIcon } from 'naive-ui'
+import { NButton, NButtonGroup, NIcon, NConfigProvider } from 'naive-ui'
 import { MenuOutline, ChevronBackOutline, ChevronForwardOutline } from '@vicons/ionicons5'
 import { PropType } from 'vue'
+import { getExemptedTheme } from '../constants/theme'
 
 // 路由排序
 const docRoutes = [

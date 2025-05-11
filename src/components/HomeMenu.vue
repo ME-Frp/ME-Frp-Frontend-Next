@@ -1,67 +1,69 @@
 <template>
-  <!-- PC端导航栏 -->
-  <NLayoutHeader bordered class="navbar pc-navbar" style="user-select: none" role="banner">
-    <div class="navbar-content">
-      <div class="logo">
-        <RouterLink to="/" class="logo-link" aria-label="返回首页">
-          <h2>ME Frp 幻缘映射</h2>
-        </RouterLink>
-      </div>
-
-      <!-- 桌面端菜单 -->
-      <div class="nav-links">
-        <NSpace class="desktop-menu" role="navigation">
-          <NSwitch size="small" :value="isDarkMode" @update:value="toggleTheme" :rail-style="switchButtonRailStyle"
-            aria-label="切换深色模式" :aria-checked="isDarkMode">
-            <template #checked>
-              <NIcon :component="Moon" aria-hidden="true" />
-            </template>
-            <template #unchecked>
-              <NIcon :component="Sunny" aria-hidden="true" />
-            </template>
-          </NSwitch>
-          <RouterLink to="/privacy">
-            <NButton :bordered="false">隐私政策</NButton>
+  <NConfigProvider :theme-overrides="getExemptedTheme()">
+    <!-- PC端导航栏 -->
+    <NLayoutHeader bordered class="navbar pc-navbar" style="user-select: none" role="banner">
+      <div class="navbar-content">
+        <div class="logo">
+          <RouterLink to="/" class="logo-link" aria-label="返回首页">
+            <h2>ME Frp 幻缘映射</h2>
           </RouterLink>
-          <RouterLink to="/content">
-            <NButton :bordered="false">内容策略</NButton>
-          </RouterLink>
-          <RouterLink to="/terms">
-            <NButton :bordered="false">服务条款</NButton>
-          </RouterLink>
-          <RouterLink to="/contact">
-            <NButton :bordered="false">联系我们</NButton>
-          </RouterLink>
-          <RouterLink to="/dashboard">
-            <NButton secondary type="primary">管理面板</NButton>
-          </RouterLink>
-        </NSpace>
-      </div>
-    </div>
-  </NLayoutHeader>
-
-  <!-- 移动端导航栏 -->
-  <NLayoutHeader bordered class="navbar mobile-navbar" style="user-select: none" role="banner">
-    <div class="mobile-header">
-      <NPopover trigger="click" placement="bottom-start" :show="showMenu" @update:show="showMenu = $event">
-        <template #trigger>
-          <NButton text class="menu-button" aria-label="打开菜单" :aria-expanded="showMenu">
-            <NIcon size="24">
-              <MenuOutline />
-            </NIcon>
-          </NButton>
-        </template>
-        <div class="mobile-menu" role="navigation" aria-label="移动端导航菜单">
-          <NMenu :options="menuOptions" @update:value="handleMenuSelect" role="menu" />
         </div>
-      </NPopover>
-      <div class="logo">
-        <RouterLink to="/" class="logo-link" aria-label="返回首页">
-          <h2>ME Frp 幻缘映射</h2>
-        </RouterLink>
+
+        <!-- 桌面端菜单 -->
+        <div class="nav-links">
+          <NSpace class="desktop-menu" role="navigation">
+            <NSwitch size="small" :value="isDarkMode" @update:value="toggleTheme" :rail-style="exemptedSwc"
+              aria-label="切换深色模式" :aria-checked="isDarkMode">
+              <template #checked>
+                <NIcon :component="Moon" aria-hidden="true" />
+              </template>
+              <template #unchecked>
+                <NIcon :component="Sunny" aria-hidden="true" />
+              </template>
+            </NSwitch>
+            <RouterLink to="/privacy">
+              <NButton :bordered="false">隐私政策</NButton>
+            </RouterLink>
+            <RouterLink to="/content">
+              <NButton :bordered="false">内容策略</NButton>
+            </RouterLink>
+            <RouterLink to="/terms">
+              <NButton :bordered="false">服务条款</NButton>
+            </RouterLink>
+            <RouterLink to="/contact">
+              <NButton :bordered="false">联系我们</NButton>
+            </RouterLink>
+            <RouterLink to="/dashboard">
+              <NButton secondary type="primary">管理面板</NButton>
+            </RouterLink>
+          </NSpace>
+        </div>
       </div>
-    </div>
-  </NLayoutHeader>
+    </NLayoutHeader>
+
+    <!-- 移动端导航栏 -->
+    <NLayoutHeader bordered class="navbar mobile-navbar" style="user-select: none" role="banner">
+      <div class="mobile-header">
+        <NPopover trigger="click" placement="bottom-start" :show="showMenu" @update:show="showMenu = $event">
+          <template #trigger>
+            <NButton text class="menu-button" aria-label="打开菜单" :aria-expanded="showMenu">
+              <NIcon size="24">
+                <MenuOutline />
+              </NIcon>
+            </NButton>
+          </template>
+          <div class="mobile-menu" role="navigation" aria-label="移动端导航菜单">
+            <NMenu :options="menuOptions" @update:value="handleMenuSelect" role="menu" />
+          </div>
+        </NPopover>
+        <div class="logo">
+          <RouterLink to="/" class="logo-link" aria-label="返回首页">
+            <h2>ME Frp 幻缘映射</h2>
+          </RouterLink>
+        </div>
+      </div>
+    </NLayoutHeader>
+  </NConfigProvider>
 </template>
 
 <script setup lang="ts">
@@ -78,7 +80,7 @@ import {
   ShieldCheckmarkOutline,
   DocumentLockOutline
 } from '@vicons/ionicons5'
-import { switchButtonRailStyle } from '../constants/theme'
+import { exemptedSwc, getExemptedTheme } from '../constants/theme'
 
 const showMenu = ref(false)
 const router = useRouter()

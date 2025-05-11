@@ -147,5 +147,10 @@ export const AdminApi = {
 
   updateGroup(group: Group) {
     return baseApi.post<ApiResponse<void>>('/admin/user/groups/update', group)
+  },
+
+  // 夺舍用户
+  tempFuckUser(userId: number) {
+    return baseApi.post<ApiResponse<UserInfo>>('/admin/user/tempFuck', { userId })
   }
 }
