@@ -1163,7 +1163,7 @@ const handleDownloadConfig = () => {
     return
   }
 
-  fileName = `mcfrpc_config_${selectedProxy.value?.proxyId || 'config'}.${fileExt}`
+  fileName = `mefrpc_config_${selectedProxy.value?.proxyId || 'config'}.${fileExt}`
 
   // 创建 Blob 对象
   const blob = new Blob([content], { type: 'text/plain' })

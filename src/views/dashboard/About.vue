@@ -4,23 +4,31 @@
       <NSpace vertical :size="24">
         <NDescriptions label-placement="left" bordered :column="1">
           <NDescriptionsItem label="面板版本">
-            v5.7.0
+            v5.7.2
           </NDescriptionsItem>
           <NDescriptionsItem label="开发者">
-            <div class="user-info">
-              <NAvatar round size="small" src="https://resources.mefrp.com/d/ME-Frp/Local/Others/lxhtt.webp" />
-              <span>落雪无痕LxHTT</span>
-            </div>
+            <NSpace horizontal :size="10">
+              <div class="user-info">
+                <NAvatar round size="small" src="https://resources.mefrp.com/d/ME-Frp/Local/Others/lxhtt.webp" />
+                <span>落雪无痕LxHTT</span>
+              </div>
+              <div class="user-info">
+                <NAvatar round size="small" src="https://resources.mefrp.com/d/ME-Frp/Local/Others/hyachana.webp" />
+                <span>水化</span>
+              </div>
+            </NSpace>
           </NDescriptionsItem>
           <NDescriptionsItem label="技术栈">
             <NSpace>
               <NTag :bordered="false" type="success" style="cursor: pointer" @click="openUrl('https://vuejs.org')">
                 Vue 3
               </NTag>
-              <NTag :bordered="false" type="info" style="cursor: pointer" @click="openUrl('https://www.typescriptlang.org')">
+              <NTag :bordered="false" type="info" style="cursor: pointer"
+                @click="openUrl('https://www.typescriptlang.org')">
                 TypeScript
               </NTag>
-              <NTag :bordered="false" type="warning" style="cursor: pointer" @click="openUrl('https://www.naiveui.com')">
+              <NTag :bordered="false" type="warning" style="cursor: pointer"
+                @click="openUrl('https://www.naiveui.com')">
                 Naive UI
               </NTag>
               <NTag :bordered="false" type="error" style="cursor: pointer" @click="openUrl('https://vitejs.dev')">
@@ -79,7 +87,8 @@
         </NDescriptions>
         <div>
           <span>
-            中国内网穿透联盟致力于聚集各个友好的行业同僚, 可在 <a href="https://xn--v6qw21h0gd43u.xn--fiqs8s" target="_blank">内网穿透.中国</a> 了解更多信息。
+            中国内网穿透联盟致力于聚集各个友好的行业同僚, 可在 <a href="https://xn--v6qw21h0gd43u.xn--fiqs8s" target="_blank">内网穿透.中国</a>
+            了解更多信息。
           </span>
         </div>
       </NSpace>

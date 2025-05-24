@@ -38,7 +38,7 @@
             <NFormItem label="节点名称" path="nodeName">
               <NInput v-model:value="formValue.nodeName" placeholder="请输入节点名称" />
               <template #feedback>
-                <div class="form-tip">节点名称应遵循 "地区 序号①②③④⑤⑥⑦⑧⑨⑩ 带宽" 的格式, 例如: "北京 ① 100Mbps"</div>
+                <div class="form-tip">节点名称应遵循 "地区 序号①②③④⑤⑥⑦⑧⑨⑩" 的格式, 例如: "北京 ①"</div>
               </template>
             </NFormItem>
 
@@ -86,7 +86,7 @@
 
             <NFormItem label="管理密码" path="adminPass">
               <div style="display: flex; gap: 8px; width: 100%;">
-                <NInput v-model:value="formValue.adminPass" type="password" placeholder="请输入管理密码"
+                <NInput :disabled="true" v-model:value="formValue.adminPass" type="password" placeholder="请生成密码"
                   show-password-on="click" style="flex-grow: 1;" />
                 <NButton type="primary" @click="generateRandomPassword" :loading="generatingPassword">
                   生成密码
@@ -100,15 +100,6 @@
                   复制
                 </NButton>
               </div>
-              <div class="password-strength" style="margin-top: 12px;">
-                <div class="strength-bar">
-                  <div class="strength-level"
-                    :style="{ width: `${passwordStrength.percent}%`, backgroundColor: passwordStrength.color }"></div>
-                </div>
-                <div class="strength-text" :style="{ color: passwordStrength.color }">
-                  密码强度: {{ passwordStrength.label }}
-                </div>
-              </div>
               <template #feedback>
                 <div class="form-tip">设置管理面板的访问密码, 建议使用32位以上的强密码。</div>
               </template>
@@ -118,7 +109,7 @@
               <NButtonGroup>
                 <NButton v-for="group in groupOptions" :key="group.value"
                   :type="formValue.allowGroup.includes(group.value.toString()) ? 'primary' : 'default'"
-                  :disabled="group.value === 'admin' || group.value === 'sponsor'" @click="toggleGroup(group.value)">
+                  :disabled="group.value === 'admin' || group.value === 'sponsor' || group.value === 'vip'" @click="toggleGroup(group.value)">
                   {{ group.label }}
                 </NButton>
               </NButtonGroup>
@@ -290,7 +281,7 @@
 
             <NFormItem label="管理密码" path="adminPass">
               <div style="display: flex; gap: 8px; width: 100%;">
-                <NInput v-model:value="editFormValue.adminPass" type="password" placeholder="请输入管理密码"
+                <NInput :disabled="true" v-model:value="editFormValue.adminPass" type="password" placeholder="请生成密码"
                   show-password-on="click" style="flex-grow: 1;" />
                 <NButton type="primary" @click="generateEditPassword" :loading="generatingPassword">
                   生成密码
@@ -313,13 +304,13 @@
               <NButtonGroup>
                 <NButton v-for="group in groupOptions" :key="group.value"
                   :type="editFormValue.allowGroup.includes(group.value.toString()) ? 'primary' : 'default'"
-                  :disabled="group.value === 'admin' || group.value === 'sponsor'"
+                  :disabled="group.value === 'admin' || group.value === 'sponsor' || group.value === 'vip'"
                   @click="toggleEditGroup(group.value)">
                   {{ group.label }}
                 </NButton>
               </NButtonGroup>
               <template #feedback>
-                <div class="form-tip">选择允许使用此节点的用户组, 管理员、赞助者组始终启用</div>
+                <div class="form-tip">选择允许使用此节点的用户组</div>
               </template>
             </NFormItem>
 
@@ -774,7 +765,7 @@ const formValue = ref({
   servicePort: 2333,
   adminPort: 2334,
   adminPass: '',
-  allowGroup: ['admin', 'sponsor'],
+  allowGroup: ['admin', 'sponsor', 'vip'],
   allowPort: '10000-60000',
   allowType: [],
   bandwidth: ''
@@ -792,7 +783,7 @@ const editFormValue = ref({
   servicePort: 2333,
   adminPort: 2334,
   adminPass: '',
-  allowGroup: ['admin', 'sponsor'],
+  allowGroup: ['admin', 'sponsor', 'vip'],
   allowPort: '10000-60000',
   allowType: [],
   bandwidth: '',
@@ -800,45 +791,6 @@ const editFormValue = ref({
 })
 const scriptInfo = ref<GetNodeInstallScriptResponse | null>(null)
 const scriptDownloadUrl = ref('')
-
-const passwordStrength = computed(() => {
-  const password = formValue.value.adminPass || ''
-
-  if (!password) {
-    // 返回默认值而不是"无", 这样即使没有密码也会显示强度指示器
-    return { percent: 0, label: '?', color: '#ccc' }
-  }
-
-  // 计算密码强度
-  let strength = 0
-
-  // 长度检查
-  if (password.length >= 32) {
-    strength += 40
-  } else if (password.length >= 16) {
-    strength += 25
-  } else if (password.length >= 8) {
-    strength += 10
-  }
-
-  // 复杂性检查
-  if (/[A-Z]/.test(password)) strength += 20 // 大写字母
-  if (/[a-z]/.test(password)) strength += 20 // 小写字母
-  if (/[0-9]/.test(password)) strength += 20 // 数字
-
-  // 返回强度级别
-  if (strength >= 80) {
-    return { percent: 100, label: '非常强', color: '#52c41a' }
-  } else if (strength >= 60) {
-    return { percent: 80, label: '强', color: '#1890ff' }
-  } else if (strength >= 40) {
-    return { percent: 60, label: '中等', color: '#faad14' }
-  } else if (strength >= 20) {
-    return { percent: 40, label: '弱', color: '#ff7875' }
-  } else {
-    return { percent: 20, label: '非常弱', color: '#f5222d' }
-  }
-})
 
 // 获取用户组名称
 const getGroupName = (groupId: string) => {
@@ -925,7 +877,7 @@ const rules = {
   },
   adminPass: {
     required: true,
-    message: '请输入管理密码',
+    message: '请生成密码',
     trigger: 'blur'
   },
   allowGroup: {
@@ -1005,7 +957,7 @@ const editRules = {
   adminPass: [
     {
       required: true,
-      message: '请输入管理密码',
+      message: '请生成密码',
       trigger: ['blur', 'change']
     }
   ],
@@ -1328,11 +1280,15 @@ const handleSubmit = () => {
   // 确保提交前管理员组被选中
   const adminGroup = groupOptions.value.find(group => group.value === 'admin')
   const sponsorGroup = groupOptions.value.find(group => group.value === 'sponsor')
+  const vipGroup = groupOptions.value.find(group => group.value === 'vip')
   if (adminGroup && !formValue.value.allowGroup.includes('admin')) {
     formValue.value.allowGroup.push('admin')
   }
   if (sponsorGroup && !formValue.value.allowGroup.includes('sponsor')) {
     formValue.value.allowGroup.push('sponsor')
+  }
+  if (vipGroup && !formValue.value.allowGroup.includes('vip')) {
+    formValue.value.allowGroup.push('vip')
   }
 
   formRef.value?.validate(async (errors) => {
@@ -1484,6 +1440,11 @@ const fetchGroups = async () => {
       if (sponsorGroup && !formValue.value.allowGroup.includes('sponsor')) {
         formValue.value.allowGroup.push('sponsor')
       }
+
+      const vipGroup = groupOptions.value.find(group => group.value === 'vip')
+      if (vipGroup && !formValue.value.allowGroup.includes('vip')) {
+        formValue.value.allowGroup.push('vip')
+      }
     } else {
       message.error(res.data.message || '获取用户组列表失败')
     }
@@ -1516,10 +1477,6 @@ const fetchNodes = async () => {
         }
       })
 
-      // 如果节点列表为空, 显示提示信息
-      if (approvedDonations.length === 0 && activeTab.value === 'delete') {
-        message.info('您目前没有已通过审核的捐赠节点可删除')
-      }
     }
   } catch (error) {
     console.error(error)
@@ -1538,6 +1495,10 @@ watch(groupOptions, (newOptions) => {
   const sponsorGroup = newOptions.find(group => group.value === 'sponsor')
   if (sponsorGroup && !formValue.value.allowGroup.includes('sponsor')) {
     formValue.value.allowGroup.push('sponsor')
+  }
+  const vipGroup = newOptions.find(group => group.value === 'vip')
+  if (vipGroup && !formValue.value.allowGroup.includes('vip')) {
+    formValue.value.allowGroup.push('vip')
   }
 }, { deep: true })
 
@@ -1598,11 +1559,15 @@ const handleEditSubmit = () => {
   }
   const adminGroup = groupOptions.value.find(group => group.value === 'admin')
   const sponsorGroup = groupOptions.value.find(group => group.value === 'sponsor')
+  const vipGroup = groupOptions.value.find(group => group.value === 'vip')
   if (adminGroup && !editFormValue.value.allowGroup.includes('admin')) {
     editFormValue.value.allowGroup.push('admin')
   }
   if (sponsorGroup && !editFormValue.value.allowGroup.includes('sponsor')) {
     editFormValue.value.allowGroup.push('sponsor')
+  }
+  if (vipGroup && !editFormValue.value.allowGroup.includes('vip')) {
+    editFormValue.value.allowGroup.push('vip')
   }
 
   editFormRef.value?.validate(async (errors) => {
@@ -1773,6 +1738,13 @@ const toggleGroup = (value: string | number) => {
     return
   }
 
+  if (value === 'vip') {
+    if (!formValue.value.allowGroup.includes(value)) {
+      formValue.value.allowGroup.push(value.toString())
+    }
+    return
+  }
+
   const index = formValue.value.allowGroup.indexOf(value.toString())
   if (index === -1) {
     formValue.value.allowGroup.push(value.toString())
@@ -1798,6 +1770,12 @@ const toggleEditGroup = (value: string | number) => {
     return
   }
 
+  if (value === 'vip') {
+    if (!editFormValue.value.allowGroup.includes(value)) {
+      editFormValue.value.allowGroup.push(value)
+    }
+    return
+  }
   const index = editFormValue.value.allowGroup.indexOf(value.toString())
   if (index === -1) {
     editFormValue.value.allowGroup.push(value.toString())
@@ -2095,31 +2073,6 @@ const getRegionName = (region: string) => {
   color: $text-color-3;
   margin-top: 4px;
   margin-bottom: 8px;
-}
-
-.password-strength {
-  margin-top: 4px;
-  margin-bottom: 4px;
-  margin-left: 8px;
-
-  .strength-bar {
-    height: 6px;
-    background-color: #f0f0f0;
-    border-radius: 3px;
-    overflow: hidden;
-
-    .strength-level {
-      height: 100%;
-      border-radius: 3px;
-      transition: all 0.3s ease;
-    }
-  }
-
-  .strength-text {
-    width: 100px;
-    font-size: 12px;
-    color: $text-color-3;
-  }
 }
 
 .modal-info-item {

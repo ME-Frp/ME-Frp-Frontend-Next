@@ -34,23 +34,27 @@
             </div>
 
             <div class="contact-cards">
-                <n-card title="企业微信群（用微信加入）" class="contact-card">
+                <n-card title="微信群" class="contact-card">
+                    <n-space vertical :size="8">
+                        <div class="contact-label">
+                            <n-tag :bordered="false" type="error" size="small">不推荐</n-tag :bordered="false">
+                            <span>快速响应</span>
+                        </div>
+
+                        <div class="contact-desc">
+                            <p>由于腾讯钱没圈够，用不了了</p>
+                        </div>
+                    </n-space>
+                </n-card>
+                <n-card title="官方文档" class="contact-card">
                     <n-space vertical :size="8">
                         <div class="contact-label">
                             <n-tag :bordered="false" type="success" size="small">推荐</n-tag :bordered="false">
-                            <span>快速响应</span>
+                            <span>全面</span>
                         </div>
                         <div class="contact-value">
-                            <img src="https://resources.mefrp.com/d/ME-Frp/Local/Others/wxwork.jpg" alt="企业微信群"
-                                style="max-width: 90%;">
-                        </div>
-                        <div class="contact-desc">
-                            <p>加入我们的用户交流群，获取实时帮助</p>
-                            <div class="contact-value">
-                                可尝试使用链接：<a
-                                    href="https://work.weixin.qq.com/apph5/external_room/join/group_mng?plg_id=dcff145c51cfbbb3dd38bbff87c9fa99&"
-                                    target="_blank">点击此处</a>
-                            </div>
+                            <a href="/docs/safety"
+                                target="_blank">点击前往查看</a>
                         </div>
                     </n-space>
                 </n-card>
